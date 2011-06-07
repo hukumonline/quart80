@@ -1,0 +1,60 @@
+<?php $guid = $this->generateGuid();?>
+<!--<div id="extTab">-->
+	<div id="relation" class="x-hide-display">
+		<table>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+			<div class="widgetContent">
+				Relate To: <strong><?php echo $this->catalogTitle;?></strong>
+				<form id="<?php echo $guid;?>frm">
+					<input type="text" id="query" name="query" size="50" value=''>
+					&nbsp;<input type="submit" value="Search">
+				</form>
+				<div style="padding-top:10px"></div>
+				<div id="<?php echo $guid;?>spinner" style="color:red; display:none;"><img src="<?php echo $this->baseUrl();?>/resources/images/wait-trans.gif" border="0"> Sending Request</div>
+				<div id="<?php echo $guid;?>output"></div>
+			</div>
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+		</table>
+	</div>
+<!--</div>-->
+
+<script type="text/javascript">
+var viewer1 = new Ext.TabPanel({
+//	renderTo: 'extTab',
+	deferredRender:false,
+//	width: 630,
+	activeTab: 0,
+	frame: true,
+	layoutOnTabChange:true,
+	items: [
+		{contentEl:'relation', title: 'Search for Relation'}
+	]
+});
+
+dialog.add(viewer1);
+dialog.doLayout();
+
+setTimeout(function()
+{ 
+	var options = { 
+		url: 'widgets_relation/search/relatedGuid/<?echo $this->catalogGuid;?>',
+        beforeSubmit: prepareData,
+        success: showResponse,
+ 		type: 'post'
+	}; 
+    $('#<?php echo $guid;?>frm').ajaxForm(options);
+	function prepareData()
+    {
+    	$('#<?php echo $guid;?>spinner').show();
+   	}
+	function showResponse(responseText, statusText) 
+	{ 
+	    $('#<?php echo $guid;?>spinner').hide();
+	    $('#<?php echo $guid;?>output').html(responseText);
+	}
+}, 100); 
+</script>

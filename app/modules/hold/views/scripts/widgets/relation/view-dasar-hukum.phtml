@@ -1,0 +1,12 @@
+<?php if (count($this->rowsetRelatedItem) > 0) { ?>
+<fieldset>
+	<legend>Dasar Hukum</legend>
+	<ul id="dhline">
+	<?php foreach ($this->rowsetRelatedItem as $row){?>
+	<li>
+		<a href="<?=$this->baseUrl();?>/pusatdata/detail/<?=$row->itemGuid;?>/node/<?=$this->node; ?>"><?=$this->getCatalogTitle($row->itemGuid); ?></a>	
+	</li>
+	<?php } ?>
+	</ul>
+</fieldset>
+<?php } ?>

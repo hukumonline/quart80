@@ -1,0 +1,110 @@
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">	
+        <h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./library/js/extjs/resources/images/default/silk/icons/folder_edit.png">&nbsp;Rename a directory ...</h3>
+        <div id="RenDirForm"></div>
+        <div class="ext_statusbar" id="statusBar"></div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+	typeOfFolder = new Ext.data.SimpleStore({
+		id:'tof',
+		fields: ['type','content'],
+		data:[['cms','Berita'],['dms','Peraturan'],['eventcalendar','Project'],['klinik','Klinik'],['marketing','Marketing'],['membership','Membership'],['menu','Menu']]
+	});
+	var renform = new Ext.FormPanel({
+		labelWidth : 125,
+		url: './admin/dms_foldermanager/save',
+		frame: false,
+		bodyStyle: 'border:none;background: none;',
+		defaultType: 'textfield',
+		
+		items:[{
+			fieldLabel: 'New Name',
+			name: 'title',
+			id: 'title',
+			value: '<?=$this->title ?>',
+			width: 175,
+			allowBlank: false
+		},
+		{
+			fieldLabel: 'Menu View Order',
+			name: 'viewOrder',
+			id: 'viewOrder',
+			value: '<?=$this->viewOrder ?>',
+			width: 125
+		},
+		{
+			fieldLabel: 'Cms Parameters',
+			name: 'cmsParams',
+			id: 'cmsParams',
+			value: '<?=$this->cmsParams ?>',
+			width: 300
+		},
+		{
+			fieldLabel: 'Description',
+			name: 'description',
+			id: 'description',
+			value: '<?=$this->description ?>',
+			width: 175
+		},
+			new Ext.form.ComboBox({
+				id:'cmbfolder',
+				fieldLabel:'Type of Folder',
+				mode: 'local',
+				typeAhead: false,
+				triggerAction:"all",
+				lazyRender: true,
+				store:typeOfFolder,
+				valueField: 'type',
+				displayField: 'content',
+				listeners:{
+					render: function(combo) {
+						combo.setValue('<?=$this->type ?>');
+					}
+				}
+			})
+		],
+		
+		buttons: [{
+			text: 'Save',
+			handler: function() {
+				var valcombo = Ext.getCmp('cmbfolder').getValue();
+				renform.form.submit({
+					reset: true,
+					waitMsg: 'Renaming directory/file name ...',
+					success: function(form, action)	{
+						parentDir = tree.getSelectionModel().getSelectedNode().parentNode;
+						parentDir.reload();
+						parentDir.select();
+						dialog.destroy();
+						dialog.hide();
+					},
+					failure: function(form, action) {
+						
+					},
+					scope: renform,
+					params: 
+					{
+						 guid:'<?=$this->guid; ?>'
+						,type:valcombo
+					}
+				})
+			}
+		}, {
+			text: 'Cancel',
+			handler: function() {
+				dialog.destroy();
+				dialog.hide();
+			}
+		}
+		]
+	});
+	
+	renform.render('RenDirForm');
+	
+	Ext.get('title').focus();
+	
+</script>

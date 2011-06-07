@@ -1,0 +1,13 @@
+<?php if (count($this->rowsetRelatedItem) > 0) { ?>
+<div style="padding-top:15px;"></div>
+<fieldset>
+	<legend>Relasi</legend>
+	<ul id="ppline">
+	<?php foreach ($this->rowsetRelatedItem as $row){?>
+	<li>
+		<a href="<?=$this->baseUrl();?>/pusatdata/detail/<?=$row->relatedGuid;?>"><?=$this->getCatalogTitle($row->relatedGuid); ?></a>	
+	</li>
+	<?php } ?>
+	</ul>
+</fieldset>
+<?php } ?>

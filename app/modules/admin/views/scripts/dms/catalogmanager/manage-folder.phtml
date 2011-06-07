@@ -1,0 +1,80 @@
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;Copy to Folder ...</h3>
+        <table>
+        <tr>
+        <td><div id="managefolder"></div></td>
+        <td><div id="go"></div></td>
+        </tr>
+        </table>
+        <div class="ext_statusbar" id="statusBar"></div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+    var ctf = new Ext.ux.form.LovCombo({
+    	id:'comboctf',
+    	hideOnSelect:false,
+    	store:folder,
+    	width:300,
+    	triggerAction:'all',
+    	emptyText:'Copy to Folder...',
+    	displayField:'title',
+    	valueField:'guid'
+    });
+    
+    var button = new Ext.Button({
+    	text: 'Go',
+    	handler:function(){
+		var value = ctf.getValue();
+		if (value.length > 0) {
+			var temp = value.split(',');
+			for(i = 0; i < temp.length; i++){
+				var selections = grid.selModel.getSelections();
+				for(j = 0; j < grid.selModel.getCount(); j++){
+					var conn = new Ext.data.Connection();
+					conn.on('beforerequest', function() {
+						Ext.MessageBox.wait('copy catalog [' + selections[j].json.title + '] to folder [' + temp[i] + ']'); 
+					});
+					conn.request({
+						url: './admin/api_folder/copy-move-items/format/json',
+						params:{
+							selitem: selections[j].json.guid,
+							folderGuid: tree.getSelectionModel().getSelectedNode().id,
+							targetGuid: temp[i],
+							act: 'copy',
+							option: 'grid'
+						},
+						callback:function(options, success, response){
+							if (success) {
+								json = Ext.decode( response.responseText );
+								if ( json.success ) {
+									store.reload(); 
+									info( 'Success', json.message );
+									ctf.reset();
+								} else {
+									info( 'Failure', json.error );
+								}
+							} else {
+								Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+							}
+						}
+					});
+					conn.on('requestcomplete', function() {
+						Ext.MessageBox.hide();
+					});	
+				}
+			}
+		}
+		else
+		{
+			Ext.MessageBox.alert('Oops ...', 'Please select one or more folder');
+		}
+    	}
+    });
+
+    ctf.render('managefolder');
+    button.render('go');
+</script>

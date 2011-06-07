@@ -1,0 +1,222 @@
+<html>
+<head>
+
+<style type="text/css">
+#FileUploadForm label.error { margin-left: 20px; width: auto; display: inline; }
+form.rfgform label.error, label.error {
+	/* remove the next line when you have trouble in IE6 with labels in list */
+	display: none;
+	color: red;
+}
+div.error { display: none; }
+input.error { border: 1px dotted red; }
+div.requiredNotice { width: 140px; float: right; padding: 0; }
+</style>
+
+</head>
+<body>
+
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;Upload form ...</h3>
+        <div id="addUploadForm">
+			<form id="FileUploadForm" enctype="multipart/form-data">
+				
+				<table>
+				<tbody>
+				<tr>
+					<td colspan='2'><hr></td>
+				</tr>
+				<tr>
+					<td width='20%'><label for='uploadedFile1'>Upload File</label></td>
+					<td><input type='file' name='uploadedFile1' id='uploadedFile1' size='50'/></td>
+				</tr>
+				<tr class='row1'></tr>
+				<tr>
+					<td width='20%'><label for='fixedTitle1'>Title</label></td>
+					<td>
+					<textarea name="fixedTitle1" id="fixedTitle1" cols="50" rows="1"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'><label for='fixedType1'>Type</label></td>
+					<td>
+					<select name='fixedType1'><option value='file' selected>File</option><option value='image'>Image</option><option value='video'>Video</option></select>
+					</td>
+				</tr>
+				<tr class='error1'></tr><br/>
+				</tbody>
+				</table>	
+				
+				<input type='hidden' name='profileGuid' id='profileGuid' value='kutu_doc'>
+				<input type='hidden' name='relatedGuid' id='relatedGuid' value='<?php echo $this->relatedGuid; ?>'>
+				
+				<input type="hidden" name="id" id="id" value="2">
+							
+				<div id="nameFields"></div><br>
+						
+				<p><a href="javascript:;" onClick="addFormField(); return false;">Tambah upload</a></p>		
+				
+				<p class="buttons"><input value="Save" type="submit"><input type="button" name="cancel" id="cancel" value="Cancel"><!--<input name="chkavailable1" id="chkavailable1" type="button" value="Cek Judul" onClick='chkavailable(); return false;'>&nbsp;--><span id="msgbox" style="display:none"></span></p>
+			</form>
+        </div>
+        <div id="uploaderSpinner" style="color:red; display:none;"><img src="./resources/img/wait-trans.gif" border="0"> Sending Request</div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript"> 
+// wait for the DOM to be loaded 
+//	$.validator.setDefaults({
+//		submitHandler: function() {
+			var options = {
+				type:'post',
+//				dataType: 'json',
+				url: './admin/api_fileuploader/save',
+//				resetForm: true,
+				beforeSubmit: prepareData,
+				success: showResponse,
+//				success: function(response){
+//					if (response.success == true)
+//					{
+//					  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+//						{ 
+//						  	//add message and change the class of the box and start fading
+//							$(this).html('File upload successfully...').addClass('messageboxok').fadeTo(900,1,
+//							function() {
+//							    $('#uploaderSpinner').hide();
+//								dialog.destroy();
+//								dialog.hide();
+//								store.reload();
+//							});
+//						});
+//					}
+//					else
+//					{ 
+//					  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+//						{ 
+//							//add message and change the class of the box and start fading
+//						  	$(this).html(response.message).addClass('messageboxerror').fadeTo(900,1);
+//						});		
+//					}
+//					$('#uploaderSpinner').hide();
+//				}
+		};
+		$('#FileUploadForm').ajaxForm(options);
+//		}
+//	});
+	// validate FileUploadForm on keyup and submit
+//	$('#FileUploadForm').validate({
+//		rules : {
+//			uploadedFile: "required",
+//			fixedTitle: "required"
+//		},
+//		messages : {
+//			uploadedFile: "<br>Empty file",
+//			fixedTitle: "<br>Please enter Title"
+//		}
+//	});
+    function prepareData() 
+    { 
+	  	$('#uploaderSpinner').show();
+	} 
+		function showResponse(responseText, statusText) 
+		{ 
+		    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+		        '\n\nThe output div should have already been updated with the responseText.'); 
+		        
+		    $('#uploaderSpinner').hide();
+		}
+		
+//function chkavailable() {
+//	var title = $('#fixedTitle').attr('value');
+//		
+//	/* Just to be sure .. remove any changes from previous submit */
+//	$('tr.row1').empty();												
+//			
+//	if (title != "") {
+//		$.ajax({
+//			type: 'POST',
+//			dataType: 'json',
+//			url: '<?php //echo $this->getControllerUrl(); ?>/check-title',
+//			data: 'title='+ title,
+//			success: function(json) {
+//				if( json.success == "true" ) {
+//					
+//					var html = '<td colspan="5" style="color: #7ebddd;margin-bottom: 1.5em; padding-left: 11em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.data + '</td>';
+//					$('tr.row1').prepend(html);						
+//							
+//				} else {
+//							
+//					if (json.error == "1") {
+//						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 8em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err1 + '</td>';
+//					} else if (json.error == "2") {
+//						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 8em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err2 + '</td>';
+//					} else if (json.error == "3") {
+//						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 8em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err3 + '</td>';
+//					}
+//							
+//					$('tr.row1').prepend(html);						
+//							
+//				}
+//			},
+//			failure: function(json) {
+//						
+//			}
+//		});
+//	} 
+//}
+
+function addFormField() {
+	var id = document.getElementById("id").value;
+	$("#nameFields").append("<table id='row" + id + "'>"+
+	"<tbody>"+
+	"<tr>"+
+		"<td colspan='2'><hr></td>"+
+	"</tr>"+
+	"<tr>"+
+		"<td width='20%'><label for='uploadedFile" + id + "'>Upload File</label></td>"+
+		"<td><input type='file' name='uploadedFile" + id + "' id='uploadedFile" + id + "' size='50'/></td>"+
+	"</tr>"+
+	"<tr class='row" + id + "'></tr>"+
+	"<tr>"+
+		"<td width='20%'><label for='fixedTitle" + id + "'>Title</label></td>"+
+		"<td><textarea name='fixedTitle" + id + "' id='fixedTitle" + id + "' cols='50' rows='1'/></textarea></td>"+
+	"</tr>"+
+	"<tr>"+
+		"<td width='20%'><label for='fixedType" + id + "'>Type</label></td>"+
+		"<td>"+
+		"<select name='fixedType" + id + "'><option value='file' selected>File</option><option value='image'>Image</option><option value='video'>Video</option></select>"+
+		"</td>"+
+	"</tr>"+
+	"<tr>"+
+		"<td><a href='#' onClick='removeFormField(\"#row" + id + "\"); return false;'>Remove</a></td>"+
+	"</tr>"+
+	"<tr class='error" + id + "'></tr><br/>"+
+	"</tbody>"+
+	"</table>");	
+		
+	$('#row' + id).highlightFade({
+		speed:1000
+	});
+		
+	id = (id - 1) + 2;
+	document.getElementById("id").value = id;
+}
+
+function removeFormField(id) { 
+	$(id).remove();
+}
+
+
+$('#cancel').click(function() {
+	dialog.destroy();
+	dialog.hide();
+	dsDocument.reload();
+});
+    
+</script>
+
+</body>
+</html>

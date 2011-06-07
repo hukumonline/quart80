@@ -1,0 +1,63 @@
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;.:Poll New</h3>
+        <div id="addpolling">
+		<form id="insert-polling">
+			<input type="hidden" name="id" id="id" value="1">
+			Title&nbsp;<input type="text" name="title" size="55"><br><br>
+			Options<br>
+			<p><a href="#" onClick="addFormField(); return false;">Add</a></p>
+			<div id="divTxt"></div><br>
+			<input type="submit" value="Save"><input type="button" name="cancel" id="cancel" value="Cancel">
+		</form>
+        </div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+	var options = {
+		type: 'post',
+		dataType: 'json',
+		url: './admin/api_polling/save',
+		beforeSubmit: prepareData,
+		success: function(response){
+			if (response.success == true) 
+			{
+				info( 'success', response.message );
+				ds.reload();
+				dialog.destroy();
+				dialog.hide();
+			}
+			else
+			{
+				info( 'Oops..', response.message );
+			}
+			Ext.MessageBox.hide();
+		}
+	};
+	$('#insert-polling').ajaxForm(options);
+	
+	function prepareData()
+	{
+		Ext.MessageBox.wait('Saving Polls');
+	}
+
+$('#cancel').click(function() {
+	dialog.destroy();
+	dialog.hide();
+	ds.reload();
+});
+
+function addFormField() {
+	var id = document.getElementById("id").value;
+	$("#divTxt").append("<label id='row" + id + "' for='txt" + id + "'>Field " + id + " <input type='text' size='60' name='polloption" + id + "' id='polloption" + id + "'> <a href='#' onClick='removeFormField(\"#row" + id + "\"); return false;'>Remove</a><br>");	
+	id = (id - 1) + 2;
+	document.getElementById("id").value = id;
+}
+function removeFormField(id) {
+	$(id).remove();
+}
+
+</script>

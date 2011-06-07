@@ -1,0 +1,105 @@
+	<style type="text/css">
+		.messagebox { position:absolute; width:100px; margin-left:30px; border:1px solid #c93; background:#ffc; padding:3px; }
+		.messageboxok { position:absolute; width:auto; margin-left:30px; border:1px solid #349534; background:#C9FFCA; padding:3px; font-weight:bold; color:#008000; }
+		.messageboxerror {	position:absolute; width:auto; margin-left:30px; border:1px solid #CC0000; background:#F7CBCA; padding:3px; font-weight:bold; color:#CC0000; }
+		#clinicInputForm label.error {
+			width: auto;
+			display: inline;
+			color: red;
+			font:11px arial,helvetica,sans-serif;
+			padding-left:5px;
+		}
+		input.error, textarea.error { border: 1px dotted red; }
+		div.requiredNotice {
+			width: 140px;
+			float: right;
+			padding: 0;
+		}
+.fct {padding:5px;font-size:12px;}
+.fcq {width:290px;height:150px;padding:5px;font-size:12px;}
+	</style>
+<form id="clinicInputForm">
+<fieldset>
+<?php
+$auth = Zend_Auth::getInstance();
+if ($auth->hasIdentity())
+{
+	$username = $auth->getIdentity()->username;
+}
+?>
+<legend>Form-Klinik</legend>
+	<table style="margin-bottom:1.4em;width:100%;">
+	<tbody>
+	<tr>
+		<td style="width:20%;font-size:12px;padding:4px 2px 4px 5px;"><label>Judul Pertanyaan</label></td>
+		<td><input name="fixedCommentTitle" id="fixedCommentTitle" size="50" tabindex="1" type="text" class="fct"></td>
+	</tr>
+	<tr>
+		<td style="font-size:12px;padding:4px 2px 4px 5px;"><label>Pertanyaan</label></td>
+		<td style="padding-top:5px;"><textarea name="fixedCommentQuestion" tabindex="2" rows="5" cols="20" class="fcq"></textarea></td>
+	</tr>
+	</tbody>
+	</table>
+	<input type='hidden' name='profileGuid' id='profileGuid' value='klinik'>
+	<input type='hidden' name='folderGuid' id='folderGuid' value='lt4a0a533e31979'>
+	<input type='hidden' name='username' id='username' value='<?=$username; ?>'>
+	<input type='hidden' name='status' id='status' value='0'>
+	<p style="font-size: 12px; padding-left:5px; padding-right:5px;">Dengan anda mengirimkan pertanyaan anda, anda sadar bahwa hubungan klien - penasehat hukum tidak terjadi , dan setuju untuk tidak bergantung pada informasi  yang disediakan tanpa berkonsultasi terlebih dahulu dengan penasehat hukum anda.</p>
+	<p style="font-size:12px;padding:4px 2px 4px 5px;"><input value="Kirim" type="submit" style="width:55px;">&nbsp;<input type="reset" value="Reset" style="width:55px;">&nbsp;<span id="msgbox" style="display:none"></span></p>
+</fieldset>
+</form>
+	<script type="text/javascript"> 
+	setTimeout(function()
+	{ 
+		$.validator.setDefaults({
+			submitHandler: function() {
+				var options = {
+					type:'post',
+					dataType: 'json',
+					url: '../api/catalog/save',
+					resetForm: true,
+					beforeSubmit: prepareData,
+					success: function(response){
+						if (response.success == true)
+						{
+						  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+							{ 
+							  	//add message and change the class of the box and start fading
+								$(this).html('Terima kasih atas minat anda terhadap klinik kami').addClass('messageboxok').fadeTo(900,1,
+								function(){
+									//window.location.reload(true);
+								});
+							});
+						}
+						else
+						{
+						  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+							{ 
+								//add message and change the class of the box and start fading
+							  	$(this).html(response.msg).addClass('messageboxerror').fadeTo(900,1);
+							});		
+						}
+						$('#AddSpinner').hide();
+					}
+			};
+			$('#clinicInputForm').ajaxForm(options);
+			}
+		});
+	$('#clinicInputForm').validate({
+		rules : {
+			fixedCommentTitle: "required",
+			fixedCommentQuestion: "required"
+		},
+		messages : {
+			fixedCommentTitle: "Masukkan judul pertanyaan",
+			fixedCommentQuestion: "Masukkan pertanyaan anda"
+		}
+	});
+    function prepareData() 
+    { 
+      	$("#msgbox").removeClass().addClass('messagebox').text('Kirim ...').fadeIn(1000);
+	} 
+		
+	}); 
+	</script> 
+

@@ -1,0 +1,254 @@
+<script type="text/javascript">
+Ext.grid.CheckColumn = function(config){
+    Ext.apply(this, config);
+    if(!this.id){
+        this.id = Ext.id();
+    }
+    this.renderer = this.renderer.createDelegate(this);
+};
+
+Ext.grid.CheckColumn.prototype ={
+    init : function(grid){
+        this.grid = grid;
+        this.grid.on('render', function(){
+            var view = this.grid.getView();
+            view.mainBody.on('mousedown', this.onMouseDown, this);
+        }, this);
+    },
+
+    onMouseDown : function(e, t){
+        if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
+            e.stopEvent();
+            var index = this.grid.getView().findRowIndex(t);
+            var record = this.grid.store.getAt(index);
+            var editEvent = {
+            	grid: this.grid,
+            	record: this.grid.store.getAt(index),
+            	field: this.dataIndex,
+            	value: !record.data[this.dataIndex],
+            	originalValue: record.data[this.dataIndex],
+            	row: index,
+            	column: this.grid.getColumnModel().findColumnIndex(this.dataIndex)
+            };            
+            record.set(this.dataIndex, !record.data[this.dataIndex]);
+            this.grid.fireEvent('afteredit',editEvent);
+        }
+    },
+
+    renderer : function(v, p, record){
+        p.css += ' x-grid3-check-col-td'; 
+        return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';
+    }
+};	
+
+	// custom column plugin example
+	var checkColumnCreate = new Ext.grid.CheckColumn({
+		align:'center',
+		header: "Create",
+		dataIndex: 'create',
+		width: 55
+	});
+
+	var checkColumnRead = new Ext.grid.CheckColumn({
+		align:'center',
+		header: "Read",
+		dataIndex: 'read',
+		width: 55
+	});
+
+	var checkColumnUpdate = new Ext.grid.CheckColumn({
+		align:'center',
+		header: "Update",
+		dataIndex: 'update',
+		width: 55
+	});
+
+	var checkColumnDelete = new Ext.grid.CheckColumn({
+		align:'center',
+		header: "Delete",
+		dataIndex: 'delete',
+		width: 55
+	});
+
+	dsshare = new Ext.data.Store({ 
+		proxy: new Ext.data.HttpProxy({
+			url: './services/sharing/view'
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'privilege',
+			totalProperty: 'totalCount',
+			id: 'guid'
+		}, [{
+				name:'group',
+				mapping:'group'
+			},
+			{
+				name:'perms',
+				mapping:'perms'
+			},
+			{
+				name:'create',
+				mapping:'perms.create'
+			},
+			{
+				name:'delete',
+				mapping:'perms.delete'
+			},
+			{
+				name:'read',
+				mapping:'perms.read'
+			},
+			{
+				name:'update',
+				mapping:'perms.update'
+			}
+		]),
+		remoteSort: true
+	});
+	
+    dataSource = dsshare;
+    
+	// custom RowNumberer for use with paging GridPanels
+	Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+	  renderer : function(v, p, record, rowIndex, colIndex, store){
+	    if (this.rowspan) {
+	    	p.cellAttr = 'rowspan="' + this.rowspan + '"';
+	    }
+	
+	    var so = store.lastOptions;
+	    var sop = so? so.params : null;
+	    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+	  }
+	});
+
+    var xg = Ext.grid;
+    var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+    var cmshare = new xg.ColumnModel
+   	([
+   		pg,
+		{id: 'group', header: "Group name", dataIndex: 'group', width: 180},
+	    checkColumnCreate,
+	    checkColumnRead,
+	    checkColumnUpdate,
+	    checkColumnDelete
+   	]);
+	
+   	// by default columns are sortable
+   	cmshare.defaultSortable = true;
+
+	// create the editor grid
+	var gridshare = new xg.GridPanel({
+		id:'privilege-grid',
+		title:'Privileges [<?=$this->itemTitle;?>]',
+		iconCls:'privileges',
+	    store: dsshare,
+	    cm: cmshare,
+	    plugins:[checkColumnCreate,checkColumnRead,checkColumnUpdate,checkColumnDelete],
+	    selModel: new xg.RowSelectionModel({singleSelect:false}),
+	    clicksToEdit:2,
+	    trackMouseOver:false,
+	    loadMask: {msg:'Loading Catalogs...'},
+	    enableColLock:false,
+	    enableDragDrop: true,
+	    stripeRows: true,
+	    ddGroup: 'GridDD', 
+	    loadMask: true,
+	    layout:'fit',
+	    forceFit:'fit'
+	});
+	
+	gridshare.addListener('afteredit',handleEdit);
+
+  	// render it	    
+  	Ext.getCmp('sharefolder').add(gridshare);
+  	Ext.getCmp('sharefolder').doLayout();
+  	
+  	dsshare.baseParams = {guid:'<?=$this->itemGuid; ?>'};
+	dsshare.load({
+		params:{start:0, limit:25}
+	});
+	
+	/**
+	 * @uses		Store related issues
+	 * @todo		Store appears empty even after calling load()
+	 * @abstract	Store.load() is 'asynchronous' when using remote data (through an HttpProxy, or a ScriptTagProxy). 
+	 *            	It returns 'immediately' after the request is sent to the server and continues to process code without
+	 *				waiting. To control postprocessing of returned data, configure the callback for the load call, or add load
+	 *				and loadexception  listeners to the store.
+	 */
+	
+	/*
+	dsshare.on({
+		'load':{
+			fn:function(store,records,options){
+				console.info('store load, arguments:',arguments);
+				console.info('store count = ',dsshare.getCount());
+			},
+			scope:this
+		},
+		'loadexception':{
+			fn:function(obj,options,response,e){
+				console.info('store loadexception,arguments:', arguments);
+				console.info('error = ', e);
+			},
+			scope:this
+		}
+	});
+	*/
+	
+	/**
+	 * Handler to control grid editing
+	 * @param {Object} oGrid_Event
+	 */
+	function handleEdit(editEvent) 
+	{
+		var itemGuid = '<?=$this->itemGuid; ?>';
+		
+		if (editEvent.value == true) {
+			
+			Ext.Ajax.request({
+				url:'./admin/dms_sharing/allow',
+				params:{
+					group:editEvent.record.data.group,
+					perm:editEvent.field,
+					guid:itemGuid
+				},
+				failure:function(response,options){
+					Ext.MessageBox.alert('Failure','Oops...');
+					dsshare.rejectChanges();
+				},
+				success:function(response,options){
+					var responseData = Ext.util.JSON.decode(response.responseText);
+					//Ext.example.msg('Success', responseData.message);
+					info('Success',responseData.message);
+					dsshare.commitChanges();
+					dsshare.reload();
+				}
+			});
+			
+		} else {
+			
+			Ext.Ajax.request({
+				url:'./admin/dms_sharing/removeallow',
+				params:{
+					group:editEvent.record.data.group,
+					perm:editEvent.field,
+					guid:itemGuid
+				},
+				failure:function(response,options){
+					Ext.MessageBox.alert('Failure','Oops...');
+					dsshare.rejectChanges();
+				},
+				success:function(response,options){
+					var responseData = Ext.util.JSON.decode(response.responseText);
+					//Ext.example.msg('Success', responseData.message);
+					info('Success',responseData.message);
+					dsshare.commitChanges();
+					dsshare.reload();
+				}
+			});
+			
+		}
+	}
+	
+</script>

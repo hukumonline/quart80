@@ -1,0 +1,136 @@
+<?php
+/**
+ * @package kutump
+ * @copyright 2008-2009 hukumonline.com/en.hukumonline.com
+ * @author Nihki Prihadi <nihki@hukumonline.com>
+ *
+ * $Id: redirectUrl.phtml 2009-01-21 16:08: $
+ */
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>hukumonline.com Membership</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/js/jquery/jquery-1.4.2.min.js"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="<?=$this->baseUrl();?>/resources/css/elastic.css" />
+	<script src="<?=$this->baseUrl();?>/resources/css/elastic.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="<?=$this->baseUrl();?>/resources/css/typography-1.css" />
+	<style type="text/css">
+	.tborder { background: #ffffff;	color: #000000;	border: 1px solid #dadada; }
+	.tcat {	background: #ddd url(/assets/images/item-hd.gif) repeat-x 0 bottom;	color: #222; font-size: 12px; font-weight:bold;	padding:3px; }
+	.panel { background: #f1f1f1; color: #000000; padding: 10px; border:0 none; }
+	.panelsurround { background: #f1f1f1; color: #000000; }
+	</style>
+</head>
+<body>
+	<div class="unit horizontal-center layout">
+		<div class="container" style="padding-top:15px;">
+			<img src="<?=$this->baseUrl(); ?>/resources/images/holid.jpg" alt="mnutopshadow" />
+			<div style="font-size:10px;padding-top:2px;border-bottom:1px solid #ddd;">Buat Akun HukumonlineID</div>
+			<div style="float:right;font-size:12px;">
+				<a href="<?=$this->getRootUrl();?>">Awal</a> | <a href="<?=$this->baseUrl();?>/identity/daftar">Daftar</a>
+			</div>
+			<div style="clear:both;"></div>
+			<div style="padding-top:10px;"></div>
+			
+			<table class='tborder' cellpadding='6' cellspacing='1' border='0' width='70%' align='center'>
+			<tr>
+				<td class='tcat'>Layanan Hukumonline.</td>
+			</tr>
+			<tr>
+				<td class='panelsurround' align='center'>
+				<blockquote>
+				
+					<p>&nbsp;</p>
+					<p><strong>Kepada Yth,</strong></p>
+					<p class='smallfont'><?=$this->rowUser->fullName?></p><br>
+					
+					<?php 
+					if ($this->rowUser->packageId == 26 || $this->rowUser->packageId == 27) {
+											
+						$tblPackage = new Pandamp_Modules_Identity_Package_Model_Package();
+						$rowPackage = $tblPackage->find($this->rowUser->packageId)->current();
+										
+						if ($this->rowUser->packageId == 26) {
+							$group = "Subsciption for Member Individual";
+							$group1 = "Individual";
+										
+						} else if ($this->rowUser->packageId == 27) {
+							$group = "Subsciption for Member Corporate";
+							$group1 = "Korporasi";
+						}
+					
+					?>			
+					
+					<p>
+					Selamat datang di Hukumonline, anda tercatat sebagai pelanggan <?=$group1?> dengan masa percobaan
+					5 hari. Harap segera melunasi pembayaran sebelum masa percobaan berakhir.
+					Anda bisa sewaktu-waktu melihat data tentang invoice anda di area profile anda.
+					</p>
+					
+					<form method='post' action="<?=ROOT_URL?>/membership/payment/complete">
+					
+					<div style="padding-top:15px;"></div>
+					<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">BILLING INFORMATION</h3>
+					<div class="unit horizontal-center layout on-2 columns">
+						<div class="fixed column" style="width:330px;padding-right:20px;">
+							Tax Number
+							<br>
+							<input name="taxNumber" value="<?=$this->userInfo->taxNumber?>">
+							<br>
+							Company Name
+							<br>
+							<input name="taxCompany" value="<?=$this->userInfo->taxCompany?>">
+							<br>
+							Address
+							<br>
+							<textarea name="taxAddress"><?=$this->userInfo->taxAddress?></textarea>
+						</div>
+						<div class="fixed column" style="width:300px;padding-right:10px;padding-left:5px;">
+							City
+							<br>
+							<input name="taxCity" value="<?=$this->userInfo->taxCity?>">
+							<br>
+							Zip
+							<br>
+							<input name="taxZip" value="<?=$this->userInfo->taxZip?>">
+							<br>
+							Province
+							<br>
+							<input name="taxProvince" value="<?=$this->userInfo->taxProvince?>">
+							<br>
+							<label for="taxCountry">* Country</label>
+							<?php echo $this->formSelectCountries('taxCountry', $this->userInfo->taxCountryId);?>
+						</div>
+					</div>
+					
+					<div style='padding-top:15px;'></div>
+					<h3 style='color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;'>PILIH METODE PEMBAYARAN</h3>
+					<select name='method' id='method' style='width:200px;'>
+						<option value='pilih'>-- Pilih --</option>
+						<option value='manual'>Bank Transfer</option>
+						<option value='nsiapay'>NsiaPay</option>
+					</select>
+					<div style='padding-top:15px;'></div>
+					<input type="hidden" name="guid" value="<?=$this->rowUser->guid?>">
+					<input type='submit' value='Process' />
+					</form>
+					
+					<?php } ?>		
+				</blockquote>
+				</td>
+			</tr>
+			</table>
+						
+		</div>
+	</div>
+	<div class="unit">
+		<div class="container footer">
+		<a href="<?=$this->baseUrl();?>/identity/feedback">Feedback</a> | Copyright &copy; 2008 Hukumonline		
+		</div>
+	</div>
+</body>
+</html>

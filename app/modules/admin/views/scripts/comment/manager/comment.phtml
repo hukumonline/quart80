@@ -1,0 +1,265 @@
+<script type="text/javascript">
+	ds = new Ext.data.Store({ 
+		proxy: new Ext.data.HttpProxy({
+			url: './services/comment/fetch-comment'
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'comment',
+			totalProperty: 'totalCount',
+			id: 'guid'
+		}, [
+				'title', 'createdby', 'ip',
+				{name:'createdDate', mapping:'createdDate'},
+				{name:'guid',mapping:'guid'},
+				{name:'status',mapping:'status',type:'int'},
+				'subtitle','content','description','user_email','guid_article','shortarticle'
+		]),
+		remoteSort: true
+	});
+	
+    function renderTcomment(value, p, record){ 
+        return String.format( 
+                '<div class="topic"><a href="javascript:;" onclick="detail(\''+record.data.guid_article+'\');return false;"><b>{0}</b></a><br /><span class="author">by {1}</span></div>',
+                value, record.data.createdby, record.id, record.data.guid);
+    }
+    function renderTopic(value, p, record){ 
+        return String.format(
+                '<div class="topic"><a href="javascript:;" onclick="ext_get(\'widget/catalogmanager/view/guid/'+record.id+'\',800,500);return false;"><b>{0}</b></a><br /><span class="author">by {1}</span></div>',
+                value, record.data.createdby, record.id, record.data.guid);
+    }
+    function renderCreatedDate(value, p, r){
+        return String.format('<span class="post-date">{0}</span><br/>ip. {1}', value, r.data['ip']);
+    }
+	function renderLink(data, cell, record, rowIndex, columnIndex, store) {
+		rowRecord = gridTanggapan.getStore().getAt(rowIndex);
+		if (record.data['status'] == 0 || record.data['status'] == 1) {
+    		return '<a href="javascript:;" onclick="statusco(\''+rowRecord['id']+'\',1,\''+record.data['guid_article']+'\');return false;">[not active]</a>';
+		} else {
+    		return '<a href="javascript:;" onclick="statusco(\''+rowRecord['id']+'\',0,\''+record.data['guid_article']+'\');return false;">[active]</a>';
+		}
+	}; 
+
+    
+	// custom RowNumberer for use with paging GridPanels
+	Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+	  renderer : function(v, p, record, rowIndex, colIndex, store){
+	    if (this.rowspan) {
+	    	p.cellAttr = 'rowspan="' + this.rowspan + '"';
+	    }
+	
+	    var so = store.lastOptions;
+	    var sop = so? so.params : null;
+	    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+	  }
+	});
+
+    var xg = Ext.grid;
+    var sm = new xg.CheckboxSelectionModel();
+    var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+    var cm = new xg.ColumnModel
+   	([
+   		sm,
+   		pg,
+   		{id: 'catalog', header: "Comment", dataIndex: 'title', width: 277, renderer:renderTcomment, css: 'white-space:normal;'},
+		{header: "Author", dataIndex: 'createdby', width: 70, hidden: true},
+	    {header: "Created on", dataIndex: 'createdDate', width: 150, renderer:renderCreatedDate},
+	    {header: "guid", dataIndex: 'guid', hidden: true}
+	    ,{header: "", dataIndex: 'status', hidden: true}
+	    ,{header: "Status", dataIndex: 'guid', width: 70, renderer: renderLink}
+   	]);
+	
+	// add a paging toolbar to the grid's footer
+	var paging = new Ext.ux.PagingToolbar({
+		pageSize: 25,
+		store: ds,
+		displayInfo: true,
+		displayMsg: 'Displaying topics {0} - {1} of {2}',
+		emptyMsg: "No data to display"
+	});
+	
+	// create the editor grid
+	var gridTanggapan = new xg.GridPanel({
+		id:'content-grid-tanggapan',
+	    ds: ds,
+	    cm: cm,
+	    sm: sm,
+	    bbar: paging,
+		viewConfig: {
+			forceFit:true,
+			enableRowBody:true,
+			showPreview:true,
+			getRowClass : function(record, rowIndex, p, ds)
+			{
+              	if (this.showPreview) { 
+           			value = record.data.description + ' <font color="red">[' + record.data.user_email + ']</font>';
+               		p.body = '<p align="justify">'+value+'</p>';
+                	return 'x-grid3-row-expanded';
+            	}
+            	return 'x-grid3-row-collapsed';
+			}
+        },
+        /*
+	    plugins: [ 
+	    	new Ext.ux.grid.Search({
+	    		searchText: 'find',
+	    		mode: 'remote',
+	    		iconCls: 'find',
+	    		dateFormat: 'd m Y H:i',
+	    		position: 'top'	
+	    	})
+	    ],
+	    */
+	    tbar: [{
+			text: 'Delete [' + tree.getSelectionModel().getSelectedNode().text + ']',
+		    icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png',
+		    cls: 'x-btn-text-icon',
+		    tooltip: 'Click to delete selected rows',
+		    handler: function(){
+		    	var selectedKeys = gridTanggapan.selModel.selections.keys;
+		    	if (selectedKeys.length > 0)
+		    	{
+		    		Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',deleteRecordCat);
+		    	}
+		    	else
+		    	{
+		    		Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+		    	}
+		    }
+      	},
+       	{
+		   	text: 'Refresh',
+		   	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+		   	cls: 'x-btn-text-icon',
+		   	tooltip: 'Click to Refresh the table',
+		   	handler: function(){ ds.reload(); }
+       	},
+	    '-', {
+	        	pressed: true,
+	            enableToggle:true,
+	            text:'&nbsp;Preview',
+	            tooltip: 'View a short summary of each post in the list',
+	            iconCls: 'summary',
+	            toggleHandler: toggleDetails
+		}
+	    ],
+	    selModel: new xg.RowSelectionModel({singleSelect:false}),
+	    trackMouseOver:false,
+	    loadMask: {msg:'Loading Comments...'},
+	    enableColLock:false,
+	    stripeRows: true,
+	    loadMask: true,
+	    layout:'fit',
+	    forceFit:'fit'
+	});
+
+  	// render it	    
+  	Ext.getCmp('kutu-Tanggapan').add(gridTanggapan);
+  	Ext.getCmp('kutu-Tanggapan').doLayout();
+	ds.load({params:{start:0, limit:25}});
+	
+	/**
+	 * Function for Deleting record(s)
+	 * @param { Object } btn
+	 */
+	function deleteRecordCat(btn) {
+		if (btn=='yes')
+		{
+			var selections = gridTanggapan.selModel.getSelections();
+			for (j=0; j < gridTanggapan.selModel.getCount(); j++)
+			{
+				var conn = new Ext.data.Connection();
+				conn.on('beforerequest',function(){
+					Ext.MessageBox.wait('delete comment ['+selections[j].json.title+']');
+				});
+				conn.request({
+					 url:'./admin/api_comment/delete'
+					,params:{guid:selections[j].json.guid}
+					,callback:function(options,success,response){
+						if (success) {
+							json = Ext.decode(response.responseText);
+							if (json.success) {
+								ds.reload();
+								info( 'success', json.message );
+							} else
+							{
+								Ext.Msg.alert( 'Failure', json.error );
+							}
+						} 
+						else
+						{
+							Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+						}
+					}
+				});
+				conn.on('requestcomplete',function(){
+					Ext.MessageBox.hide();
+				});
+			}
+		}
+	}
+		
+	statusco = function ( value, status, relatedGuid )
+	{ 
+		Ext.Ajax.request({
+			waitMsg: 'Change status ...',
+			url: './admin/api_comment/status',
+			params: {
+				catalogGuid: value,
+				relatedGuid: relatedGuid,
+				status: status
+			},
+			success: function(response,options) {
+				ds.reload();
+			},
+			failure: function(response,options) {
+				Ext.MessageBox.alert('Warning','Oops ...');
+			}
+		});
+	}
+	
+	detail = function( article )
+	{
+		/*
+		 * @TODO
+		 * folderGuid = lt498d49d30c8c1
+		 * adalah guid dari folder Article
+		 * pada admin panel
+		 * karena berhubung semua yang berhubungan dengan berita hukumonline ada pada folder Redaksi > Article
+		 */
+		
+		if (article)
+		{
+			ext_get('./admin/browser/view-in-new-tab/catalogGuid/'+article+'/folderGuid/lt498d49d30c8c1',800,500);
+		}
+		else
+		{
+			Ext.MessageBox.alert('Warning','There is no related item ...');
+		}
+	}
+	
+    function toggleDetails(btn, pressed){
+        var view = Ext.getCmp('content-grid-tanggapan').getView();
+        view.showPreview = pressed;
+        view.refresh();
+    }
+	
+	gridTanggapan.on('rowcontextmenu',showRowContextMenu);
+	
+	function showRowContextMenu(grid, rowIndex, e)
+	{
+		var coords = e.getXY();
+		rowRecord = ds.getAt(rowIndex);
+		e.stopEvent();
+		menuG.showAt([coords[0], coords[1]]);
+	}
+	    
+	var menuG = new Ext.menu.Menu('mainGridRowContext');
+	menuG.add({
+		text:'Preview in New Window'
+		,handler:function(){
+			window.open('<?=ROOT_URL ?>/berita/baca/'+rowRecord.data['guid_article']+'/'+rowRecord.data['shortarticle']);
+		}
+	}
+	);
+	
+</script>

@@ -1,0 +1,15 @@
+<fieldset>
+	<legend>Navigation</legend>
+<?php if ((count($this->aPath)-1) > 0) { ?>
+<div id="peraturan">
+<?php for($i=0; $i<count($this->aPath);$i++) { ?>
+	<?php if($i != count($this->aPath)-1) {?>
+		<a href="<?=$this->aPath[$i]['url']; ?>" class="link"><?=$this->aPath[$i]['title'];?></a> 
+	<?php } else {?>
+		<a href="<?=$this->aPath[$i]['url']; ?>" class="link"><?=$this->aPath[$i]['title'];?></a>
+	<?php } ?>
+	
+<?php } ?>
+</div>
+<?php } ?>
+</fieldset>

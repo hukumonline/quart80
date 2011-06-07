@@ -1,0 +1,154 @@
+<div class="unit horizontal-center layout">
+	<div id="panelIndex">
+		<form name="dsel" onsubmit="return false;">
+		<label><input type="button" value="Lihat Index Tanggal" onclick="dsel_submit()"></label>
+	   	<label>
+	   		<?php 
+	   		if ((isset($this->year)) AND (isset($this->month)) AND (isset($this->date))) 
+	   			echo Pandamp_Lib_Form::selectDate($this->date,$this->month,$this->year); 
+	   		else 
+	   			echo Pandamp_Lib_Form::selectDate(); 
+	   		?>
+	   	</label>
+		</form>
+	</div>
+</div>
+<?php
+if (isset($this->year))
+{
+	$year = $this->year;
+}
+if (isset($this->month))
+{
+	if ($this->month < 10) 
+		$month = 0 . $this->month;
+	else 
+		$month = $this->month;
+}
+if (isset($this->date))
+{
+	if ($this->date < 10) 
+		$day = 0 . $this->date;
+	else 
+		$day = $this->date;
+}
+
+if ((isset($year)) AND (isset($month)) AND (isset($day))) $givenDate = $year.'-'.$month.'-'.$day;
+?>
+
+<div class="unit horizontal-center layout on-3 columns">
+<div class="fixed column" style="width:320px">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">utama</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/utama">indeks</a></div>
+		</div>
+		<?=$this->action('utama-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:320px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">berita</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/terbaru">indeks</a></div>
+		</div>
+		<?=$this->action('terbaru-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:300px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">fokus</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/fokus">indeks</a></div>
+		</div>
+		<?=$this->action('fokus-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+</div>
+<div class="unit horizontal-center layout on-3 columns">
+<div class="fixed column" style="width:320px">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">isu hangat</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/isuhangat">indeks</a></div>
+		</div>
+		<?=$this->action('isuhangat-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:320px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">tajuk</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/tajuk">indeks</a></div>
+		</div>
+		<?=$this->action('tajuk-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:300px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">kolom</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/kolom">indeks</a></div>
+		</div>
+		<?=$this->action('kolom-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+</div>
+<div class="unit horizontal-center layout on-3 columns">
+<div class="fixed column" style="width:320px">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">jeda</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/jeda">indeks</a></div>
+		</div>
+		<?=$this->action('jeda-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:320px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">resensi</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/resensi">indeks</a></div>
+		</div>
+		<?=$this->action('resensi-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:300px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">tokoh</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/tokoh">indeks</a></div>
+		</div>
+		<?=$this->action('tokoh-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+</div>
+<div class="unit horizontal-center layout on-2 columns">
+<div class="fixed column" style="width:320px">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">info</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/info">indeks</a></div>
+		</div>
+		<?=$this->action('info-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+<div class="fixed column" style="width:320px;padding-left:10px;">
+	<div id="panelBerita">
+		<div id="panelTitle">
+			<div style="float:left">aktual</div>
+			<div id="panelTitleIndex">&raquo; <a href="<?=$this->getRootUrl(); ?>/warta/aktual">indeks</a></div>
+		</div>
+		<?=$this->action('aktual-by-date','widgets_content','berita',array( 'givenDate' => isset($givenDate)? $givenDate : '' )); ?>
+	</div>
+</div>
+</div>
+<script language="javascript">
+	function dsel_submit() {
+		var frm = document.dsel;
+		idate = frm.d.selectedIndex + 1;
+		imonth = frm.m.selectedIndex + 1;
+		iyear = frm.y.options[frm.y.selectedIndex].value;
+		location = '<?=$this->getRootUrl(); ?>/warta/' + iyear + '/' + imonth + '/' + idate;
+	}
+</script>

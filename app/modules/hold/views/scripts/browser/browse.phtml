@@ -1,0 +1,35 @@
+<div id="container-1">
+	<ul>
+		<li><a href="#fragment-1"><span>Peraturan</span></a></li>
+		<li><a href="#fragment-2"><span>Putusan</span></a></li>
+	</ul>
+	<div id="fragment-1">
+   	<?php 
+		echo $this->action('kategori', 'widgets_folder', 'hold', array('node' => $this->node)).'<br>'; 
+       	echo $this->action('peraturan', 'widgets_folder', 'hold', array('node' => $this->nprt)); 
+   	?>
+    <br>
+    <?php
+    if ($this->node) {
+    	echo $this->ajaxActionRenderer(ROOT_URL.'/pusatdata/vc/'.$this->node);
+       	//echo $this->action('view-catalogs', 'widgets_folder', 'hold', array('node' => $this->node));
+    }
+   	if ($this->nprt) {
+   		echo $this->ajaxActionRenderer(ROOT_URL.'/pusatdata/vcp/'.$this->nprt);
+   		//echo $this->action('view-catalogs-peraturan', 'widgets_folder', 'hold', array('node' => $this->nprt));
+   	}
+   	?>
+	</div>
+	<div id="fragment-2">
+   	<?php 
+       	echo $this->action('putusan', 'widgets_folder', 'hold', array('node' => $this->npts)); 
+   	?>
+    <br>
+    <?php
+   	if ($this->npts) {
+   		echo $this->ajaxActionRenderer(ROOT_URL.'/pusatdata/vcpu/'.$this->npts);
+   		//echo $this->action('view-catalogs-putusan', 'widgets_folder', 'hold', array('node' => $this->npts));
+   	}
+   	?>
+	</div>
+</div>

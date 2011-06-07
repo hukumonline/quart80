@@ -1,0 +1,231 @@
+<style type="text/css">
+
+.floatLeft		{ float: left; margin: 7px; }
+.popupTitle 	{ font-family: Verdana, sans-serif;	font-size: 10px; font-weight: bold;	margin: 5; }
+.popupText 		{ font: Verdana, sans-serif; font-size: 10px; font-weight: normal; }
+.popupInfo 		{ font: Verdana, sans-serif; font-size: 10px; font-weight: normal; margin: 5; }
+img.floatLeft	{ float: left; margin: 7px; border: 1px solid #CCCCCC; }
+
+</style>
+
+<table>
+<tr>
+	<td><div class="popupTitle">Login Name::<?=$this->rowset->username; ?></div></td>
+</tr>
+</table>
+
+<?php
+
+$sDir = ROOT_URL.'/uploads/images/'.$this->rowset->guid.'/'.$this->rowset->picture;
+if ($this->rowset->picture)
+{
+	$img = '<img alt="user" src="'.$sDir.'" width="80px" height="55px" align="left" class="floatLeft"/>';
+}
+else 
+{
+	$img = '<img alt="hukumonline" src="../../resources/images/noimage.jpg" align="left" class="floatLeft"/>';
+}
+	
+if ($this->rowset->gender == "L") { 
+	$gender = "Laki-laki";	
+} 
+elseif ($this->rowset->gender == "P")
+{
+	$gender = "Perempuan";
+} 
+else 
+{
+	$gender = '-';
+}
+if (!empty($this->rowset->birthday))
+{
+	$birthday = strftime("%d %b %Y",strtotime($this->rowset->birthday));
+}
+else 
+{
+	$birthday = '-';
+}
+if (!empty($this->rowset->kopel))
+{
+	$kopel = $this->rowset->kopel;
+}
+else 
+{
+	$kopel = "-";
+}
+if (!empty($this->rowset->company))
+{
+	$company = $this->rowset->company;
+}
+else 
+{
+	$company = "-";
+}
+if (!empty($this->rowset->phone))
+{
+	$phone = $this->rowset->phone;
+}
+else 
+{
+	$phone = "-";
+}
+if (!empty($this->rowset->fax))
+{
+	$fax = $this->rowset->fax;
+}
+else 
+{
+	$fax = "-";
+}
+if (!empty($this->rowset->billingAddress))
+{
+	$billingAddress = $this->rowset->billingAddress;
+}
+else 
+{
+	$billingAddress = "-";
+}
+if (!empty($this->rowset->emailBilling))
+{
+	$emailBilling = $this->rowset->emailBilling;
+}
+else 
+{
+	$emailBilling = "-";
+}
+if ($this->rowset->isContact == "Y") { 
+	$isContact = "Pengguna merupakan orang yang bisa dihubungi dari perusahaan yang bersangkutan.";
+}
+else 
+{
+	$isContact = "";
+}
+?>
+	
+<table>
+<tr>
+	<td rowspan="11"><?=$img; ?></td>
+</tr>
+<tr>
+	<td width="120">Kode Pelanggan</td>
+	<td>:</td>
+	<td><?=$kopel; ?></td>
+</tr>
+<tr>
+	<td width="120">Nama Lengkap</td>
+	<td>:</td>
+	<td><?=$this->rowset->fullName; ?></td>
+</tr>
+<tr>
+	<td width="120">Jenis Kelamin</td>
+	<td>:</td>
+	<td><?=$gender; ?></td>
+</tr>
+<tr>
+	<td width="120">Tgl. Lahir</td>
+	<td>:</td>
+	<td><?=$birthday; ?></td>
+</tr>
+<tr>
+	<td width="120">Perusahaan</td>
+	<td>:</td>
+	<td><?=$company; ?></td>
+</tr>
+<tr>
+	<td width="120">Telp</td>
+	<td>:</td>
+	<td><?=$phone; ?></td>
+</tr>
+<tr>
+	<td width="120">Fax</td>
+	<td>:</td>
+	<td><?=$fax; ?></td>
+</tr>
+<tr>
+	<td width="120">Email</td>
+	<td>:</td>
+	<td><?=$this->rowset->email; ?></td>
+</tr>
+<tr>
+	<td width="120">Alamat penagihan</td>
+	<td>:</td>
+	<td><?=$billingAddress; ?></td>
+</tr>
+<tr>
+	<td width="120">Email penagihan</td>
+	<td>:</td>
+	<td><?=$emailBilling; ?></td>
+</tr>
+<tr>
+	<td><?=$isContact; ?></td>
+</tr>
+</table>
+
+<table>
+<tr>
+	<td><b>Newsletter :</b></td>
+	<td></td>
+</tr>
+<tr>
+	<td style="vertical-align: top;" colspan="1" rowspan="2">
+	<?php
+		if ($this->rowset->newArticle == "Y") echo "Artikel berita terbaru<br>";
+		if ($this->rowset->weeklyList == "Y") echo "Daftar peraturan mingguan<br>";
+		if ($this->rowset->monthlyList == "Y") echo "Daftar peraturan bulanan<br>";
+	?>
+	</td>
+	<td></td>
+</tr>
+</table><br>
+	
+<?php
+	$db = Zend_Db_Table::getDefaultAdapter()->query("SELECT gag.value as package, kud.promotionId, kue.description as education, kuex.description as expense, 
+	kud.paymentId as payment, kub.description as business, kus.status as status, kud.activationDate, kud.createdDate, kud.createdBy, kud.updatedDate,
+	kud.updatedBy, kud.isActive	FROM KutuUserDetail kud INNER JOIN gacl_aro_groups gag ON kud.packageId=gag.id INNER JOIN KutuUserBusiness kub ON kud.businessTypeId=kub.businessTypeId INNER JOIN KutuUserEducation kue ON kud.educationId=kue.educationId INNER JOIN KutuUserExpense kuex ON kud.expenseId=kuex.expenseId INNER JOIN KutuUserStatus kus ON kud.periodeId=kus.accountStatusId WHERE kud.uid = '".$this->rowset->guid."'");
+	$rowset = $db->fetchAll(Zend_Db::FETCH_OBJ);
+?>
+	
+<table width="100%" border="1">
+<tr valign="top">
+	<td height="30" colspan="13">Berikut dibawah ini adalah detil selengkapnya :</td>
+</tr>
+<tr>
+	<td width="20%"><b>Paket</b></td>
+	<td width="20%" nowrap><b>Kode Promosi</b></td>
+	<td width="20%"><b>Pendidikan</b></td>
+	<td width="20%"><b>Pengeluaran</b></td>
+	<td width="20%"><b>Pembayaran</b></td>
+	<td width="20%" nowrap><b>Jenis Usaha</b></td>
+	<td width="20%"><b>Status</b></td>
+	<td width="20%" nowrap><b>Tgl. Aktifasi</b></td>
+	<td width="20%" nowrap><b>Tgl. Pembuatan</b></td>
+	<td width="20%" nowrap><b>Dibuat oleh</b></td>
+	<td width="20%" nowrap><b>Tgl. Diubah</b></td>
+	<td width="20%" nowrap><b>Diubah oleh</b></td>
+	<td width="20%"><b>Aktif</b></td>
+</tr>
+<?php foreach ($rowset as $row) { ?>
+<tr>
+	<td><?=$row->package; ?></td>
+	<td><?=$row->promotionId; ?></td>
+	<td><?=$row->education; ?></td>
+	<td><?=$row->expense; ?></td>
+	<td><?=$row->payment; ?></td>
+	<td><?=$row->business; ?></td>
+	<td><?=$row->status; ?></td>
+	<td><?=Pandamp_Lib_Formater::get_date($row->activationDate); ?></td>
+	<td><?=Pandamp_Lib_Formater::get_date($row->createdDate); ?></td>
+	<td><?=$row->createdBy; ?></td>
+	<td><?=Pandamp_Lib_Formater::get_date($row->updatedDate); ?></td>
+	<td><?=$row->updatedBy; ?></td>
+	<td>
+	<?php 
+		if ($row->isActive == 1)
+			echo 'Y';
+		else 
+			echo 'N'; 
+	?>
+	</td>
+</tr>
+<?php } ?>
+</table>

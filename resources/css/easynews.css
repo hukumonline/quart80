@@ -1,0 +1,15 @@
+.c_kr1 {float:left;border:1px solid #ddd;}
+html > body .c_kr1 {margin-top:0px;}
+.c_kr1 h1 {margin:5px 5px 2px 9px;font-weight:bold;}
+.c_kr1 a {padding:0; text-decoration:none;font-size:12px;}
+.c_kr1 a:hover {text-decoration:underline;}
+.news_style{
+display:none;
+}
+.image
+{
+	background-color: #fff;
+	padding: 10px;
+	margin: 3px 3px 3px 0px;
+	float: left;
+}

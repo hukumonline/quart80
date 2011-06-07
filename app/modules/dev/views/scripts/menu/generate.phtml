@@ -1,0 +1,14 @@
+<div class="span-24 last">
+<ul class="sf-menu">
+<?php
+for ($i=0;$i<count($this->rowset);$i++)
+{
+?>
+<li>
+<a href="<?php echo $this->url(array('controller'=>'menu','action'=>'browse')); ?>"><?=$this->rowset[$i]['title']?></a>
+<?=$this->action('getmenuchild','menu','dev',array('node'=>$this->rowset[$i]['guid']))?>
+</li>
+
+<?php } ?>
+</ul>
+</div>

@@ -1,0 +1,26 @@
+<div class="unit">
+	<div class="container">
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:640px;padding-right:20px;">
+			<?=$this->action('pencaharian','browser','hold'); ?>
+			<div style="padding-top:15px;"></div>
+			<?php 
+				if ($this->node) { 
+					echo str_replace('Root','',$this->action('view-folder-navigation', 'widgets_folder', 'hold', array('node' => $this->node)));
+				} 
+				elseif ($this->nprt) { 
+					echo str_replace('Root','',$this->action('view-folder-navigation-peraturan', 'widgets_folder', 'hold', array('nprt' => $this->nprt)));
+				} 
+				elseif ($this->npts) {
+					echo str_replace('Root','',$this->action('view-folder-navigation-putusan', 'widgets_folder', 'hold', array('npts' => $this->npts)));
+				} 
+			?>
+			<div style="padding-top:15px;"></div>
+			<?=$this->action('browse','browser','hold'); ?>
+		</div>
+		<div class="fixed column" style="width:300px;">
+			<?=$this->action('kanan','widgets_sidebar','hol-site'); ?>
+		</div>
+	</div>
+ 	</div>
+</div>

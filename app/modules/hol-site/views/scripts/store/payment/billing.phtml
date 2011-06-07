@@ -1,0 +1,79 @@
+<div class="unit horizontal-center layout">
+<h2 style="font-weight:bold;">Edit Billing Info</h2>
+<div class="bor"></div>
+<div style="padding-top:15px;"></div>
+</div>
+<div class="unit horizontal-center layout">
+	<div class="fixed column">
+	<a href="<? echo ROOT_URL;?>/identity/personal.setting">My Account</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/list">Order </a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/transaction">Transaction </a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/confirm">Confirmation</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/billing">Billing Info</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/document">Documents</a>
+	
+	</div><br>
+	<fieldset>
+	<legend>Edit Info</legend>
+	<form method="post">
+	<table>
+	<?php foreach($this->rowset as $row) :?>
+	<input type="hidden" name="userId" value="<?=$row->userId; ?>" >
+	<input type="hidden" name="createdDate" value="<?=$row->createdDate; ?>" >
+	<input type="hidden" name="createdBy" value="<?=$row->createdBy; ?>" >
+	<input type="hidden" name="modifiedDate" value="<?=$row->updatedDate; ?>" >
+	<input type="hidden" name="modifiedBy" value="<?=$row->updatedBy; ?>" >
+	<tr>
+		<td>Tax Number</td>
+		<td><input type="text" name="taxNumber" value="<?=$row->taxNumber; ?>" ></td>
+	</tr>
+	<tr>
+		<td>Tax Company</td>
+		<td><input type="text" name="taxCompany" value="<?=$row->taxCompany; ?>" ></td>
+	</tr>
+	<tr>
+		<td>Tax Address</td>
+		<td><textarea name="taxAddress"><?=$row->taxAddress; ?></textarea></td>
+	</tr>
+	<tr>
+		<td>Tax City</td>
+		<td><input type="text" name="taxCity" value="<?=$row->taxCity; ?>" ></td>
+	</tr>
+	<tr>
+		<td>Tax Province</td>
+		<td><input type="text" name="taxProvince" value="<?=$row->taxProvince; ?>" ></td>
+	</tr>
+	<tr>
+		<td>Tax ZIP</td>
+		<td><input type="text" name="taxZip" value="<?=$row->taxZip; ?>" ></td>
+	</tr>
+	<tr>
+		<td>Tax Country ID</td>
+		<td><input type="text" name="taxCountryId" value="<?=$row->taxCountryId; ?>" ></td>
+	</tr>
+	<?php $remain =  ($row->creditLimit) - ($this->outstandingAmount);?>
+	<tr>
+		<td>Limit</td>
+		<td><?=$row->creditLimit?></td>
+	</tr>
+	<tr>
+		<td>Otstanding Amount</td>
+		<td><?=$this->outstandingAmount?></td>
+	</tr>
+	<tr>
+		<td>Limit Remain</td>
+		<td><?=$remain?></td>
+	</tr>
+	<?php ($row->isPostPaid == 1)?$value=$limit:$value='';?>
+	<tr>
+		<td><?=$value?></td>
+	</tr>
+	<?endforeach;?>
+	<tr>
+		<td><input type="reset" value="reset"></td>
+		<td><input type="submit" name="save" value="save"></td>
+	</tr>
+	</table>
+	</form>
+	</fieldset>
+</div>

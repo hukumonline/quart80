@@ -1,0 +1,25 @@
+<div class="td_news1">
+	<div class="td_news2">
+		<h1>Berita Terbaru</h1>
+	</div>
+	<div id="terbaru_border">
+		<div class="terbaru_box active">
+		<ul>
+			<?php for($i=0; $i<$this->numberOfRows;$i++) { ?>
+			<li>
+			<div style="float:left;">[<?=$this->data[$i][2]; ?>]</div>
+			<div style="float:right;width:245px;">
+			<a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][3]; ?>/<?=$this->data[$i][1]; ?>" class="terbaru">
+			<?=$this->data[$i][0];?>
+			</a>
+			</div>
+			<div style="clear:both;"></div>
+			</li>
+			<?php } ?>
+		</ul>
+		<ul>
+			<li>[<a href="<?=$this->getRootUrl(); ?>/warta/terbaru" class="terbaru">index</a>]</li>
+		</ul>
+		</div>
+	</div>
+</div>

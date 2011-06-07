@@ -1,0 +1,375 @@
+<script type="text/javascript">
+/* global Ext */
+Ext.ns('LogUser');
+Ext.ns('Invoice');
+
+// custom RowNumberer for use with paging GridPanels
+Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+  renderer : function(v, p, record, rowIndex, colIndex, store){
+    if (this.rowspan) {
+      p.cellAttr = 'rowspan="' + this.rowspan + '"';
+    }
+
+    var so = store.lastOptions;
+    var sop = so? so.params : null;
+    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+  }
+});
+
+LogUser.Grid = Ext.extend(Ext.grid.GridPanel, {
+	initComponent:function() {
+		Ext.apply(this, {
+			store:new Ext.data.JsonStore({
+				 id: 'user_access_log_id'
+				,totalProperty: 'totalCount'
+				,root: 'log'
+				,url: './services/auth/userlog'
+				,baseParams:{uid:'<?=$this->guid; ?>'}
+				,fields:[
+					 {name:'user_access_log_id'}
+					,{name:'login'}
+					,{name:'lastlogin'}
+					,{name:'user_ip'}
+				]
+			})
+			,columns:[
+			 new Ext.grid.CheckboxSelectionModel()
+			,new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30}),
+			{
+				 header: "guid"
+				,dataIndex: 'user_access_log_id'
+				,sortable: true
+				,hidden: true
+			},{
+				 header: "Login"
+				,dataIndex: 'login'
+				,width: 120
+				,sortable: true
+			},{
+				 header: "Last Login"
+				,dataIndex: 'lastlogin'
+				,width: 250
+				,sortable: true
+			},{
+				 header: "IP"
+				,dataIndex: 'user_ip'
+				,width: 250
+				,sortable: true
+			}]
+			,tbar:[{
+				 text: 'Delete'
+				,icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png'
+				,cls: 'x-btn-text-icon'
+				,tooltip: 'Click to delete selected rows'
+				,handler: this.handleDelete
+				,scope:this
+			}]
+		}); // eo apply
+		
+		this.sm = new Ext.grid.CheckboxSelectionModel();
+		
+		this.bbar = new Ext.ux.PagingToolbar({
+			 pageSize: 25
+			,store:this.store
+			,displayInfo: true
+			,displayMsg: 'Displaying topics {0} - {1} of {2}'
+			,emptyMsg: "No data to display" 
+		});
+		
+		this.selModel = new Ext.grid.RowSelectionModel({singleSelect:true});
+		
+		// call parent
+		LogUser.Grid.superclass.initComponent.apply(this);
+		
+		// load the store at the latest possible moment
+		this.on({
+			afterlayout:{scope:this, single:true, fn:function() {
+				this.store.load({params:{start:0, limit:25}});
+			}}
+		});
+	} // eo function initComponent
+	// }}}
+	// {{{
+	,handleDelete:function(){
+		var grid = this;
+		var selectedKeys = grid.selModel.selections.keys;
+		if (selectedKeys.length > 0)
+		{
+			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',function(btn){
+				if (btn=='yes')
+				{
+					var selections = grid.selModel.getSelections();
+					for(j = 0; j < grid.selModel.getCount(); j++){
+						var conn = new Ext.data.Connection();
+						conn.on('beforerequest', function() {
+							Ext.MessageBox.wait('delete log user [' + selections[j].json.user_access_log_id + ']');
+						});
+						conn.request({
+							 url:'./admin/membership_manager/delete-log-user/format/json'
+							,params:{uid: selections[j].json.user_access_log_id}
+							,callback:function(options, success, response){
+								if (success) {
+									json = Ext.decode( response.responseText );
+									if ( json.success ) {
+										grid.store.load({params:{start:0, limit:25}});
+										info( 'Success', json.message );
+									} else {
+										info( 'Failure', json.message );
+									}
+								} 
+								else
+								{
+									Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+								}
+							}
+						});
+						conn.on('requestcomplete', function() {
+							Ext.MessageBox.hide();
+						});
+					}
+				}
+			});
+		}
+		else
+		{
+			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+		}
+	} // eo function handleDelete
+});
+
+Ext.reg('logusergrid', LogUser.Grid);
+
+Invoice.Grid = Ext.extend(Ext.grid.GridPanel, {
+	initComponent:function() {
+		Ext.apply(this, {
+			store:new Ext.data.JsonStore({
+				 id: 'invoiceid'
+				,totalProperty: 'totalCount'
+				,root: 'invoice'
+				,url: './services/auth/invoice'
+				,baseParams:{uid:'<?=$this->uid; ?>'}
+				,fields:[
+					 {name:'invoiceId'}
+					,{name:'isPaid'}
+					,{name:'price'}
+					,{name:'discount'}
+					,{name:'invoiceOutDate'}
+					,{name:'invoiceConfirmDate'}
+					,{name:'expirationDate'}
+				]
+			})
+			,columns:[
+			 new Ext.grid.CheckboxSelectionModel()
+			,new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30}),
+			{
+				 header: "invoiceid"
+				,dataIndex: 'invoiceId'
+				,sortable: true
+				,hidden: true
+			},{
+				  header: "Status"
+				 ,dataIndex: 'isPaid'
+				 ,width: 100
+				 ,sortable: true
+			},{
+				 header: "Price"
+				,dataIndex: 'price'
+				,width: 100
+				,sortable: true
+			},{
+				 header: "Discount"
+				,dataIndex: 'discount'
+				,width: 60
+				,sortable: true
+				,hidden: false
+			},{
+				 header: "Date Out"
+				,dataIndex: 'invoiceOutDate'
+				,width: 100
+				,sortable: true
+			},{
+				 header: "Paid Date"
+				,dataIndex: 'invoiceConfirmDate'
+				,width: 100
+				,sortable: true
+			},{
+				 header: "Expr. Date"
+				,dataIndex: 'expirationDate'
+				,width: 100
+				,sortable: true
+			}
+			]
+			,tbar:[{
+				 text: 'Delete'
+				,icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png'
+				,cls: 'x-btn-text-icon'
+				,tooltip: 'Click to delete selected rows'
+				,handler: this.handleDeleteInvoice
+				,scope:this
+			},'-',{
+				text:'renewable'
+				,icon: './js/extjs/resources/images/default/silk/icons/css_add.png'
+				,cls: 'x-btn-text-icon'
+				,tooltip: 'Click to renewable invoice'
+				,handler: this.renewInvoice
+				,scope:this
+			}
+			]
+		}); // eo apply
+		
+		this.sm = new Ext.grid.CheckboxSelectionModel();
+		
+		this.bbar = new Ext.ux.PagingToolbar({
+			 pageSize: 25
+			,store:this.store
+			,displayInfo: true
+			,displayMsg: 'Displaying topics {0} - {1} of {2}'
+			,emptyMsg: "No data to display" 
+		});
+		
+		this.selModel = new Ext.grid.RowSelectionModel({singleSelect:true});
+		
+		// call parent
+		Invoice.Grid.superclass.initComponent.apply(this);
+		
+		// load the store at the latest possible moment
+		this.on({
+			afterlayout:{scope:this, single:true, fn:function() {
+				this.store.load({params:{start:0, limit:25}});
+			}}
+		});
+		
+		this.addListener('afteredit', function(editEvent){
+			var gridField = editEvent.field;//determine what column is being edited
+			this.updateDB(editEvent);
+		});
+	} // eo function initComponent
+	// }}}
+	// {{{
+	,handleDeleteInvoice:function(){
+		var grid = this;
+		var selectedKeys = grid.selModel.selections.keys;
+		if (selectedKeys.length > 0)
+		{
+			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',function(btn){
+				if (btn=='yes')
+				{
+					var selections = grid.selModel.getSelections();
+					for(j = 0; j < grid.selModel.getCount(); j++){
+						var conn = new Ext.data.Connection();
+						conn.on('beforerequest', function() {
+							Ext.MessageBox.wait('delete invoice [' + selections[j].json.invoiceId + ']');
+						});
+						conn.request({
+							 url:'./admin/membership_manager/delete-invoice/format/json'
+							,params:{iid: selections[j].json.invoiceId}
+							,callback:function(options, success, response){
+								if (success) {
+									json = Ext.decode( response.responseText );
+									if ( json.success ) {
+										grid.store.load({params:{start:0, limit:25}});
+										info( 'Success', json.message );
+									} else {
+										info( 'Failure', json.message );
+									}
+								} 
+								else
+								{
+									Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+								}
+							}
+						});
+						conn.on('requestcomplete', function() {
+							Ext.MessageBox.hide();
+						});
+					}
+				}
+			});
+		}
+		else
+		{
+			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+		}
+	} // eo function handleDelete
+	,updateDB:function(){
+		
+	}
+	,renewInvoice:function(){
+		var grid = this;
+		var selectedKeys = grid.selModel.selections.keys;
+		if (selectedKeys.length > 0)
+		{
+		
+			Ext.Ajax.on('beforerequest', function() {
+				Ext.MessageBox.wait('Renewable invoice...'); 
+			});						
+			Ext.Ajax.request({
+				url: './admin/membership_manager/renew-invoice/format/json',
+				params:{
+					iid:grid.getSelectionModel().getSelected().data.invoiceId,
+					uid:'<?=$this->uid;?>'
+				},
+				failure:function(response,options){
+					Ext.MessageBox.hide();
+					Ext.MessageBox.alert('Warning','Oops...');
+				},
+				success: function(response,options)
+				{
+					var responseData = Ext.util.JSON.decode(response.responseText);
+					Ext.MessageBox.hide();
+					Ext.MessageBox.alert('Status', responseData.message);
+				}
+			});
+			Ext.Ajax.on('requestcomplete', function() {
+				Ext.MessageBox.hide();
+			});						
+		}
+		else
+		{
+			Ext.MessageBox.alert('Oops ...','Please select at least one item to renew');
+		}
+	}
+});
+
+Ext.reg('invoicegrid', Invoice.Grid);
+
+var userdetail = new Ext.TabPanel({
+	id:'extension_users',
+	layoutOnTabChange:true,
+	deferredRender:false,
+	activeTab: 0,
+	frame: true,
+	defaults: {layout:'fit'},
+	items:[{
+		title: 'Detail',
+		autoScroll:true,
+		autoLoad: {
+			url: './admin/membership_manager/view-user',
+			params: {guid:'<?=$this->guid ?>'},
+			scripts:true
+		}
+		},{
+		title:'Log', 
+		id:'log',
+		layout:'fit',
+		xtype:'logusergrid'
+	},{
+		title:'Invoice', 
+		id:'invoice',
+		xtype:'invoicegrid'
+	},{
+		title:'History',
+		id:'history',
+		autoLoad: {
+			url: './admin/membership_manager/history',
+			params: {guid:'<?=$this->guid ?>'},
+			scripts:true
+		}
+	}
+	]
+});  
+			
+Ext.getCmp('dialog_window3').add(userdetail);
+Ext.getCmp('dialog_window3').doLayout();
+      
+</script>

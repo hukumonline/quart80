@@ -1,0 +1,12 @@
+<fieldset>
+	<legend>Klinik</legend>
+	<p style="margin:0 0 1.5em;padding-right:3px;">Rubrik ini disediakan bagi anda untuk mengajukan persoalan hukum yang anda hadapi. Rubrik ini diperuntukkan hanya kepada member Hukumonline.com.</p>
+	<a id="pertanyaan" href="<?=$this->baseUrl();?>/klinik/form" style="font-family: arial;font-size: 8pt;color: #000000;text-decoration: none;"><img src="<?=$this->baseUrl(); ?>/resources/images/icon_pertanyaan.gif" border="0"></a>
+	<form id="searchKlinik" method="POST" action="<?=$this->baseUrl();?>/klinik/search"><br>
+		<div style="padding-left:20px;font-size:14px;">Cari pertanyaan:&nbsp;<input type="text" id="searchQuery" name="searchQuery" size="21" value='<?=$this->layout()->searchQuery;?>' style="width:255px;"></div>
+		<div style="padding-top:5px;"></div>
+		<div style="padding-left:9em;font-size:14px;"><?=Pandamp_Lib_Form::categoryClinicPullDown($this->layout()->categorySearchQuery); ?></div>
+		<div style="padding-top:10px;"></div>
+		<div style="padding-left:9em;font-size:14px;"><input type="submit" value="Cari" name="B3" style="width:55px;"></div>
+	</form>
+</fieldset>

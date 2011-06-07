@@ -1,0 +1,91 @@
+<div class="kotakisi">
+	<?php if ($this->subtitle) { ?><div class="subjudul"><?php echo $this->subtitle; ?></div><?php } ?>
+	<h2><?php echo $this->title; ?></h2>
+	<div style="padding-top:5px"></div>
+	<div class="tanggalterbit"><?php echo $this->date; ?></div>
+	<?php if ($this->description) { ?><div class="description"><?php echo $this->description; ?></div><?php } ?>
+	 
+	<div class="votitaly-inline-rating" id="votitaly-inline-rating-1">
+		<span class="votitaly-get-id" style="display:none;">1</span> 
+	
+		<span class="votitaly-inline-rating">
+		<ul class="votitaly-star-rating">
+			<li class="current-rating" id="current-rating-<?php echo $this->catalogGuid; ?>"><!-- will show current rating --></li>
+			<span id="ratelinks">
+			<li><a href="javascript:void(0)" title="1 star out of 5" class="one-star">1</a></li>
+			<li><a href="javascript:void(0)" title="2 stars out of 5" class="two-stars">2</a></li>
+			<li><a href="javascript:void(0)" title="3 stars out of 5" class="three-stars">3</a></li>
+			<li><a href="javascript:void(0)" title="4 stars out of 5" class="four-stars">4</a></li>
+			<li><a href="javascript:void(0)" title="5 stars out of 5" class="five-stars">5</a></li>
+			</span>
+		</ul>
+		</span>
+		
+		<div class="votitaly-box">
+		<?php echo $this->drawrating; ?>
+		</div>
+	
+	</div>
+	 
+	 
+	<div class="busear">
+		<a href="javascript:;" title="PDF" onclick="javascript:printPdf('<?//=$this->catalogGuid?>')" rel="nofollow"><img src="<?//=$this->baseUrl(); ?>/resources/images/pdf_button.png" alt="PDF"></a>&nbsp;
+		<a href="javascript:;" title="Print" onclick="javascript:printEDoc('<?=$this->catalogGuid?>')" rel="nofollow"><img src="<?=$this->baseUrl(); ?>/resources/images/printButton.png" alt="Print"></a>&nbsp;
+		<a href="javascript:;" title="E-mail" onclick="javascript:sendEMail('<?=$this->catalogGuid?>')"><img src="<?=$this->baseUrl(); ?>/resources/images/emailButton.png" alt="E-mail"></a>
+	</div>
+	<div class="bersih"></div>
+	<?php 
+	$sDir = $this->getRemoteImageUrl();
+	$thumb = "";
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->catalogGuid,'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+	
+	$screenshot = "<img src=\"".$thumb."\" />";
+	
+	?>
+	<? if (!empty($thumb)) : ?>
+    <div class="image"><?php echo $screenshot; ?><br><span class="fname"><?php echo $this->getFotoAttributeName($rowsetRelatedItem->itemGuid); ?></span></div>
+    <? endif; ?>
+	<div id="detailarticle"> 
+	<p>
+	<?php 
+	//echo Pandamp_Lib_Formater::_cleanMsWordHtml($this->content); 
+	echo $this->content; 
+	?>
+	</p>
+	</div>
+	<div class="bawah_info"></div>
+	<div class="detail_bawah_info">
+		<span class="left">Penulis : <?php echo $this->author; ?></span>
+		<span class="right">Dibaca : <?php echo $this->numOfClick; ?></span>
+	</div>
+	<div class="bersih"></div>
+	<div style="padding-top:5px;"></div>
+	<div id="fsizer" class="detail_bawah_info_as">
+		<!-- AddThis Button BEGIN -->
+		<!-- <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4be575c25f52d844"><img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/></a> -->
+		<!-- AddThis Button END -->
+		
+		<!-- <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4be57092018a90f9"></script> -->
+		<!-- AddThis Button END -->
+		<div class="ico_ft">
+			<img src="<?php echo $this->getRootUrl(); ?>/resources/ico/facebook.gif" width="13" height="13" />&nbsp;<a target="_blank" href="http://www.facebook.com/sharer.php?u=<?php echo $this->getRootUrl(); ?>/berita/baca/<?php echo $this->catalogGuid?>/<?php echo $this->title; ?>&t=<?php echo $this->title; ?>">Bagi ke Facebook</a>
+			| <img src="<?php echo $this->getRootUrl(); ?>/resources/ico/twitter.png" width="15" height="11" />&nbsp;<a target="_blank" href="http://twitter.com/home?status=[ hukumonline.com ] <?php echo $this->title; ?> - <?php echo $this->shortUrl; ?>" class="linkbawah">Bagi ke Twitter</a>
+		</div>
+		<div id="fontsizer"></div>
+	</div>
+	<div class="bersih"></div>
+</div>
+<div class="bersih"></div>
+<div style="padding-top:5px;"></div>
+<?php echo $this->action('beritaterkait','widgets_relation','hol-site',array('guid'=>$this->catalogGuid)); ?>
+<div style="padding-top:5px;"></div>
+<?php 
+echo $this->action('browse','manager','comment',array('guid'=>$this->catalogGuid,'page'=>$this->page)); 
+//echo $this->action('komentar','manager','comment',array('guid'=>$this->catalogGuid,'page'=>$this->page)); 
+?>
+

@@ -1,0 +1,132 @@
+<?php
+class Pandamp_Modules_Misc_Agenda_Model_Calendar
+	extends Zend_Db_Table_Abstract implements Pandamp_BeanContext_Decoratable {
+	
+	protected $_name = 'calendar_mssgs';
+
+	public function EventDateCalendar($month, $year)
+	{ 
+		$sql = "SELECT id,d,title,text,start_time,end_time, ";	
+		
+		if (TIME_DISPLAY_FORMAT == "12hr") {
+			$sql .= "TIME_FORMAT(start_time, '%l:%i%p') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%l:%i%p') AS etime ";
+		} elseif (TIME_DISPLAY_FORMAT == "24hr") {
+			$sql .= "TIME_FORMAT(start_time, '%H:%i') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%H:%i') AS etime ";		
+		} else {
+			echo "Bad time display format, check your configuration file.";
+		}
+		
+		$sql .= "FROM calendar_mssgs WHERE m = $month AND y = $year ";
+		$sql .= "ORDER BY start_time";
+
+		$db = $this->_db->query($sql);
+		$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
+		$data = array(
+			'table'		=> $this,
+			'data'		=> $dataFetch,
+			'rowClass'	=> $this->_rowClass,
+			'stored'	=> true
+		);	
+		Zend_Loader::loadClass($this->_rowsetClass);
+		return new $this->_rowsetClass($data);
+	}
+	public function openPosting( $pid )
+	{
+		$sql = "SELECT d, m, y FROM calendar_mssgs WHERE id=".$pid;
+		$db = $this->_db->query($sql);
+		$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
+//		$data = array(
+//			'table'		=> $this,
+//			'data'		=> $dataFetch,
+//			'rowClass'	=> $this->_rowClass,
+//			'stored'	=> true
+//		);
+//		Zend_Loader::loadClass($this->_rowsetClass);
+//		return new $this->_rowsetClass($data);
+		return $dataFetch;
+	}
+	public function writePosting( $pid )
+	{
+		$sql = "SELECT y, m, d, title, text, start_time, end_time, ";
+		$sql .= "KutuUser.guid, username, ";
+		
+		if (TIME_DISPLAY_FORMAT == "12hr") {
+			$sql .= "TIME_FORMAT(start_time, '%l:%i%p') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%l:%i%p') AS etime ";
+		} elseif (TIME_DISPLAY_FORMAT == "24hr") {
+			$sql .= "TIME_FORMAT(start_time, '%H:%i') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%H:%i') AS etime ";
+		} else {
+			echo "Bad time display format, check your configuration file.";
+		}
+		
+		$sql .= "FROM calendar_mssgs ";
+		$sql .= "LEFT JOIN KutuUser ";
+		$sql .= "ON (calendar_mssgs.uid = KutuUser.guid) ";
+		$sql .= "WHERE id = " . $pid;
+		
+		$db = $this->_db->query($sql);
+		$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
+		return $dataFetch;
+	}
+	public function fetchCalendar($start = 0 , $end = 0)
+	{
+		$sql = "SELECT id, y, m, d, title, text, start_time, end_time, ";
+		$sql .= "KutuUser.guid, username, ";
+		
+		if (TIME_DISPLAY_FORMAT == "12hr") {
+			$sql .= "TIME_FORMAT(start_time, '%l:%i%p') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%l:%i%p') AS etime ";
+		} elseif (TIME_DISPLAY_FORMAT == "24hr") {
+			$sql .= "TIME_FORMAT(start_time, '%H:%i') AS stime, ";
+			$sql .= "TIME_FORMAT(end_time, '%H:%i') AS etime ";
+		} else {
+			echo "Bad time display format, check your configuration file.";
+		}
+		
+		$sql .= "FROM calendar_mssgs ";
+		$sql .= "LEFT JOIN KutuUser ";
+		$sql .= "ON (calendar_mssgs.uid = KutuUser.guid) ";
+		$sql .= "ORDER BY id DESC ";
+		$sql .= "LIMIT " . $start . ', '. $end;
+		
+		$db = $this->_db->query($sql);
+    	$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
+    	$data  = array(
+            'table'    => $this,
+            'data'     => $dataFetch,
+            'rowClass' => $this->_rowClass,
+            'stored'   => true
+        );
+
+        Zend_Loader::loadClass($this->_rowsetClass);
+        return new $this->_rowsetClass($data);
+	}
+	public function getCountCalendar()
+	{
+    	$select = $this->select()
+    				->from($this,array('COUNT(*) as count'))
+    				->joinLeft('KutuUser','calendar_mssgs.uid=KutuUser.guid',array());
+    				
+    	$row = $this->fetchRow($select);
+    	
+    	return ($row !== null) ? $row->count : 0;
+	}
+	
+	
+// -------- interface Pandamp_BeanContext_Decoratable
+    
+    public function getRepresentedEntity()
+    {
+    	return 'Pandamp_Modules_Misc_Calendar';
+    }
+    public function getDecoratableMethods()
+    {
+    	return array(
+    		''
+    	);
+    }
+}
+?>

@@ -1,0 +1,73 @@
+<div id="detailFooter">
+	<div id="blokWadah">
+		<div id="blokTitle">
+		tanggapan
+		</div>
+		<div id="blokIsi">
+			<?=$this->action('list4','manager','comment',array('guid'=>$this->catalogGuid,'page'=>$this->page)); ?>
+			<div class="disclaimer"><a href="#">disclaimer</a></div><br />
+			<div id="komentar">
+			<div id="blokIsiKomen">
+				<div id="blokIsiProfilTitle">Kirim Tanggapan</div>
+				<div id="hr" style="border-bottom:1px solid #eee"></div>
+				<div id="divClear"></div>
+				<div class="formkomentar">
+				<div id="rs" style="display:none;"></div>
+				<?php require_once('recaptchalib.php');?>
+				<form id="tanggapan" method="post" action="<?=$this->getRootUrl(); ?>/comment/save" style="margin:0;padding:0;width:70%;">
+					<input type="hidden" name="guid" id="guid" value="<?php echo $this->catalogGuid; ?>">
+					<input type="hidden" name="parent_id" class="commentID" value="0" />
+					<div id="divLeft">
+						Nama<br><input type="text" size="45" maxlength="255" name="name" id="name" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<div id="divLeft">
+						Email<br><input type="text" size="45" maxlength="255" name="email" id="email" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<div id="divLeft">
+						Judul<br><input type="text" size="45" maxlength="255" name="title" id="title" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<div id="divLeft">
+						Tanggapan<br><textarea cols="40" rows="8" name="comment" id="comment" style="width:252px;"></textarea>
+					</div>
+					<div id="divClear"></div>
+					
+					<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+					
+					<div id="recaptcha_div"></div>
+					
+					<div style="padding:0;margin:0;"></div>
+					<input type="submit" name="submitComment" id="submitComment" value="Kirim"  />
+				</form>
+				<script type="text/javascript">
+				$(document).ready(function() {
+
+					$('#tanggapan').submit(function() {
+						$.ajax({
+							type: 'POST',
+							url: $(this).attr('action'),
+							data: $(this).serialize(),
+							success: function(data) {
+								$('#rs').show('slow').html(data);
+							}
+						})
+						return false;
+					});
+					
+				});
+				</script>		
+				</div>		
+			</div>
+			</div>
+			<?php
+			$auth = Zend_Auth::getInstance(); 
+			if(!$auth->hasIdentity()) : ?>
+			<div id="blokIsiKomen">
+				Jika anda member Hukumonline, silahkan <b><a href="<?php echo $this->loginUrl;?>">login</a></b>, atau <b><a href="<?php echo $this->signUp;?>">Daftar</a></b> ID anda. 	
+			</div>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,36 @@
+<div class="unit horizontal-center layout on-2 columns" style="-moz-border-radius-topleft:10px;-moz-border-radius-topright:10px;-webkit-border-top-left-radius:10px;-webkit-border-top-right-radius:10px;background:#fff;">
+	<div style="float:right;">
+	<!-- Beginning of compulsory code below -->
+	
+	<ul id="nav" class="dropdown dropdown-horizontal">
+		<li><span class="dir">Kerjasama</span>
+			<ul>
+				<li><a href="./">Program Conceptor</a></li>
+				<li><a href="./">Sponsorship</a></li>
+			</ul>
+		</li>
+		<li><a href="./">Galeri</a></li>
+		<li><a href="<?=ROOT_URL;?>/talks/uevents" class="dir">Upcoming Events</a>
+			<ul>
+				<li><a href="./">BOOKING NOW</a></li>
+				<li><a href="./">Terms and Conditions </a></li>
+			</ul>
+		</li>
+	</ul>
+	
+	<!-- / END -->
+	
+	</div>
+	<div style="padding-top:15px;clear:both;"></div>
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:630px;padding-right:5px;padding-left:10px;padding-bottom:10px;">
+			<?=$this->action('detail','widgets_catalog','talks',array('page'=>$this->page)); ?>
+		</div>
+		<div class="fixed column" style="width:300px;padding-right:10px;padding-left:5px;">
+			<?=$this->action('viewcart','index','talks'); ?>
+			<div style="padding-top:5px;"></div>
+			<?=$this->action('terbaru','widgets_sidebar','hol-site'); ?>
+		</div>
+	</div>
+	<div style="padding-top:15px;"></div>
+</div>

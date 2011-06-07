@@ -1,0 +1,100 @@
+<fieldset>
+	<legend>Hasil pencarian&nbsp;<b><?=$this->aData['totalCount'];?></b> (<b><?=$this->time;?></b> detik)</legend>
+	<?php if(isset($this->hits->spellcheck->suggestions->collation)) { ?>
+	<table>
+		<tr>
+			<td style="color: #003366;font-size: 12px;">Apa maksudnya : <a href="<?=$this->baseUrl(); ?>/pusatdata/search/searchQuery/<?=$this->hits->spellcheck->suggestions->collation ?>"><?=$this->hits->spellcheck->suggestions->collation ?></a></td>
+		</tr>
+	</table>
+	<?php } ?>
+	<div id='catalogContent'></div><br>
+	<table>
+		<tr>
+			<td width=25%>&nbsp;</td>
+			<td align="center"><div id='catalogSearchPagination' class="pagination"></div></td>
+		</tr>
+	</table>
+</fieldset>
+
+<script>
+
+$(document).ready(function(){
+	
+	var isFirstTime = 1;
+	
+	var myPageIndex = 0;
+	
+	$("#catalogSearchPagination").pagination(<?=$this->aData['totalCount'];?>, 
+	{items_per_page:<?=$this->aData['limit'];?>, callback:handlePaginationClick, next_text:'Berikutnya',prev_text:'Sebelumnya'}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		myPageIndex = new_page_index;
+		myStart = (<?=$this->aData['limit'];?> * myPageIndex);
+		
+		if(true)
+		{
+			if($('#tblCatalogPager-'+myPageIndex).length==0)
+			{	
+				$.getJSON('<?=$this->baseUrl();?>/api/catalog/getsearch/query/<?=$this->query;?>/start/'+myStart+'/limit/<?=$this->aData['limit'];?>', '', viewResult);
+			}
+			else
+				showCatalogContent();
+		}
+		return false;
+	}
+	
+	function viewResult(res)
+	{
+		size = res.catalogs.length;
+		var tblRow = "<a name='a-"+myPageIndex+"' ></a>"+'<table width="100%" class="tblCatalogPager" id="tblCatalogPager-'+myPageIndex+'">';
+		tblRow += 
+			
+			"<tr valign=top>"
+			+"<td>"
+			+"<div class='td_peraturan5'>"
+			+"<div style='height:auto;'>"
+			+"<ul id='nlrulenoline'>";
+			
+		for(i=0;i<size;i++)
+		{
+			<?php 
+			$r = 'res.catalogs[i].folderGuid';
+			$node = Pandamp_Lib_Formater::getNode($r);
+			?>
+
+			tblRow += 
+				
+				"<li>"				
+				+"<a href='<?=$this->baseUrl();?>/pusatdata/detail/"+res.catalogs[i].guid+"/<?=$node; ?>/"+res.catalogs[i].folderGuid+"'>"+res.catalogs[i].title+"</a><br>"
+				+res.catalogs[i].subTitle
+				+"</li>";							
+		}
+		
+		tblRow += 
+			
+			"</ul>"
+			+"</div>"
+			+"</div>"
+			+"</td>"
+			+"</tr>";
+		
+		tblRow += "</table>";
+		$(tblRow).appendTo("#catalogContent");
+		showCatalogContent();
+		
+	}
+	function showCatalogContent()
+	{
+		$('.tblCatalogPager').hide();
+		$('#tblCatalogPager-'+myPageIndex).show();
+		if(!isFirstTime)
+			Scroller.scroll();
+		isFirstTime = 0;
+	}
+});
+
+
+
+</script>

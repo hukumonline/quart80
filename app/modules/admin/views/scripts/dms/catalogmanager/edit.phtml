@@ -1,0 +1,163 @@
+<?php 
+/**
+ * @package kutump
+ * @author Nihki Prihadi <nihki@hukumonline.com>
+ *
+ * $Id: edit.phtml 2009-01-10 12:01: $
+ */
+?>
+
+<script type="text/javascript" src="./js/datepicker/datetimepicker.js"></script>
+<link href="./js/datepicker/rfnet.css" type="text/css" rel="stylesheet">
+
+<style type="text/css">
+#catalogInputForm label.error { margin-left: 20px; width: auto; display: inline; }
+form.rfgform label.error, label.error {
+	/* remove the next line when you have trouble in IE6 with labels in list */
+	display: none;
+	color: red;
+}
+div.error { display: none; }
+input.error { border: 1px dotted red; }
+div.requiredNotice { width: 140px; float: right; padding: 0; }
+</style>
+
+<div style="width: auto;" id="formContainerCatalog">
+<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+<h3 style="margin-bottom:5px;"><img src="./js/extjs/resources/images/default/silk/icons/application_form_edit.png">&nbsp;Edit Catalog</h3>
+<div id="cForm">
+<form id="catalogInputForm">
+	<table width="100%">
+		<?php 
+		foreach ($this->aRenderedAttributes['baseForm'] as $a)
+		{
+		?>	
+		<tr>
+			<td width="200"><?=$a['description']; ?></td>
+			<td><?=$a['form']; ?></td>
+		</tr>
+		<?php
+		}
+		?>
+	</table>
+	<table width="100%">
+		<?php 
+		foreach ($this->aRenderedAttributes['attributeForm'] as $a)
+		{
+		?>	
+		<tr>
+			<td width="200"><?=$a['description']; ?></td>
+			<td><?=$a['form']; ?></td>
+		</tr>
+		<?php
+		}
+		?>
+	</table>
+	<?php //if($this->isAllowed($this->itemGuid, 'update','content')) { ?>
+		<input type="submit" name="save" id="save" value="Save">
+		<!--
+		<input type="button" name="saveAsDraft" id="saveAsDraft" value="Save as Draft">
+		<input type="button" name="savePublish" id="savePublish" value="Save and Publish">
+		-->
+		<span id="msgbox" style="display:none"></span>
+	<?php //}; ?>
+</form>
+</div>
+<!--<div id="CatEditSpinner" style="color:red; display:none;"><img src="./resources/img/wait-trans.gif" border="0"> Sending Request</div>-->
+</div></div></div>
+<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript"> 
+setTimeout(function()
+{ 
+	$.validator.setDefaults({
+	submitHandler: function() {
+		var options = {
+			type:'post',
+			dataType: 'json',
+			url: './admin/api_catalog/save/format/json',
+//			resetForm: true,
+			beforeSubmit: prepareData,
+			success: function(response){
+			if (response.success == true)
+			{
+			  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+				{ 
+						info( 'success', response.message );
+						store.reload();
+						dialog.destroy();
+						dialog.hide();
+					/*	
+					$(this).html(response.msg).addClass('messageboxok').fadeTo(900,1,
+					function() {
+						store.reload();
+						dialog.destroy();
+						dialog.hide();
+					});
+					*/
+				});
+			}
+			else
+			{
+			  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+				{ 
+				  	//$(this).html('Error saved').addClass('messageboxerror').fadeTo(900,1);
+				  	info( 'Oops..', response.message );
+				});		
+			}
+			//$('#CatEditSpinner').hide();
+			Ext.MessageBox.hide();
+			}
+		};
+		$('#catalogInputForm').ajaxForm(options);
+	}
+	});
+	// validate catalogInputForm on keyup and submit
+	$('#catalogInputForm').validate({
+		rules : {
+			fixedTitle: "required"
+		},
+		messages : {
+			fixedTitle: "<br>Please enter Title"
+		}
+	});
+    function prepareData(a, jqForm, options) 
+    { 
+    	//$("#msgbox").removeClass().addClass('messagebox').text('Saving ...').fadeIn(1000);
+		for (var i=0; i < a.length; i++) 
+		{
+			try
+		   	{
+		   		if(FCKeditorAPI.GetInstance(a[i].name))
+		   		{
+		   			var val = FCKeditorAPI.GetInstance(a[i].name).GetXHTML(true);
+		   			a[i].value = val;
+		   		}
+		   	}
+      		catch (err)
+      		{
+      			var is_error = true;
+      		}
+      	}
+      	Ext.MessageBox.wait('Saving Catalog');
+      	//$('#CatEditSpinner').show();
+		return true; 
+	} 
+	/*
+	$('#savePublish').bind('click', onClickSavePublish);
+	function onClickSavePublish()
+	{
+		$('#status').val(99);
+		$('#catalogInputForm').submit();
+	}
+	$('#saveAsDraft').bind('click', onClickSaveAsDraft);
+	function onClickSaveAsDraft()
+	{
+		$('#status').val(0);
+		$('#catalogInputForm').submit();
+	}
+	*/		
+},100); 
+</script> 

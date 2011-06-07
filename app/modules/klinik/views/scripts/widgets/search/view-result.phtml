@@ -1,0 +1,102 @@
+<fieldset>
+	<legend>Hasil pencarian&nbsp;<b><?=$this->aData['totalCount'];?></b> (<b><?=$this->time;?></b> detik)</legend>
+	<?php if(isset($this->hits->spellcheck->suggestions->collation)) { ?>
+	<table>
+		<tr>
+			<td style="color: #003366;font-size: 12px;">
+			<form id="searchForm" method="POST" action="<?=$this->baseUrl();?>/warta/cari">
+			Apa maksudnya : <?=$this->hits->spellcheck->suggestions->collation ?>
+				<input name="a" type="hidden" value="klinik" />
+				<input name="cari" type="hidden" value="<?=$this->hits->spellcheck->suggestions->collation ?>" />
+		        <input value="Ya" class="loginform" type="submit" style="width:55px;" />
+			</form>
+			</td>
+		</tr>
+	</table>
+	<?php } ?>
+	<div id='catalogContent'></div><br>
+	<table>
+		<tr>
+			<td width=25%>&nbsp;</td>
+			<td align="center"><div id='catalogSearchPagination' class="pagination"></div></td>
+		</tr>
+	</table>
+</fieldset>
+
+<script>
+
+$(document).ready(function(){
+	
+	var isFirstTime = 1;
+	
+	var myPageIndex = 0;
+	
+	$("#catalogSearchPagination").pagination(<?=$this->aData['totalCount'];?>, 
+	{items_per_page:<?=$this->aData['limit'];?>, callback:handlePaginationClick, next_text:'Berikutnya',prev_text:'Sebelumnya'}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		myPageIndex = new_page_index;
+		myStart = (<?=$this->aData['limit'];?> * myPageIndex);
+		
+		if(true)
+		{
+			if($('#tblCatalogPager-'+myPageIndex).length==0)
+			{	
+				$.getJSON('<?=$this->baseUrl();?>/api/catalog/getclinicsearch/query/<?=$this->query;?>/ct/<?=$this->ct?>/start/'+myStart+'/limit/<?=$this->aData['limit'];?>', '', klinikResult);
+			}
+			else
+				showCatalogContent();
+		}
+		return false;
+	}
+	
+	function klinikResult(res)
+	{
+		size = res.catalogs.length;
+		var tblRow = "<a name='a-"+myPageIndex+"' ></a>"+'<table width="100%" class="tblCatalogPager" id="tblCatalogPager-'+myPageIndex+'">';
+		tblRow += 
+			
+			"<tr valign=top>"
+			+"<td>"
+			+"<div class='td_peraturan5'>"
+			+"<div style='height:auto;'>"
+			+"<div class='klinikterbaruisi'>";
+			
+		for(i=0;i<size;i++)
+		{
+			tblRow += 
+				
+				"<h2><a href='<?=$this->baseUrl();?>/klinik/detail/"+res.catalogs[i].guid+"'>"+res.catalogs[i].kategori+" "+res.catalogs[i].title+"</a></h2>"
+				+"<p>"+res.catalogs[i].commentQuestion+"</p>"
+				+"<div class='author'>"+res.catalogs[i].createdBy+"</div>";
+		}
+		
+		tblRow += 
+			
+			"</div>"
+			+"</div>"
+			+"</div>"
+			+"</td>"
+			+"</tr>";
+		
+		tblRow += "</table>";
+		$(tblRow).appendTo("#catalogContent");
+		showCatalogContent();
+		
+	}
+	function showCatalogContent()
+	{
+		$('.tblCatalogPager').hide();
+		$('#tblCatalogPager-'+myPageIndex).show();
+		if(!isFirstTime)
+			Scroller.scroll();
+		isFirstTime = 0;
+	}
+	
+});
+
+
+
+</script>

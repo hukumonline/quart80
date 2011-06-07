@@ -1,0 +1,58 @@
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./library/js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;Add New Banner Zone ...</h3>
+        <div id="Addzone"></div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+	var szone = new Ext.FormPanel({
+		labelWidth: 125,
+		url: './admin/api_banner/savezone',
+		frame: false,
+		bodyStyle: 'border:none;background: none;',
+		defaultType: 'textfield',
+		
+		items:[{
+			fieldLabel: 'New Zone Name',
+			name: 'title',
+			id: 'title',
+			width: 175,
+			allowBlank: false
+		}
+		],
+		
+		buttons: [{
+			text: 'Save',
+			handler: function() {
+				szone.form.submit({
+					reset: true,
+					waitMsg: 'Saving zone ...',
+					success: function(form, action)	{
+						dialog.destroy();
+						dialog.hide();
+						dsZone.reload();
+						info( 'success', action.result.message );
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failure',action.result.message);
+					},
+					scope: szone
+				})
+			}
+		},{
+			text: 'Cancel',
+			handler: function() {
+				dialog.destroy();
+				dialog.hide();
+			}
+		}
+		]
+	});
+	
+	szone.render('Addzone');
+	
+	Ext.get('title').focus();
+</script>

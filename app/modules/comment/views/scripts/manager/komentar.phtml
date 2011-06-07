@@ -1,0 +1,113 @@
+<div id="detailFooter">
+	<div id="blokWadah">
+		<div id="blokTitle">
+		tanggapan
+		</div>
+		<div id="blokIsi">
+			<?=$this->action('listcomment','manager','comment',array('guid'=>$this->catalogGuid));?>
+			<div class="disclaimer"><a href="">disclaimer</a></div><br />
+			<div id="komentar">
+			<div id="blokIsiKomen">
+				<div id="blokIsiProfilTitle">Kirim Tanggapan</div>
+				<div id="hr" style="border-bottom:1px solid #eee"></div>
+				<div id="divClear"></div>
+				<div class="formkomentar">
+				<!-- our error cc -->
+				<div class="cc">
+					<ol>
+						<li></li>
+					</ol>
+				</div>
+				<form id="tanggapan" style="margin:0;padding:0;width:70%;">
+					<input type="hidden" name="relatedGuid" id="relatedGuid" value="<?=$this->catalogGuid; ?>">
+					<input type="hidden" name="profileGuid" id="profileGuid" value="comment" />
+					<input type="hidden" name="status" id="status" value="0" />
+					<div id="divLeft">
+						Nama<br><input type="text" size="45" maxlength="255" name="fixedName" id="fixedName" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<div id="divLeft">
+						Email<br><input type="text" size="45" maxlength="255" name="fixedEmail" id="fixedEmail" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<div id="divLeft">
+						Judul<br><input type="text" size="45" maxlength="255" name="fixedJudul" id="fixedJudul" style="width:252px;" />
+					</div>
+					<div id="divClear"></div>
+					<?=$this->bbCodeCP; ?>
+					<div id="divLeft">
+						Tanggapan<br><textarea cols="40" rows="8" name="fixedComment" id="fixedComment" style="width:252px;"></textarea>
+					</div>
+					<div id="divClear"></div>
+					<div style="padding:0;margin:0;"></div>
+					<input type="submit" name="submitComment" id="submitComment" value="Kirim"  />
+					<span id="msgbox" style="display:none"></span>
+				</form>
+				<script type="text/javascript">
+				setTimeout(function(){
+					var cc = $('div.cc');
+					$.validator.setDefaults({
+						submitHandler: function(){
+							var options = {
+								 type:'post'
+								,dataType:'json'
+								,url:'<?=$this->getRootUrl(); ?>/comment/save'
+								,beforeSubmit:prepareData
+								,success:function(response){
+									if (response.success == true)
+									{
+										$('#msgbox').fadeTo(200,0.1,function(){
+											$(this).html('Terima kasih atas tanggapan anda').addClass('messageboxok').fadeTo(900,1,
+											function(){
+												location.reload(true);
+											});
+										});
+									}
+									else
+									{
+										
+									}
+								}
+							};
+							$('#tanggapan').ajaxForm(options);
+						}
+					});
+					$('#tanggapan').validate({
+						errorContainer: cc,
+						errorLabelContainer: $("ol", cc),
+						wrapper: 'li',
+						meta: "validate",
+						rules:{
+							 fixedName:'required'
+							,fixedEmail:{
+								 required:true
+								,email:true
+							}
+							,fixedJudul:'required'
+							,fixedComment:'required'
+						},
+						messages:{
+							 fixedName: "Masukan nama anda!"
+							,fixedEmail: "Masukan email anda / penulisan email salah!"
+							,fixedJudul: "Masukan judul tanggapan!"
+							,fixedComment: "Masukan tanggapan anda!"
+						}
+					});
+					function prepareData()
+					{
+						$("#msgbox").removeClass().addClass('messagebox').text('Simpan ...').fadeIn(1000);
+					}
+					
+				});
+				</script>		
+				</div>		
+			</div>
+			</div>
+			<?php if(!$this->isLoggedIn) : ?>
+			<div id="blokIsiKomen">
+				Jika anda member Hukumonline, silahkan <b><a href="<?=$this->loginUrl;?>">login</a></b>, atau <b><a href="<?=$this->signUp;?>">Daftar</a></b> ID anda. 	
+			</div>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,10 @@
+<ul class="breadcrumbs">
+<?php for($i=0; $i<count($this->aPath);$i++) { ?>
+	<?php if($i != count($this->aPath)-1) {?>
+		<li><a href="<?php echo $this->aPath[$i]['url']; ?>"><?php echo $this->aPath[$i]['title'];?></a><span class="separator">></span></li>
+	<?php } else {?>
+		<li><a href="<?php echo $this->aPath[$i]['url']; ?>"><?php echo $this->aPath[$i]['title'];?></a></li>
+	<?php }?>
+
+<?php } ?>
+</ul>

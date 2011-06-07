@@ -1,0 +1,18 @@
+<div class="unit">
+	<div class="container">
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:700px;">
+			<div id="kategoriRubrik">
+			<div id="kategoriTitle">
+				<div id="kategoriTitleTitle"> <?=$this->title;?></div>
+				<div id="kategoriTitleIndex"></div>
+			</div>
+			<?=$this->action('browse','page','hol-site',array('page'=>$this->id)); ?>
+			</div>
+		</div>
+		<div class="fixed column" style="width:300px;">
+			<?=$this->action('kanan','widgets_sidebar','hol-site'); ?>
+		</div>
+	</div>
+ 	</div>
+</div>

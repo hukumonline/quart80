@@ -1,0 +1,18 @@
+<?php if (count($this->rowsetFolder) > 0) { ?>
+<fieldset>
+	<legend>Lokasi</legend>
+	<ul id="holdline">
+	<?php foreach ($this->rowsetFolder as $row){ ?>
+	<li>
+		<?php if (in_array($row->guid,array('137','711'))) { ?>
+		<a href="<?=$this->baseUrl();?>/pusatdata/view/npts/<?=$row->guid;?>"><?=$row->title; ?></a>
+		<?php } elseif (in_array($row->guid,array('658','761','971'))) { ?>
+		<a href="<?=$this->baseUrl();?>/pusatdata/view/nprt/<?=$row->guid;?>"><?=$row->title; ?></a>
+		<?php } else { ?>
+		<a href="<?=$this->baseUrl();?>/pusatdata/view/node/<?=$row->guid;?>"><?=$row->title; ?></a>
+		<?php } ?>
+	</li>
+	<?php } ?>
+	</ul>
+</fieldset>
+<?php } ?>

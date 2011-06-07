@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;">
+	<title>.:Development:.</title>
+	
+  <!-- Framework CSS -->
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/bp/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/bp/print.css" type="text/css" media="print">
+	
+  <!--[if IE]><link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/bp/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	
+	<!-- Import fancy-type plugin for the sample page. -->
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/bp/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/adm.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/superfish.css" type="text/css" media="screen, projection">
+	
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/jquery/superfish/hoverIntent.js"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/jquery/superfish/superfish.js"></script>
+	<script type="text/javascript">
+
+		// initialise plugins
+		$(document).ready(function(){
+			jQuery('ul.sf-menu').superfish();
+		});
+
+	</script>
+</head>
+<body>
+<div class="container">
+	<div class="span-24 last">
+	<ol>
+		<li>Miscellaneous
+		<ul>
+			<li><a href="<?php echo $this->url(array('controller'=>'index','action'=>'catalog'));?>">findDependentRowsetCatalogAttribute</a></li>
+			<li><a href="<?php echo $this->url(array('controller'=>'menu','action'=>'browse')); ?>">Menu</a></li>
+			<ul>
+				<li><a href="<?php echo $this->url(array('controller'=>'menu','action'=>'generate')); ?>">Generate</a></li>
+			</ul>
+		</ul>
+		</li>
+	</ol>
+	</div>
+	<?php echo $this->layout()->content;?>
+</div>
+</body>
+</html>

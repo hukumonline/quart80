@@ -1,0 +1,56 @@
+<div class="klideisi">
+
+	<div class="votitaly-inline-rating" id="votitaly-inline-rating-1">
+		<span class="votitaly-get-id" style="display:none;">1</span> 
+	
+		<span class="votitaly-inline-rating">
+		<ul class="votitaly-star-rating">
+			<li class="current-rating" id="current-rating-<?php echo $this->catalogGuid; ?>"><!-- will show current rating --></li>
+			<span id="ratelinks">
+			<li><a href="javascript:void(0)" title="1 star out of 5" class="one-star">1</a></li>
+			<li><a href="javascript:void(0)" title="2 stars out of 5" class="two-stars">2</a></li>
+			<li><a href="javascript:void(0)" title="3 stars out of 5" class="three-stars">3</a></li>
+			<li><a href="javascript:void(0)" title="4 stars out of 5" class="four-stars">4</a></li>
+			<li><a href="javascript:void(0)" title="5 stars out of 5" class="five-stars">5</a></li>
+			</span>
+		</ul>
+		</span>
+		
+		<div class="votitaly-box">
+		<?php echo $this->drawrating; ?>
+		</div>
+	
+	</div>
+	<div style="float:right">
+<!-- AddThis Button BEGIN -->
+<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+<div class="addthis_toolbox addthis_default_style">
+<a class="addthis_button_facebook"></a>
+<a class="addthis_button_google"></a>
+<a class="addthis_button_twitter"></a>
+<a class="addthis_button_email"></a>
+<a class="addthis_button_favorites"></a>
+<span class="addthis_separator">|</span>
+<a href="http://www.addthis.com/bookmark.php?v=250&amp;username=hukumonline" class="addthis_button_expanded">More</a>
+</div>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=hukumonline"></script>
+<!-- AddThis Button END -->
+	
+	</div>
+	<div style="padding-top:10px;clear:both;"></div>
+<h2><span class="kategori"><?=$this->getCatalogAttribute($this->category,'fixedTitle');?></span>&nbsp;<?=$this->title;?></h2>
+<div class="q">Pertanyaan :</div>
+<p><?=$this->question; ?></p>
+<div class="q">Jawaban :</div>
+<p><?=$this->answer; ?></p>
+<div class="author" style="padding-top:2px;">
+Penanya: <?=$this->createdBy;?><br>
+Jawaban oleh: <a href="<?=$this->baseUrl();?>/klinik/penjawab/<?=$this->author;?>/mitra/<?=$this->getCatalogAttribute($this->author,'fixedSelectMitra'); ?>" target="_blank" /><?=$this->getCatalogAttribute($this->author,'fixedTitle'); ?></a><br>
+Sumber: <?=$this->getCatalogAttribute($this->source,'fixedTitle'); ?><br>
+Diterbitkan:<?=$this->publishedDate;?><br>
+Dibaca: <?=$this->numofclick;?>
+</div>
+<div style="padding-top:5px;"></div>
+<?php echo $this->action('beritaterkait','widgets_relation','klinik',array('guid'=>$this->catalogGuid)); ?>
+<div style="clear:both;"></div>
+</div>

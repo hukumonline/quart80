@@ -1,0 +1,59 @@
+#FileETag None
+
+#<IfModule mod_expires.c>
+#ExpiresActive On
+#ExpiresDefault A600
+#ExpiresByType image/x-icon A2592000
+#ExpiresByType application/x-javascript A604800
+#ExpiresByType text/css A604800
+#ExpiresByType image/gif A2592000
+#ExpiresByType image/png A2592000
+#ExpiresByType image/jpeg A2592000
+#ExpiresByType text/plain A86400
+#ExpiresByType application/x-shockwave-flash A2592000
+#ExpiresByType video/x-flv A2592000
+#ExpiresByType application/pdf A2592000
+#ExpiresByType text/html A600
+#</IfModule>
+
+# Expires by type
+# ======================
+<IfModule mod_expires.c>
+ 
+# turn on the module for this directory
+ExpiresActive on
+# set default
+#ExpiresDefault "access plus 24 hours"
+ExpiresByType image/jpg "access plus 1 months"
+ExpiresByType image/gif "access plus 1 months"
+ExpiresByType image/jpeg "access plus 1 months"
+ExpiresByType image/png "access plus 1 months"
+ExpiresByType text/css "access plus 1 months"
+ExpiresByType text/javascript "access plus 1 months"
+ExpiresByType application/javascript "access plus 1 months"
+#ExpiresByType application/x-shockwave-flash "access plus 1 months"
+ 
+</IfModule>
+
+SetEnv APPLICATION_ENV development
+
+RewriteEngine On
+
+#RewriteCond %{REQUEST_METHOD} GET
+#RewriteCond %{DOCUMENT_ROOT}/data/cache/page/index.html -f
+#RewriteRule ^/*$ data/cache/page/index.html [L]
+
+#RewriteCond %{REQUEST_METHOD} GET
+#RewriteCond %{DOCUMENT_ROOT}/data/cache/page/%{REQUEST_URI}.html -f
+#RewriteRule .* data/cache/page/%{REQUEST_URI}.html [L]
+#RewriteCond %{DOCUMENT_ROOT}/data/cache/page/%{REQUEST_URI}.json -f
+#RewriteRule .* data/cache/page/%{REQUEST_URI}.json [L]
+
+RewriteCond %{REQUEST_FILENAME} \.(js|css|gif|jpg|jpeg|png|swf)$ [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+
+

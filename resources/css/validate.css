@@ -1,0 +1,12 @@
+.messagebox { position:absolute; width:100px; margin-left:30px; border:1px solid #c93; background:#ffc; padding:3px; }
+.messageboxok { position:absolute; width:auto; margin-left:30px; border:1px solid #349534; background:#C9FFCA; padding:3px; font-weight:bold; color:#008000; }
+.messageboxerror { position:absolute; width:auto; margin-left:30px; border:1px solid #CC0000; background:#F7CBCA; padding:3px; font-weight:bold; color:#CC0000; }
+div.error { display: none; }
+div.requiredNotice { float: right; padding: 0; }
+.password { font-size : 12px; width : 200px; font-family : arial, sans-serif;}
+.pstrength-minchar { font-size : 10px; color: #777;	}		
+div.cc { background-color: #eee; border: 1px solid red; }
+div.cc ol li { list-style:none;	margin-left: 20px; margin-bottom:20px; }
+div.cc { display: none; }
+.cc label.error { display: inline; }
+

@@ -1,0 +1,111 @@
+<div class="span-16 colborder">
+<fieldset>
+	<legend>Hasil pencarian&nbsp;<b><?php echo $this->aData['totalCount'];?></b> (<b><?php echo $this->time;?></b> detik)</legend>
+	<?php if(isset($this->hits->spellcheck->suggestions->collation)) { ?>
+	<div class="span-15 last">
+		Apa maksudnya : <a href="<?php echo $this->baseUrl(); ?>/pusatdata/search/searchQuery/<?php echo $this->hits->spellcheck->suggestions->collation ?>"><?php echo $this->hits->spellcheck->suggestions->collation ?></a>
+	</div>
+	<?php } ?>
+	<div class="span-15 last">
+		<div id='catalogContent'></div>
+	</div>
+	<div class="span-15 last">
+		<div id='catalogSearchPagination' class="pagination"></div>
+	</div>
+</fieldset>
+</div>
+<div class="span-7 last"><?php echo $this->action('sidebar','widgets_catalog','hol-site'); ?></div>
+
+<script>
+
+$(document).ready(function(){
+	
+	var isFirstTime = 1;
+	
+/*	function showGrowl()
+	{
+		$('#growl').jGrowl("Retrieving page "+(myPageIndex+1)+'...', { 
+			speed: 500,
+			sticky: true
+		
+		});
+	}
+	function closeGrowl()
+	{
+		$('div.jGrowl-notification').children('div.close').trigger('click');
+	}
+*/	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 0;
+	
+	$("#catalogSearchPagination").pagination(<?php echo $this->aData['totalCount'];?>, 
+	{items_per_page:<?php echo $this->aData['limit'];?>, callback:handlePaginationClick, next_text:'Berikutnya',prev_text:'Sebelumnya'}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		myPageIndex = new_page_index;
+		myStart = (<?php echo $this->aData['limit'];?> * myPageIndex);
+		
+		if(true)
+		{
+			//$.get('<?echo KUTU_ROOT_URL;?>/api/catalog/getcatalogsinfolder/folderGuid/2/start/0/limit/20', '', showResult, "text");
+			if($('#tblCatalogPager-'+myPageIndex).length==0)
+			{	
+//				showGrowl();
+				$('#message_box').show();
+				$.getJSON('<?php echo $this->baseUrl();?>/api/catalog/getclinicsearch/query/<?php echo $this->query;?>/start/'+myStart+'/limit/<?php echo $this->aData['limit'];?>', '', testJson);
+			}
+			else
+				showCatalogContent();
+		}
+		return false;
+	}
+	
+	function testJson(res)
+	{
+		size = res.catalogs.length;
+		var tblRow = "<a name='a-"+myPageIndex+"' ></a>"+'<table width="100%" class="tblCatalogPager" id="tblCatalogPager-'+myPageIndex+'">';
+		for(i=0;i<size;i++)
+		{
+//			console.log(getNode(res.catalogs[i].folderGuid));
+
+			<?php 
+			$formater = new Kutu_Lib_Formater();
+			$r = 'res.catalogs[i].folderGuid';
+			$node = $formater->getNode($r);
+			?>
+
+			tblRow += 
+				
+				"<tr valign=top>"
+				+"<td width=25><a href='<?php echo $this->baseUrl();?>/klinik/detail/"+res.catalogs[i].guid+"'><IMG src='<?php echo $this->baseUrl().'/resources/img/doc-s.png' ?>' border=0 align=absmiddle /></a></td>"
+				+"<td><div id=peraturan><a class=linkhref href='<?php echo $this->baseUrl();?>/klinik/detail/"+res.catalogs[i].guid+"'>"+res.catalogs[i].kategori+" "+res.catalogs[i].title+"</a>"
+				+"<div class=subtitle>"+res.catalogs[i].createdBy+"</div>"
+				+"<div class='' style='padding-top:8px'></div></div>"
+				+"</td>"
+				+"</tr>";
+				
+		}
+		tblRow += "</table>";
+		$(tblRow).appendTo("#catalogContent");
+		showCatalogContent();
+//		closeGrowl();
+		$('#message_box').fadeOut();
+		
+	}
+	function showCatalogContent()
+	{
+		$('.tblCatalogPager').hide();
+		$('#tblCatalogPager-'+myPageIndex).show();
+		if(!isFirstTime)
+//			Scroller.scroll();
+		isFirstTime = 0;
+	}
+	
+});
+
+
+
+</script>

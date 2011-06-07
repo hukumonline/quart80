@@ -1,0 +1,102 @@
+<div class="unit horizontal-center layout">
+	<div class="container" style="padding-bottom:15px;">
+	<h2 style="font-weight:bold;">YOUR ORDER HAS BEEN COMPLETED</h2>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">INVOICE</h3>
+	<div style="padding-top:15px;"></div>
+	<strong>Number: <?echo $this->invoiceNumber;?></strong>
+	<br>
+	<strong>Date: <?=Pandamp_Lib_Formater::get_date($this->datePurchased);?></strong>
+	<div style="padding-top:15px;"></div>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">BILLING INFORMATION</h3>
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:330px;padding-right:20px;">
+			<strong>Tax Number</strong>
+			<br>
+			<?=($this->data['taxNumber'])?$this->data['taxNumber']:'-';?>
+			<br>
+			<strong>Company Name</strong>
+			<br>
+			<?=($this->data['taxCompany'])?$this->data['taxCompany']:'-';?>
+			<br>
+			<strong>Address</strong>
+			<br>
+			<?=($this->data['taxAddress'])?$this->data['taxAddress']:'-';?>
+		</div>
+		<div class="fixed column" style="width:300px;padding-right:10px;padding-left:5px;">
+			<strong>City</strong>
+			<br>
+			<?=($this->data['taxCity'])?$this->data['taxCity']:'-';?>
+			<br>
+			<strong>Zip</strong>
+			<br>
+			<?=($this->data['taxZip'])?$this->data['taxZip']:'-';?>
+			<br>
+			<strong>Province</strong>
+			<br>
+			<?=($this->data['taxProvince'])?$this->data['taxProvince']:'-';?>
+			<br>
+			<strong>Country</strong>
+			<br>
+			<?=($this->data['taxCountry'])?$this->data['taxCountry']:'-';?>
+		</div>
+	</div>
+	<div style="padding-top:15px;"></div>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">ORDER DETAILS</h3>
+	<table cellspacing="0" border="0" cellpadding="0" id="shopping-cart-table" class="data-table box-table shopping-cart">
+	<thead>
+	<tr>
+		<th rowspan="1" colspan="2" class="a-left" style="padding-left:23px;border-left: 1px solid #cacaca;">Description</th>
+		<th class="a-center">Price</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td class="attributes-col" rowspan="1" colspan="2" style="padding-left:23px;">
+			<h4 class="title" style="margin-bottom:5px;"><?=$this->itemName;?></h4>
+		</td>
+		<td class="a-right last">
+			<div style="padding-right:10px;text-align:right;">
+				<span class="price">Rp. <?=number_format($this->total,2);?></span> 
+			</div>
+		</td>
+		
+	</tr>
+	</tbody>
+	</table>	
+	<table style="border: 1px solid #cacaca; border-top: 0;width:90%;">
+	<tr>
+		<td style="padding: 0px 0px 0px 10px;" valign="top">
+		<div class="shopping-cart-totals">
+		<table cellspacing="0" id="shopping-cart-totals-table">
+		<tbody>
+		<tr>
+			<td valign="middle" align="right" style="color: #444;text-transform: uppercase;" class="a-right" colspan="2">
+			Total (harga + diskon + PPN 10%)
+			</td>
+			<td>:</td>
+			<td class="a-right" width="20%">
+			<span class="price">Rp. <?=number_format($this->total,2);?></span>
+			</td>
+		</tr>
+		</tbody>
+		</table>
+		</div>
+		</td>
+	</tr>
+	</table>
+	<div style="padding-top:15px;"></div>
+	
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">PAYMENT METHOD: <?=$this->method;?></h3>
+	<form method="get" action="<?=ROOT_URL;?>/membership/payment/process/orderId/<?=$this->orderId;?>">
+		<input type="submit" value="Continue with Payment" />
+	</form>
+	
+	</div>
+</div>

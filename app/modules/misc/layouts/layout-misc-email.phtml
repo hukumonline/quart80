@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>hukumonline.com kirim Email</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="<?php echo $this->baseUrl();?>/resources/images/hole_small.ico" />
+	
+	<link rel="stylesheet" href="<?php echo $this->baseUrl();?>/resources/css/sendemail.css" type="text/css" media="screen, projection">
+	
+	<script src="<?php echo $this->baseUrl();?>/js/jquery/jquery-1.2.3.pack.js" type="text/javascript"></script>
+	<script src="<?php echo $this->baseUrl();?>/js/jquery/form/jquery.form.js" type="text/javascript"></script>
+	<script src="<?php echo $this->baseUrl();?>/js/jquery/form/jquery.delegate.js" type="text/javascript"></script>
+	<script src="<?php echo $this->baseUrl();?>/js/jquery/form/jquery.validate.js" type="text/javascript"></script>
+	<style type="text/css">
+	.messagebox 		{position:absolute;width:100px;margin-left:30px;border:1px solid #c93;background:#ffc;padding:3px;font-family:verdana;font-size:12px }
+	.messageboxok 		{position:absolute;width:auto;margin-left:30px;border:1px solid #349534;background:#C9FFCA;padding:3px;font-weight:bold;color:#008000;}
+	.messageboxerror 	{position:absolute;width:auto;margin-left:30px;border:1px solid #CC0000;background:#F7CBCA;padding:3px;font-weight:bold;color:#CC0000;}
+	form.rfgform label.error, label.error {
+		/* remove the next line when you have trouble in IE6 with labels in list */
+		display: none;
+		color: red;
+		font-family: verdana;
+		font-size: 12px;
+	}
+	div.cc {
+		background-color: #eee;
+		border: 1px solid red;
+	}
+	div.cc ol li {
+		list-style:none;
+		margin-left: 2px;
+		margin-bottom:5px;
+	}
+	div.cc { display: none; }
+	.cc label.error {
+		display: inline;
+	}
+	.lineThrough{
+		text-decoration:line-through;	
+	}
+	</style>
+</head>
+<body>
+	<?=$this->layout()->content; ?>
+</body>
+</html>

@@ -1,0 +1,36 @@
+.kotakisi{padding:10px;}
+.kotakisi h2{
+	font-size:1em;
+	text-align:left;
+	font-weight: bold;
+	color: #004276;
+}
+.kotakisi .tanggalterbit{
+	font-family: arial,helvetica,sans-serif;
+	color: #808080;
+	font-size: 0.625em;
+	padding-top:1px;
+	padding-bottom:5px;
+}
+.kotakisi .description{
+	color: #333333; 
+	font-size: 0.715em; 
+	line-height: 16px;	
+	padding-bottom: 10px; 
+	font-style:italic;
+}
+.kotakisi p{
+	font-size: 0.885em;
+	line-height: 1.5em;
+	padding-top:5px;
+}
+.kotakisi .image{
+	background-color: #fff; 
+	padding: 2px;	
+	margin: 13px 15px 13px 0px;	
+	border: 1px solid #e4d09b; 
+	float: left;
+}
+.kotakisi .fname{
+	font-size: 11px;
+}

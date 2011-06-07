@@ -1,0 +1,9 @@
+<div class="kotakisi">
+	<?php if ($this->subtitle) { ?><div class="subjudul"><?php echo $this->subtitle; ?></div><?php } ?>
+	<h2><?php echo $this->title; ?></h2>
+	<div style="padding-top:5px"></div>
+	<div class="tanggalterbit"><?php echo $this->date; ?></div>
+	<?php if ($this->description) { ?><div class="description"><?php echo $this->description; ?></div><?php } ?>	
+	<div style="padding-top:5px;"></div>
+	<?php echo $this->action('beritaterkait','widgets_relation','hol-site',array('guid'=>$this->catalogGuid)); ?>
+</div>

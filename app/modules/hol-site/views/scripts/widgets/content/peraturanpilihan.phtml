@@ -1,0 +1,6 @@
+<ul id="rulelistnoline">
+	<?php for($i=0; $i<$this->numberOfRows;$i++) { ?>
+	<li><a href="<?=$this->getRootUrl(); ?>/pusatdata/detail/<?=$this->data[$i][2]; ?>/node/<?=$this->data[$i][3]; ?>"><?=$this->data[$i][0]; ?></a></li>
+	<li><?=$this->data[$i][1]; ?></li>
+	<?php } ?>
+</ul>

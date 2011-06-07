@@ -1,0 +1,12 @@
+<?php if ($this->numberOfRows <> 0) { ?>
+<div id="related">
+	<div id="related_selip">
+		<div id="title">BERITA TERKAIT</div>
+		<ul>
+		<?php foreach ($this->rowsetRelatedItem as $row) { ?>
+		<li><a href="<?=$this->baseUrl(); ?>/berita/baca/<?=$row->itemGuid ?>/<?=$this->getCatalogShortTitle($row->itemGuid) ?>"><?=$this->getCatalogTitle($row->itemGuid); ?></a></li>
+		<?php } ?>
+		</ul>
+	</div>
+</div>
+<?php } ?>

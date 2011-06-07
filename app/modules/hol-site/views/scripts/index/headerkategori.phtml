@@ -1,0 +1,83 @@
+<div class="unit">
+	<div class="container">
+		<div class="unit horizontal-center layout on-2 columns">
+			<div class="column">
+			<a href="<?=$this->getRootUrl(); ?>"><img src="<?=$this->baseUrl();?>/resources/images/logo_hukumonline.jpg" width="151" height="65" /></a>
+			</div>
+			<div class="column">
+				<div class="container" style="text-align:right;padding-top:5px;padding-right:5px;">
+					<?php
+					$auth = Zend_Auth::getInstance(); 
+					if($auth->hasIdentity()) : ?>
+						<div class="headerMenu" style="text-align:right">
+							<span style="color:#7079A8;"><?=$auth->getIdentity()->username; ?></span> &nbsp;|&nbsp; <a href="<?php $this->baseUrl();?>/identity/personal.setting">Profile</a> &nbsp;|&nbsp; <a href="<?=$this->logoutUrl;?>">logout</a>
+						</div>
+					<?php else : ?>
+						<div class="headerMenu" style="text-align:right">
+							<a href="<?=$this->loginUrl;?>">Masuk</a> &nbsp;|&nbsp; <a href="<?=$this->signUp;?>">Daftar</a>
+						</div>
+					<?php endif; ?>
+				</div>
+				<div class="container" style="text-align:right;padding-top:10px;padding-right:5px;">
+					<div class="headerMenu" style="text-align:right">
+						<a href="<?=$this->baseUrl();?>/tentangkami">Tentang Kami</a> &nbsp;|&nbsp; <a href="<?=$this->baseUrl();?>/produk">Produk dan Jasa</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="unit horizontal-center layout on-1 columns">
+			<div class="column">
+				<div id="header-local-nav">
+					<ul id="navigationlist">
+						<li><a href="http://en.hukumonline.com" title="Hukumonline dalam Bahasa Inggris">English Version!</a></li>
+						<li><a href="http://hukumpedia.com" title="Hukumpedia">Hukumpedia</a></li>
+						<li><a href="<?=$this->getRootUrl(); ?>/klinik" title="Klinik">Klinik</a></li>
+						<li><a href="<?=$this->getRootUrl(); ?>/pusatdata" title="Pusat Data">Peraturan</a></li>
+						<li><a href="<?=$this->getRootUrl(); ?>/warta" title="Warta">Berita</a></li>
+						<li><a href="<?=$this->getRootUrl(); ?>" title="Awal">Awal</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="unit horizontal-center layout on-2 columns">
+			<div class="fixed column" style="width:620px;">
+				<div class="container dmsAtasTicker">
+					<div class="akiriticker">
+					<?=$this->action('ticker','index','hol-site'); ?>
+					</div>
+				</div>
+			</div>
+			<div class="fixed column" style="width:340px;">
+				<div class="container atassearch">
+					<form>
+					<input name="cari" type="text" class="loginform" />
+					<select name="a" class="loginform" id="a">
+						<option>--- Pilih ---</option>
+			            <option value="artikel">Artikel</option>
+			            <option value="klinik">Klinik</option>
+			            <option value="peraturan">Peraturan</option>
+			       	</select>
+			        <input value="Cari" class="loginform" type="submit" />
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="unit horizontal-center layout">
+			<ul class="sf-menu">
+			<?php
+			for ($i=0;$i<count($this->rowset);$i++)
+			{
+			$json = new Zend_Json();
+			$aData = $json->decode($this->rowset[$i]['cmsParams']);
+			?>
+			<li>
+			<a href="<?=$this->baseUrl(); ?>/page/<?=$aData['st']?>" class='kaber'><?=$this->rowset[$i]['title']?></a>
+			<?=$this->action('getmenuchild','index','berita',array('node'=>$this->rowset[$i]['guid']))?>
+			</li>
+			<?php } ?>
+			</ul>
+		</div>		
+	</div>
+</div>

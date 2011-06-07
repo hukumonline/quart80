@@ -1,0 +1,49 @@
+<?php $guid = $this->generateGuid();?>
+<div id="<?=$guid;?>spinner" style="color:red; display:none;"><img src="<?=$this->baseUrl();?>/resources/images/wait-trans.gif" border="0"> Sending Request</div>
+<table>
+<tr>
+	<td>TITLE</td>
+	<td>RELATE AS</td>
+</tr>
+<? foreach ($this->hits->response->docs as $hit) { ?>
+<?php $guid2 = $this->generateGuid();?>
+<tr>
+<td width="650"><strong><? echo $hit->title; ?></strong></td>
+<td>
+<input id="<?=$guid2;?>guid" type='hidden' value='<? echo $hit->guid;?>'>
+<select id="<?=$guid2;?>relateas">
+	<option value="">Select Relation &nbsp;&nbsp;</option>
+	<option value="RELATED_BASE">Dasar Hukum</option>
+	<option value="RELATED_HISTORY">Sejarah</option>
+	<option value="RELATED_OTHER">Others</option>
+</select>
+<script type="text/javascript">
+$('#<?=$guid2;?>relateas').change(function() {
+	if(this.value != '')
+	{
+		if(confirm ('Are you sure to relate this?'))
+		{
+			itemGuid = $('#<?=$guid2;?>guid').attr('value');
+			$.ajax({
+			   type: "POST",
+			   url: "<?=ROOT_URL; ?>/api/relation/create",
+			   data: "itemGuid=" + itemGuid + "&relatedGuid=<?=$this->relatedGuid;?>&relateAs=" + this.value,
+			   beforeSend: function()
+			   {
+					$('#<?=$guid;?>spinner').show();
+			   },
+			   success: function(msg){
+			   		$('#<?=$guid;?>spinner').hide();
+			     	alert( "Data Saved: " + msg );
+			   }
+			 });
+		}
+	}
+	return false;
+});
+</script>
+</td>
+</tr>
+
+<? } ?>
+</table>

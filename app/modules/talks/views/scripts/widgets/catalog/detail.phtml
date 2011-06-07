@@ -1,0 +1,40 @@
+<div class="td_footer2">
+	<div id="footer" style="padding-left:5px;">
+<?php if ($this->numberOfRows == 0) { ?>
+<div style="font:11px verdana,arial,helvetica,sans-serif;font-weight:bold;line-height: 16px;color: #999999;">Tidak ada talk</div>
+<?php } ?>
+
+<?php 
+for ($i=0; $i<$this->numberOfRows;$i++) { 
+	
+	//$sDir = 'uploads/images';
+	$sDir = $this->getRemoteImageUrl();
+	$thumb = "";
+	
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->data[$i][1],'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+	
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+	
+	if ($thumb == "") { $thumb = "resources/images/nothumb.jpg"; }
+	
+	$screenshot = "<img src=\"".$thumb."\"  vspace=\"0\" width=\"104\" border=\"0\" hspace=\"0\" align=\"left\" />";
+
+	?>
+	<div class="talk" style="<?php echo ($i%2 ? 'background-color:#F8F8F8;border-top: 1px dotted #F3BD15;' : 'background-color: #F0F0F0;border-top: 1px dotted #F3BD15;'); ?>">
+	<?php 	
+	if ($thumb == "") { $screenshot = ""; } else { ?>
+    <div class="image"><?=$screenshot; ?></div>
+    <?php } ?>
+	<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][1]; ?>/<?=$this->data[$i][2]; ?>"><?=$this->data[$i][0]; ?></a></h2>
+	<p><?=$this->data[$i][3]; ?></p>    
+	</div>
+	<div style="clear:both;"></div>
+    
+<?php } ?>			
+	
+</div>
+</div>

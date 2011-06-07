@@ -1,0 +1,167 @@
+<script type="text/javascript" src="./js/datepicker/datetimepicker.js"></script>
+<link href="./js/datepicker/rfnet.css" type="text/css" rel="stylesheet" />
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;Edit Banner ...</h3>
+        <div id="editBanner">
+        <form id="anb" enctype='multipart/form-data'>
+        <table>
+        <tr>
+        	<td>ID</td>
+        	<td><?=$this->rowset->guid ?></td>
+        </tr>
+        <tr>
+        	<?php $arrayformat = array(0 => "","Picture Format", "Flash Format"); ?>
+        	<td>Format</td>
+        	<td><?php if ($this->rowset->type == 1) { ?> Picture Format <?php } else { ?> Flash Format <?php } ?></td>
+        </tr>
+        <tr>
+        	<td>Name</td>
+        	<td><input type='text' name='new_name' value="<?=$this->rowset->name ?>" size='60'></td>
+        </tr>
+        <tr>
+        	<td>Alt. Text</td>
+        	<td><input type='text' name='new_alt' value="<?=$this->rowset->alt ?>" size='60'></td>
+        </tr>
+        <?php if ($this->rowset->type == 1) { ?>
+        <tr>
+        	<td>URL</td>
+        	<td><input type='text' name='new_url' id="new_url" size='60' value='<?=$this->rowset->url ?>'></td>
+        </tr>
+        <?php } else if ($this->rowset->type == 2) { $swfdims = preg_split('[x]',$this->rowset->url); ?>
+        <tr>
+        	<td>Width x Height</td>
+        	<td><input type='text' name='new_url1' id="new_url1" size='20' value="<?=$swfdims[0] ?>"> x <input type='text' id="new_url2" name='new_url2' size='20' value="<?=$swfdims[1] ?>"></td>
+        </tr>
+        <?php } ?>
+        <tr>
+        	<td>Banner Zone</td>
+        	<td>
+        	<?php 
+        	$formater = new Pandamp_Lib_Form(); 
+        	echo $formater->zone('new_ban_zone',$this->rowset->zone);
+        	?>
+        	</td>
+        </tr>
+        <tr>
+        	<td>How many times banner<br>can be displayed</td>
+        	<td>
+        	<select name='new_dis_times' id="new_dis_times">
+        	<option value='0' <?php if ($this->rowset->dis_times == 0) { echo "selected"; } ?>>Unlimited</option>
+        	<option value='EV'>- Enter Value -</option>
+        	<option value='100' <?php if ($this->rowset->dis_times == 100) { echo "selected"; } ?>>100</option>
+        	<option value='200' <?php if ($this->rowset->dis_times == 200) { echo "selected"; } ?>>200</option>
+        	<option value='300' <?php if ($this->rowset->dis_times == 300) { echo "selected"; } ?>>300</option>
+        	<option value='400' <?php if ($this->rowset->dis_times == 400) { echo "selected"; } ?>>400</option>
+        	<option value='500' <?php if ($this->rowset->dis_times == 500) { echo "selected"; } ?>>500</option>
+        	<option value='600' <?php if ($this->rowset->dis_times == 600) { echo "selected"; } ?>>600</option>
+        	<option value='700' <?php if ($this->rowset->dis_times == 700) { echo "selected"; } ?>>700</option>
+        	<option value='800' <?php if ($this->rowset->dis_times == 800) { echo "selected"; } ?>>800</option>
+        	<option value='900' <?php if ($this->rowset->dis_times == 900) { echo "selected"; } ?>>900</option>
+        	<?php if ($this->rowset->dis_times == 1000) { ?>
+        	<option value='1000' selected>1000</option>
+        	</select> Enter Value <input type='text' name='new_dis_times_ev' id="new_dis_times_ev" size='29' value='<?=$this->rowset->dis_times ?>'>
+        	<?php } else { ?>
+        	<option value='1000'>1000</option>
+        	</select> Enter Value <input type='text' name='new_dis_times_ev' id="new_dis_times_ev" size='29' value='<?=$this->rowset->dis_times ?>'>
+        	<?php } ?>
+        	</td>
+        </tr>
+        <?php list($dtype,$location) = preg_split('[|]',$this->rowset->dtype); ?>
+        <tr>
+        	<td>Display Type</td>
+        	<td>
+        	<select name='new_dis_type' readonly>
+        	<option value='1' <?php if ($dtype == 1) { echo "selected"; } ?>>Standard HTML</option>
+        	<option value='2' <?php if ($dtype == 2) { echo "selected"; } ?>>PopUp Window</option>
+        	</select> - upcoming feature -
+        	</td>
+        </tr>
+        <tr>
+        	<td>On Click, Target Window</td>
+        	<td>
+        	<select name='new_target'>
+        	<option value='_self' <?php if ($this->rowset->target == "_self") { echo "selected"; } ?>>Open in Current Window</option>
+        	<option value='_blank' <?php if ($this->rowset->target == "_blank") { echo "selected"; } ?>>Open in New Window</option>
+        	</select>
+        	</td>
+        </tr><br>
+       	<?php $today = date('Y-m-d H:i:s'); ?>
+        <tr>
+        	<td>Published Date</td>
+        	<td>
+        	<input type="Text" id="publishedDate" maxlength="25" size="25" name="publishedDate" value="<?=$this->rowset->publishedDate ?>"><a href="javascript:NewCal('publishedDate','yyyymmdd',true,24)"><img src="./js/extjs/resources/images/default/custom/img.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Expired Date</td>
+        	<td>
+        	<input type="Text" id="expiredDate" maxlength="25" size="25" name="expiredDate" value="<?=$this->rowset->expiredDate ?>"><a href="javascript:NewCal('expiredDate','yyyymmdd',true,24)"><img src="./js/extjs/resources/images/default/custom/img.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Created on</td>
+        	<td>
+        	<?=$this->rowset->createdDate ?>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Modified on</td>
+        	<td>
+        	<?=$today ?><input type='hidden' name='modifiedDate' id='modifiedDate' value='<?=$today ?>'>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Status</td>
+        	<td>
+        	<?php 
+        	require_once(CONFIG_PATH.'/master-status.php'); 
+        	$aStatus = MasterStatus::getPublishingStatus();
+        	?>
+			<select name="status" id="status">
+				<?php foreach($aStatus as $val => $label) {?>
+					<option value="<?=$val;?>" 
+						<?php 
+							if($val == $this->rowset->status) echo 'selected';
+						?>
+						>
+						<?=$label;?>
+					</option>
+				<?php }?>
+			</select>
+        	</td>
+        </tr>
+        </table><br>
+        <input type='hidden' name='guid' value="<?=$this->rowset->guid ?>">
+        <p class="buttons"><input value="Save" type="submit"><input type="button" name="cancel" id="cancel" value="Cancel">
+        </form>
+        </div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+<script type="text/javascript">
+var options = {
+	type:'post',
+	url: './admin/api_banner/save',
+	beforeSubmit: prepareData,
+	success: showResponse
+};
+$('#anb').ajaxForm(options);
+function prepareData() {
+	Ext.MessageBox.wait('Saving Banner');
+}
+function showResponse(responseText, statusText) {
+    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+        '\n\nThe output div should have already been updated with the responseText.'); 
+		        
+	Ext.MessageBox.hide();
+}
+
+$('#cancel').click(function() {
+	dialog.destroy();
+	dialog.hide();
+	dsBanner.reload();
+});
+
+</script>

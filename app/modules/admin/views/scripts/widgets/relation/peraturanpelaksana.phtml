@@ -1,0 +1,66 @@
+<?php $guid = $this->generateGuid();?>
+<div id="implementingregulation-page">
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<div style="padding:5px;">
+				<div id="<?=$guid;?>spinner" style="color:red; display:none;"><img src="<?=$this->baseUrl();?>/resources/images/wait-trans.gif" border="0"> Sending Request</div>
+				<?php foreach ($this->rowsetRelatedItem as $row){?>
+					<div style="padding-top:5px"></div>
+					<a href="javascript:;" onclick="<?=$guid;?>goUrl('<?=$row->relatedGuid;?>','<?=$this->getCatalogTitle($row->relatedGuid); ?>');return false;"><?=$this->getCatalogTitle($row->relatedGuid); ?></a>
+					<br><div style="color: #333333;font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;"><?=$this->getCatalogSubTitle($row->relatedGuid); ?></div>
+					<!--
+					<?php //if($this->isAllowed($this->catalogGuid, 'update','content')){?>
+					- <a href="javascript:;" onclick="<?php //echo $guid;?>remove('<?php //echo $row->itemGuid;?>', '<?php //echo $row->relatedGuid;?>', 'RELATED_BASE');return false;">Remove</a>
+					<?php //} ?>
+					-->
+					<div style="padding-top:5px"></div>
+				<?php } ?>
+				<div style="padding-bottom:5px"></div>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<script type="text/javascript">
+function <?=$guid;?>remove(itemGuid, relatedGuid, relateAs)
+{
+	Ext.MessageBox.show({
+       	title: 'Warning',
+       	msg: "Are you sure to remove this ?",
+       	buttons: Ext.MessageBox.YESNO,
+       	icon: Ext.MessageBox.WARNING,			
+       	fn: function(btn) {
+      		if (btn=="yes") {
+				Ext.Ajax.request
+				({ 
+					url: "<?=ROOT_URL; ?>/admin/api_relation/delete/itemGuid/" + itemGuid + "/relatedGuid/" + relatedGuid + "/relateAs/" + relateAs,
+					success: function(response,options)
+					{
+						var responseData = Ext.util.JSON.decode(response.responseText);
+						info('Success', responseData.msg);
+						Ext.get('implementingregulation-page').load({
+							url:'<?=$this->getRootUrl(); ?>/admin/widgets_relation/view-implementing-regulation',
+							scripts:true,
+							params:"guid=<?=$this->catalogGuid ?>"
+						});						
+					}
+				});
+       		} else {
+				Ext.MessageBox.alert('Status', 'Deleted canceled.');
+       		}
+       	}
+	});
+}
+function <?=$guid;?>goUrl(guid,title)
+{
+	loadTab('./admin/browser/view-in-new-tab/catalogGuid/'+guid+'/folderGuid/<?=$this->node ?>',title);
+//	Ext.get('extTab').load({
+//		url:'<?php //echo $this->getRootUrl();?>/app/admin/widget/catalogmanager/view/guid/'+guid+'/node/'+<?php //echo $this->node ?>,
+//		scripts:true
+//	});
+}
+</script>

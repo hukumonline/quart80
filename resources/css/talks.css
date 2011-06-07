@@ -1,0 +1,55 @@
+body {
+	margin: 0px; 
+	padding: 0; 
+	color:#727272; 
+	background:url(../images/bg.jpg) repeat-x #eaeaea; 
+	font-size: 1em;
+	font-family: georgia,"times new roman",times,serif;
+}
+.talk{
+	padding:2px;
+	float:right;
+	width:615px;
+	margin-right:5px;
+	font-size:12px;
+}
+.talk h2{
+	font-size:1em;
+	text-align:left;
+	color: #999999;
+	line-height:1.25em;
+	padding-top:2px;
+	font-weight:bold;
+}
+.talk p{
+	font-size:1em;
+	color:#000;
+	line-height: 1.5em;
+	padding-top:2px;
+	padding-bottom:10px;
+}
+.talk .image{
+	background-color: #fff; 
+	padding: 2px;	
+	margin: 3px 5px 1px 0;	
+	border: 1px solid #e4d09b; 
+	float: left;
+}
+.price{
+	padding:2px;
+	font-size:12px;
+	color:#000;
+	line-height: 1.5em;
+}
+.talk a {padding:0; text-decoration:none;color:#000;}
+.talk a:hover {text-decoration:underline;color: #B79C00;}
+
+.vcart		{ vertical-align:top; background: #F0E68C; border:1px solid #ddd; padding: 0px 5px 0px 5px;}
+.vcart h1{
+	font-size: 0.875em;
+	color: #0000CD;
+	font-weight: bold;
+	padding-bottom:5px;
+}
+.vcart_1	{ vertical-align:top; background: #FFFFFF; padding: 1px 5px 0px 5px;}
+

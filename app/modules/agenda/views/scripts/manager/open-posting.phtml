@@ -1,0 +1,53 @@
+<style type="text/css">
+.display_header		{ font-size:16px; font-family:arial, helvetica; font-weight:bold }
+.display_title		{ font-size:12px; font-family:arial, helvetica; color:#FFFFFF; font-weight:bold }
+.display_txt		{ font-size:12px; font-family:arial, helvetica; color:#000000 }
+.display_user		{ font-size:10px; font-family:verdana, helvetica, arial; color:#999999; font-weight:bold }
+.display_edit		{ font-size:10px; font-family:verdana, arial, helvetica }
+.display_title_bg	{ background-color:#2663E2 }
+.display_txt_bg		{ background-color:#EDECD8 }
+</style>
+
+<div id="openposting">
+    	
+	<!-- selected date -->
+	<table cellspadding="0" cellspacing="0" border="0" width="400" align="center"><br />
+	<tr>
+		<td><span class="display_header"><?php echo $this->dateline ?></span></td>
+		<td align="right"><span class="display_header"><?php echo $this->wday ?></span></td>
+	</tr>
+	</table>
+	<img src="./library/js/extjs/resources/images/default/custom/clear.gif" width="1" height="3" border="0"><br clear="all">
+	<table cellspacing="0" cellpadding="0" border="0" width="400" align="center">
+		<tr>
+		<td bgcolor="#000000">
+			<table cellspacing="1" cellpadding="1" border="0" width="100%">
+				<tr>
+					<td class="display_title_bg">
+						<table cellspacing="0" cellpadding="0" border="0" width="100%">
+							<tr>
+								<td width="100%"><span class="display_title">&nbsp;<?php echo $this->title ?></span></td>
+								<td><img src="./library/js/extjs/resources/images/default/custom/clear.gif" width="20" height="1" border="0"></td>
+								<td align="right" nowrap="yes"><span class="display_title"><?php echo $this->timestr ?>&nbsp;</span></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="display_txt_bg">
+						<table cellspacing="1" cellpadding="1" border="0" width="100%">
+							<tr>
+								<td><span class="display_txt"><?php echo $this->body ?></span></td>
+							</tr>
+							<tr>
+								<td align="right"><span class="display_user"><?php echo $this->postedby ?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		</tr>
+	</table>
+
+</div>

@@ -1,0 +1,28 @@
+<fieldset>
+	<legend>Pusat Data</legend>
+	<div class="hold">
+		<h4><strong><?php echo $this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value;?></strong></h4>
+		<?php 
+		foreach ($this->aAttribute as $row) { 
+			if ((!in_array($row['value'],array('no-info','-','in','','00:00:00'))) && (!in_array($row['name'],array('Comments','Billing')))) {
+		?>
+		<div class="p1">
+			<?php 
+			if ($this->profileGuid == "kutu_putusan") { 
+				if (($row['name'] == "Title") || ($row['name'] == "Sub Title"))	{
+			?>
+			<div class="p2"></div>
+			<?php } else { ?>
+			<div class="p2"><h5><?=$row['name'];?></h5></div>
+			<?php }} else { ?>
+			<div class="p2"><h5><?=$row['name'];?></h5></div>
+			<?php } ?>
+			<?php if (in_array($row['name'],array('Date','Tanggal Dibacakan','Tanggal berlaku'))) { ?>
+			<div class="p3"><?=strftime("%d %B %Y",strtotime($row['value']));?></div>
+			<?php } else { ?>
+			<div class="p3"><?=$row['value'];?></div>
+			<?php } ?>
+		</div>
+		<?php }} ?>
+	</div>
+</fieldset>

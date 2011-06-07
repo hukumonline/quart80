@@ -1,0 +1,12 @@
+<?php if ($this->numberOfRows <> 0) { ?>
+<div id="related">
+	<div id="related_selip">
+		<div id="title">KLINIK TERKAIT</div>
+		<ul>
+		<?php foreach ($this->rowsetRelatedItem as $row) { ?>
+		<li><a href="<?=$this->baseUrl(); ?>/klinik/detail/<?=$row->itemGuid ?>"><?=$this->getClinicTitle($row->itemGuid); ?></a></li>
+		<?php } ?>
+		</ul>
+	</div>
+</div>
+<?php } ?>

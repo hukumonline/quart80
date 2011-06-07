@@ -1,0 +1,123 @@
+<?php if (!$this->rows) { ?>
+<div id="blokIsiKomen">
+	Belum ada tanggapan untuk ditampilkan pada artikel ini.
+</div>
+<?php } else { ?>
+<div id="comments">
+<div id="blokIsiKomen">
+	<b>Komentar terkini (<?php echo $this->numrows; ?> Komentar)</b>
+</div>
+<?php foreach ($this->paginator as $comment) : ?>
+	<div id="blokIsiKomen">			
+		<div class="comment-avatar">
+		<?php
+			$arraypictureformat = array("jpg", "jpeg", "gif");
+			//$sDir = ROOT_DIR.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'photo';
+			$sDir = $this->getRemotePhotoDir();
+			//$sDir2 = ROOT_URL."/uploads/photo/";
+			$sDir2 = $this->getRemotePhotoUrl();
+			$x = 0;
+			foreach ($arraypictureformat as $key => $val) {
+				if (is_file($sDir."/".$comment->getuserid().".".$val)) {
+					$myphoto = $sDir."/".$comment->getuserid().".".$val;
+					$myext = $val;
+					$x = 1;
+					break;
+				}
+			}
+			if ($x == 1) {
+				$myphotosize = getimagesize($myphoto);
+				$dis = "";
+				if (isset($myext) && is_file($sDir."/".$comment->getuserid().".".$myext)) 
+					$txt_existence = "<img src=\"".$sDir2.$comment->getuserid().".".$myext."\" width=\"52\" height=\"52\" />";
+				
+			}
+			else 
+			{
+				$txt_existence = "<img src=\"".$this->cdn('images')."/gravatar-140.png\" border=\"0\" />";
+			}
+			
+			echo $txt_existence;
+		?>
+		
+		</div>
+		<div class="comment-box">
+			<div class="avatar-indent">
+				<span class="comment-title"><?php echo $comment->getTitle();?></span> &mdash;
+				<span class="comment-author"><?php echo $comment->getName();?></span>
+				<span class="comment-date"><?php echo Pandamp_Lib_Formater::get_date($comment->getDate());?></span>
+				<div class="comment-body"><?php echo Pandamp_Lib_Bbcode::parseBBCode($comment->getComment()); ?></div>
+				<div class="togglereplychild">
+					<?php if ($this->getNumOfComment($comment->getId()) != 0) { ?>
+					<a href="#" class="togglechild"><?php echo $this->getNumOfComment($comment->getId()); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+					<?php } ?>
+					<a href="#comment-<?php echo $comment->getId();?>" id="reply-<?php echo $comment->getId();?>" class="togglereply" onclick="return false">Balas Tanggapan</a>
+				</div>
+				<?php if ($this->getNumOfComment($comment->getId()) != 0) { ?>
+				<div class="childcomments">
+					<?php 
+					$i=0;
+					foreach ($this->getComment($comment->getId()) as $child) {
+					?>
+					<div id="comment-<?php echo $child->getId(); ?>" class="<?php echo ($i%2 ? 'commentdetails-child2' : 'commentdetails-child'); ?>">
+						<div class="comment-avatar">
+						<?php
+						$x = 0;
+						foreach ($arraypictureformat as $key => $val) {
+							if (is_file($sDir."/".$child->getuserid().".".$val)) {
+								$myphoto = $sDir."/".$child->getuserid().".".$val;
+								$myext = $val;
+								$x = 1;
+								break;
+							}
+						}
+						if ($x == 1) {
+							$myphotosize = getimagesize($myphoto);
+							$dis = "";
+							if (isset($myext) && is_file($sDir."/".$child->getuserid().".".$myext)) 
+								$txt_existence = "<img src=\"".$sDir2.$child->getuserid().".".$myext."\" width=\"52\" height=\"52\" />";
+							
+						}
+						else 
+						{
+							$txt_existence = "<img src=\"".$this->cdn('images')."/gravatar-140.png\" border=\"0\" />";
+						}
+						
+						echo $txt_existence;
+						
+						?>						
+						</div>
+						<div class="comment-box">
+							<div class="avatar-indent">
+								<span class="comment-title"><?php echo $child->getTitle();?></span> &mdash;
+								<span class="comment-author"><?php echo $child->getName();?></span>
+								<span class="comment-date"><?php echo Pandamp_Lib_Formater::get_date($child->getDate());?></span>
+								<div class="comment-body"><?php echo Pandamp_Lib_Bbcode::parseBBCode($child->getComment()); ?></div>
+							</div>
+						</div>
+					</div>
+					<?php
+					$i++; 
+					} 
+					?>
+				</div>
+				<?php } ?>
+			</div>
+		</div>
+		<div id="divClear"></div>
+	</div>
+<?php endforeach; ?>
+</div>
+<?php if (count($this->rows) > 10) { ?>
+<div class="copage">
+		<b>Halaman: </b>
+		<?php 
+			/*
+			 * Print the pagination of type
+			 */
+			echo $this->paginationControl($this->paginator,
+		                                    'Sliding',
+		                                    '/partials/user_pagination_control.phtml'); ?>	 dari total <b><?php echo count($this->paginator); ?></b> halaman
+
+</div>
+<?php }} ?>

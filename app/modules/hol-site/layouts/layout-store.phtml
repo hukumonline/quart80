@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>hukumonline.com</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
+	<link rel="stylesheet" type="text/css" media="all" href="<?=$this->baseUrl();?>/resources/css/elastic.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="<?=$this->baseUrl();?>/resources/css/typography.css" />
+	<link rel="stylesheet" type="text/css" href="<?=$this->baseUrl();?>/resources/css/calender.css" />
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/js/jquery/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/js/jquery/ui/jquery-ui-1.8.5.custom.min.js"></script>
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/resources/css/elastic.js" language="javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/js/jquery/newsticker/jquery.newsticker.pack.js"></script>
+	<script type="text/javascript" src="<?=$this->baseUrl();?>/js/globe.js"></script>
+</head>
+<body>
+	<?=$this->render("header.phtml"); ?>
+	<div style="padding-top:10px;"></div>
+	<?=$this->layout()->content; ?>
+	<?=$this->render("footer.phtml"); ?>
+</body>
+</html>

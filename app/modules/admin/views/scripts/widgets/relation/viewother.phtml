@@ -1,0 +1,76 @@
+<?php $guid = $this->generateGuid();?>
+<div id="otherpage">
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<div style="padding:5px;">
+				<div id="<?=$guid;?>spinner" style="color:red; display:none;"><img src="<?=$this->baseUrl();?>/resources/images/wait-trans.gif" border="0"> Sending Request</div>
+				<?php foreach ($this->rowsetRelatedItem as $row){?>
+					<div style="padding-top:5px"></div>
+					<a href="javascript:;" onclick="<?=$guid;?>goUrl('<?=$row->itemGuid;?>','<?=$this->getCatalogTitle($row->itemGuid); ?>');return false;">
+					<?php if ($this->getCatalogTitle($row->itemGuid) !== "No-Title") {
+						echo $this->getCatalogTitle($row->itemGuid);
+					}
+					else if ($this->getClinicTitle($row->itemGuid) !== "No-Title") {
+						echo $this->getClinicTitle($row->itemGuid);
+					}
+					else
+					{
+						echo $this->getCatalogTitle($row->itemGuid);
+					}
+					?>
+					&nbsp;[<?=$row->relateAs; ?>]</a>
+					<?php if($this->isAllowed($this->catalogGuid, 'update','content')){?>
+					- <a href="javascript:;" onclick="<?=$guid;?>remove('<?=$row->itemGuid;?>', '<?=$row->relatedGuid;?>', '<?=$row->relateAs; ?>');return false;">Remove</a>
+					<?php } ?>
+					<div style="padding-top:5px"></div>
+				<?php } ?>
+				<div style="padding-bottom:5px"></div>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<script type="text/javascript">
+function <?=$guid;?>remove(itemGuid, relatedGuid, relateAs)
+{
+	Ext.MessageBox.show({
+       	title: 'Warning',
+       	msg: "Are you sure to remove this ?",
+       	buttons: Ext.MessageBox.YESNO,
+       	icon: Ext.MessageBox.WARNING,			
+       	fn: function(btn) {
+      		if (btn=="yes") {
+				Ext.Ajax.request
+				({ 
+					url: "<?=ROOT_URL; ?>/admin/api_relation/delete/itemGuid/" + itemGuid + "/relatedGuid/" + relatedGuid + "/relateAs/" + relateAs,
+					success: function(response,options)
+					{
+						var responseData = Ext.util.JSON.decode(response.responseText);
+						info('Success', responseData.msg);
+						Ext.get('otherpage').load({
+							url:'<?=$this->getRootUrl(); ?>/admin/widgets_relation/viewother',
+							scripts:true,
+							params:"guid=<?=$this->catalogGuid ?>"
+						});						
+					}
+				});
+       		} else {
+				Ext.MessageBox.alert('Status', 'Deleted canceled.');
+       		}
+       	}
+	});
+}
+function <?=$guid;?>goUrl(guid,title)
+{
+	loadTab('./admin/browser/view-in-new-tab/catalogGuid/'+guid,title);
+//	Ext.get('catab').load({
+//		url:'browser/view-in-new-tab',
+//		params:{catalogGuid:guid},
+//		scripts:true
+//	});
+}
+</script>

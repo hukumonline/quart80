@@ -1,0 +1,107 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+	#freeEmailConfirm label.error {
+		margin-left: 20px; width: auto; display: inline;
+	}
+	form.rfgform label.error, label.error {
+		/* remove the next line when you have trouble in IE6 with labels in list */
+		display: none; color: red;
+	}
+	div.error { display: none; }
+	input.error { border: 1px dotted red; }
+	div.requiredNotice {
+		width: 140px; float: right; padding: 0;
+	}
+</style>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+</head>
+<body>
+<div>
+<form id="freeEmailConfirm">
+	<table width="100%">
+		<?php foreach ($this->aRenderedAttributes['baseForm'] as $a) { ?>	
+		<tr>
+			<td width="200"><label for="<?php echo $a['description']; ?>" class="input required"><?php echo $a['description']; ?></label></td>
+			<td><?php echo $a['form']; ?></td>
+		</tr>
+		<?php } ?>
+	</table>
+	<table width="100%">
+		<?php foreach ($this->aRenderedAttributes['attributeForm'] as $a) { ?>	
+		<tr>
+			<td nowrap><label for="<?php echo $a['description']; ?>" class="input required"><?php echo $a['description']; ?></label></td>
+			<td><?php echo $a['form']; ?></td>
+		</tr>
+		<?php } ?>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type="submit" name="save" id="save" value="Save"><span id="msgbox" style="display:none"></span>&nbsp;<input type="button" name="cancel" id="cancel" value="Cancel"></td>
+		</tr>
+	</table>
+</form>	
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+setTimeout(function()
+{
+	$.validator.setDefaults({
+		submitHandler: function() {
+			var options = {
+				type:'post',
+				dataType: 'json',
+				url: './admin/dms_catalogmanager/save',
+//				resetForm: true,
+				beforeSubmit: prepareData,
+				success: function(response){
+					if (response.success == true)
+					{
+					  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+						{ 
+						  	//add message and change the class of the box and start fading
+							$(this).html('Email saved').addClass('messageboxok').fadeTo(900,1);
+						});
+					}
+					else
+					{
+					  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+						{ 
+						//add message and change the class of the box and start fading
+					  	$(this).html('Error saved').addClass('messageboxerror').fadeTo(900,1);
+					});		
+				}
+			}
+		};
+		$('#freeEmailConfirm').ajaxForm(options);
+		}
+	});
+	// validate catalogInputForm on keyup and submit
+	$('#freeEmailConfirm').validate({
+		rules : {
+			jTagEditor: "required"
+		},
+		messages : {
+			jTagEditor: "<br>Please enter Content"
+		}
+	});
+	
+    function prepareData() 
+    { 
+       	$("#msgbox").removeClass().addClass('messagebox').text('Saving ...').fadeIn(1000);
+    }
+    
+	$("#html").jTagEditor();
+	
+	$('#cancel').click(function() {
+		dialog.destroy();
+		dialog.hide();
+	});
+	
+},20);
+</script>

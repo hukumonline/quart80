@@ -1,0 +1,860 @@
+<!--<div id="indexingform"></div>
+<div id="indexingTabCatalog"></div>-->
+<script type="text/javascript">
+//var indexingForm = new Ext.FormPanel({
+//	 title:'Indexing'
+//	,iconCls:'indexing'
+//	,url:'./admin/widgets_indexing/index-all/format/json'
+//	,items:[
+//	new Ext.form.Checkbox({
+//		fieldLabel:'&nbsp;&nbsp;Berita'
+//		,name:'berita'
+//		,id:'berita'
+//	}),
+//	new Ext.form.Checkbox({
+//		fieldLabel:'&nbsp;&nbsp;Peraturan'
+//		,name:'peraturan'
+//	})
+//	],
+//	buttons:[{
+//		  text:'Start'
+//		 ,handler:function(){
+//					Ext.Ajax.request({
+//						url:'./admin/widgets_indexing/cekstatus/format/json',
+//						callback: function(options, success, response ) {
+//							if( success ) {
+//								var result = Ext.decode( response.responseText );
+//								if (result.success == true) {
+//								Ext.MessageBox.show({
+//									title:'Confirm',
+//									msg:"Indexing may take a while, change offline?",
+//									buttons: Ext.MessageBox.YESNO,
+//									icon: Ext.MessageBox.QUESTION,
+//									fn: function(btn) {
+//										if (btn=="yes") {
+//		 				Ext.Ajax.request({
+//		 					 url:'./admin/widgets_indexing/change-status/format/json'
+//		 					,params:{status:'offline'}
+//		 					,callback:function(options,success,response){
+//		 						if (success) {
+//		 							var result = Ext.decode(response.responseText);
+//								 	indexingForm.form.submit({
+//								 		waitMsg: 'Indexing ...',
+//								 		success: function(response, options)	{
+//								 			var response = Ext.util.JSON.decode(response, responseText);
+//								 			if (response.success == true)
+//								 			{
+//								 				Ext.Msg.alert('Notification',response.error);
+//								 			}
+//								 			else
+//								 			{
+//								 				Ext.Msg.alert('Failure',response.error);
+//								 			}
+//								 		},
+//								 		failure: function(response, options) {
+//								 			Ext.Msg.alert('Failure',response.error);
+//								 		},
+//								 		scope: indexingForm
+//								 	});
+//		 						}
+//		 					}
+//		 				});
+//										} 
+//										else
+//										{
+//											Ext.MessageBox.alert('Oops...','Indexing cancel');
+//										}
+//									}
+//								}
+//								);
+//								} else {
+//									var berita = Ext.getCmp('berita').getValue();
+//									console.log(berita);
+									
+// ------------------------------------------------------------------------------------------------------------- //									
+//								 	indexingForm.form.submit({
+//								 		waitMsg: 'Indexing ...',
+//								 		success: function(form, action)	{
+//								 			var response = Ext.util.JSON.decode(response, responseText);
+//								 			if (response.success == true)
+//								 			{
+//								 				Ext.Msg.alert('Notification',action.result.message);
+//								 			}
+//								 			else
+//								 			{
+//								 				Ext.Msg.alert('Failures',action.result.error);
+//								 			}
+//								 		},
+//								 		failure: function(form, action) {
+//								 			Ext.Msg.alert('Failure',action.result.error);
+//								 		}
+//								 	});
+// ------------------------------------------------------------------------------------------------------------- //
+									
+//								}
+//							}
+//						}
+//					});
+//
+//		 }
+//	},{
+//		text:'Abort'
+//		,handler:function(){
+//			dialog.destroy();
+//			dialog.hide();
+//		}
+//	}
+//	]
+//});
+//
+//indexingForm.render('indexingform');
+
+var indexingTab = new Ext.TabPanel({
+	// renderTo:'indexingTabCatalog',
+	id:'indexingTabCatalog',
+	minTabWidth: 115,
+	tabWidth:135,
+	enableTabScroll:true,
+	width:680,
+	height:350,
+	defaults: {autoScroll:true},
+	activeTab: 0,
+	frame: true,
+	layoutOnTabChange:true,
+	items:[
+//	{
+//		 id:'ittcb'
+//		,layout:'fit'
+//		,title:'Berita'
+//	},
+	{
+		 id:'ittcp'
+		,layout:'fit'
+		,title:'Indexing'
+	}
+	]
+});
+
+Ext.getCmp('dialog_indexing').add(indexingTab);
+Ext.getCmp('dialog_indexing').doLayout();
+
+
+// --- grid Peraturan ---
+
+dsTempIndex = new Ext.data.GroupingStore({
+	proxy: new Ext.data.HttpProxy({
+		url: './services/catalog/indexing-temp'
+	}),	
+	reader: new Ext.data.JsonReader({
+		root: 'index',
+		totalProperty: 'totalCount',
+		id: 'guid'
+	}, [
+		 {name:'guid'}
+		,{name:'catalogGuid'}
+		,{name:'title'}
+		,{name:'status'}
+		,{name:'createdDate'}
+	]),
+	remoteSort: true
+});
+	
+// custom RowNumberer for use with paging GridPanels
+Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+  renderer : function(v, p, record, rowIndex, colIndex, store){
+    if (this.rowspan) {
+      p.cellAttr = 'rowspan="' + this.rowspan + '"';
+    }
+
+    var so = store.lastOptions;
+    var sop = so? so.params : null;
+    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+  }
+});
+
+var xg = Ext.grid;
+var sm = new xg.CheckboxSelectionModel();
+var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+var cm = new xg.ColumnModel
+([
+	sm,
+	pg,
+	{header:'Title',dataIndex:'title',width:650,sortable:true},
+	{header: "Status",dataIndex: 'status',width: 50,sortable: true},
+	{header: "Tanggal",dataIndex: 'createdDate',width: 130,sortable: true}
+]);
+	
+var paging = new Ext.ux.PagingToolbar({
+	pageSize: 25,
+	store: dsTempIndex,
+	displayInfo: true,
+	displayMsg: 'Displaying topics {0} - {1} of {2}',
+	emptyMsg: "No data to display",
+	items:[
+		'-', {
+			pressed: false,
+			enableToggle: true,
+	    	icon: './js/extjs/resources/images/default/silk/icons/page_white_magnify.png',
+			cls: 'x-btn-icon',
+			tooltip: 'Show preview',
+			toggleHandler: toggleDetails
+		}
+	]	
+});
+	
+var gridTempIndex = new xg.EditorGridPanel({
+	id:'gridTempIndex',
+	iconCls:'indexing',
+    ds: dsTempIndex,
+    cm: cm,
+    sm: sm,
+    bbar: paging,
+//    plugins: [ 
+//    	new Ext.ux.grid.Search({
+//    		 iconCls: 'find'
+//    	})
+//    ],
+    tbar: [{
+    	text: 'Delete',
+    	icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png',
+    	cls: 'x-btn-text-icon',
+    	tooltip: 'Click to delete selected rows',
+    	handler: function(){
+    		var selectedKeys = gridTempIndex.selModel.selections.keys;
+    		if (selectedKeys.length > 0)
+    		{
+    			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',deleteRecordTempIndex);
+    		}
+    		else
+    		{
+    			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+    		}
+    	}
+    }, {
+    	text: 'Refresh',
+    	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+    	cls: 'x-btn-text-icon',
+    	tooltip: 'Click to Refresh the table',
+    	handler: function(){ dsTempIndex.reload(); }
+    },'-',{
+    	text:'Indexing Catalog',
+    	icon: './js/extjs/resources/images/default/silk/icons/cog.png',
+    	cls:'x-btn-text-icon',
+    	tooltip:'Click to index catalog',
+    	handler:function(){
+    		var selectedKeys = gridTempIndex.selModel.selections.keys;
+    		if (selectedKeys.length > 0)
+    		{
+    			var selections = gridTempIndex.selModel.getSelections();
+    			for(i = 0; i< gridTempIndex.selModel.getCount(); i++){
+    				var conn = new Ext.data.Connection();
+    				conn.on('beforerequest', function() {
+    					Ext.MessageBox.wait('Indexing catalog [' + selections[i].json.title + ']');
+    				});
+					conn.request({
+	    				url: './admin/widgets_indexing/indexing-catalog/format/json',
+	    				params:{
+	    					 catalogGuid: selections[i].json.catalogGuid
+	    					 ,guid: selections[i].json.guid
+	    				},
+	    				callback:function(options, success, response){
+						    if (success) {
+						    	json = Ext.decode( response.responseText );
+						    	if ( json.success ) {
+						    		dsTempIndex.reload(); 
+						    	} else {
+						    		if (json.error.message) {
+						    			Ext.Msg.alert( 'Failure', json.error.message );
+						    		}
+						    		else
+						    		{
+						    			Ext.Msg.alert( 'Failure', json.error );
+						    		}
+						    	}
+						    } else {
+						    	Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+						    }
+	    				}
+					});
+					conn.on('requestcomplete', function() {
+						Ext.MessageBox.hide();
+					});
+    			}
+    		}
+    		else
+    		{
+    			Ext.MessageBox.alert('Oops ...','Please select at least one item');
+//    			Ext.MessageBox.show({
+//    				 title:'Indexing'
+//    				,msg:'Indexing all temporary catalog?'
+//    				,buttons: Ext.MessageBox.YESNO
+//    				,icon: Ext.MessageBox.QUESTION
+//    				,fn: function(btn) {
+//    					if (btn=="yes") {
+//    						Ext.Ajax.request({
+//    							 url:'./admin/widgets_indexing/index-temp-all/format/json'
+//    							,params:{ profile:'peraturan' }
+//    							,callback: function(options, success, response ) {
+//    								if( success ) {
+//    									var result = Ext.decode( response.responseText );
+//    									if (result.success == true) {
+//    										dsTempIndex.reload();
+//    									}
+//    									else
+//    									{
+//								    		if (result.error.message) {
+//								    			Ext.Msg.alert( 'Failure', result.error.message );
+//								    		}
+//								    		else
+//								    		{
+//								    			Ext.Msg.alert( 'Failure', result.error );
+//								    		}
+//    										
+//    									}
+//    								}
+//    								else
+//    								{
+//    									Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+//    								}
+//    							}
+//    						});
+//    					}
+//    					else
+//    					{
+//    						dsTempIndex.reload();
+//    					}
+//    				}
+//    			});
+    		}
+    	}
+    },{
+    	text:'Indexing All Catalog',
+    	icon: './js/extjs/resources/images/default/silk/icons/cog.png',
+    	cls:'x-btn-text-icon',
+    	tooltip:'Click to index catalog',
+    	handler:function(){
+   			Ext.MessageBox.show({
+   				 title:'Indexing'
+   				,msg:'Indexing all catalog may take some time, are you sure ?'
+   				,buttons: Ext.MessageBox.YESNO
+   				,icon: Ext.MessageBox.QUESTION
+   				,fn: function(btn) {
+   					if (btn=="yes") {
+   						Ext.Ajax.request({
+   							 url:'./admin/widgets_indexing/cekstatus/format/json'
+   							,callback:function(options, success, response) {
+   								if (success) {
+   									var result = Ext.decode( response.responseText );
+   									if (result.success == true)
+   									{
+   										Ext.MessageBox.show({
+   											 title:'Confirm'
+   											,msg:'In order indexing to run properly, change website status into Offline.'
+   											,buttons:Ext.MessageBox.YESNO
+   											,icon:Ext.MessageBox.QUESTION
+   											,fn:function(btn) {
+   												Ext.Ajax.request({
+   													 url:'./admin/widgets_indexing/change-status/format/json'
+   													,params:{status:'offline'}
+   													,callback:function(options,success,response)
+   													{
+   														if (success)
+   														{
+   															var result = Ext.decode( response.responseText );
+   															if (result.success == true)
+   															{
+																ext_get_iframe("../../cron/indexing.php",600,500,'dialog_indexing_all','Indexing Catalog');
+//   																Ext.Ajax.on('beforerequest',function(){
+//   																	Ext.MessageBox.show({
+//   																		msg:'Indexing peraturan, please wait...',
+//   																		progressText:'Indexing',
+//   																		width:300,
+//   																		wait:true,
+//   																		waitConfig:{interval:200},
+//   																		icon:'ext-mb-download'
+//   																	});
+//   																		
+//   																});
+//   																Ext.Ajax.request({
+//   																	 url:'./admin/widgets_indexing/index-all/format/json'
+//   																	,params:{profile:'peraturan'}
+//   																	,callback:function(options,success,response)
+//   																	{
+//   																		if (success)
+//   																		{
+//   																			var result = Ext.decode( response.responseText );
+//   																			if (result.success == true)
+//   																			{
+//   																				dsTempIndex.reload();
+//   																			}
+//   																			else
+//   																			{
+//   																				Ext.Msg.alert('Status','Indexing peraturan failed!!');
+//   																			}
+//   																		}
+//   																	}
+//   																});
+//   																Ext.Ajax.on('requestcomplete',function(){
+//   																	Ext.MessageBox.hide();
+//   																});
+   															}
+   															else
+   															{
+   																Ext.MessageBox.show({title:'Failure',msg:'Change status website failed!!',buttons:Ext.MessageBox.OK,icon:Ext.MessageBox.ERROR});
+   															}
+   														}
+   													}
+   												});
+   											}
+   										});
+   									}
+   									else
+   									{
+   										ext_get_iframe("../../cron/indexing.php",600,500,'dialog_indexing_all','Indexing Catalog');
+//   																Ext.Ajax.on('beforerequest',function(){
+//   																	Ext.MessageBox.wait('Please Wait...', 'Indexing...',{text:'Indexing peraturan...'});
+//   																});
+//   																Ext.Ajax.request({
+//   																	 url:'./admin/widgets_indexing/index-all/format/json'
+//   																	,params:{profile:'peraturan'}
+//   																	,timeout: 360000
+//   																	,disableCaching : true
+//   																	,success:function(response,options) {
+//   																		var result = Ext.util.JSON.decode(response.responseText);
+//   																		if (result.success == true)
+//   																		{
+//   																			window.location.reload();
+//   																		}
+//   																		window.location.reload();
+//   																	}
+//   																	,failure:function(response,options) {
+//   																		Ext.MessageBox.show({
+//   																			title:'Notification'
+//   																			,msg:'Indexing failed!!'
+//   																			,buttons:Ext.MessageBox.OK
+//   																			,icon:Ext.MessageBox.ERROR
+//   																			,fn:function(){
+//   																				window.location.reload();
+//   																			}
+//   																		});
+//   																	}
+//   																	,scope:this
+//   																});
+//   																Ext.Ajax.on('requestcomplete',function(){
+//   																	Ext.MessageBox.hide();
+//   																});
+   										
+   									}
+   								}
+   							}
+   						});
+   					}
+   				}
+   			});
+    	}
+    }
+    ],
+    selModel: new xg.RowSelectionModel({singleSelect:false}),
+    enableColLock:false,
+    enableDragDrop: true,
+    stripeRows: true,
+    ddGroup: 'GridDD', 
+    loadMask: true,
+    layout:'fit',
+    forceFit:'fit'
+});
+
+// render it	    
+Ext.getCmp('ittcp').add(gridTempIndex);
+Ext.getCmp('ittcp').doLayout();
+ 	
+dsTempIndex.load({params:{start:0, limit:25}});
+    
+function toggleDetails(btn, pressed){
+    gridTempIndex.getView().refresh();
+}
+
+/**
+ * Function for Deleting record(s)
+ * @param { Object } btn
+ */
+function deleteRecordTempIndex(btn) {
+	if (btn=='yes')
+	{
+		var selections = gridTempIndex.selModel.getSelections();
+		for(i = 0; i< gridTempIndex.selModel.getCount(); i++){
+			var conn = new Ext.data.Connection();
+			conn.on('beforerequest', function() {
+				Ext.MessageBox.wait('Delete temporary index [' + selections[i].json.title + ']');
+			});
+			conn.request({
+				url: './admin/widgets_indexing/delete/format/json',
+				params: {
+					guid: selections[i].json.guid
+				},
+                failure:function(response,options){
+                	Ext.MessageBox.alert('Warning','Oops...');
+               	},                                      
+                success:function(response,options){
+					var responseData = Ext.util.JSON.decode(response.responseText);
+					if (responseData.success == true)
+					{
+						info('success', responseData.message);
+					} else {
+						info('Error', responseData.message);
+					}
+                    dsTempIndex.reload();
+               	}                                      				
+			});
+			conn.on('requestcomplete', function() {
+				Ext.MessageBox.hide();
+			});
+		}
+	}
+}
+
+// --- End of Peraturan ---
+
+
+// --- grid Berita
+
+//dsTempIndexNews = new Ext.data.GroupingStore({
+//	proxy: new Ext.data.HttpProxy({
+//		url: '../../app/services/json/catalog/indexing-temp/profileGuid/berita'
+//	}),	
+//	reader: new Ext.data.JsonReader({
+//		root: 'index',
+//		totalProperty: 'totalCount',
+//		id: 'guid'
+//	}, [
+//		 {name:'guid'}
+//		,{name:'catalogGuid'}
+//		,{name:'title'}
+//		,{name:'status'}
+//		,{name:'createdDate'}
+//	]),
+//	remoteSort: true
+//});
+//	
+//// custom RowNumberer for use with paging GridPanels
+//Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+//  renderer : function(v, p, record, rowIndex, colIndex, store){
+//    if (this.rowspan) {
+//      p.cellAttr = 'rowspan="' + this.rowspan + '"';
+//    }
+//
+//    var so = store.lastOptions;
+//    var sop = so? so.params : null;
+//    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+//  }
+//});
+//
+//var xgn = Ext.grid;
+//var smn = new xgn.CheckboxSelectionModel();
+//var pgn = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+//var cmn = new xgn.ColumnModel
+//([
+//	smn,
+//	pgn,
+//	{header:'Title',dataIndex:'title',width:450,sortable:true},
+//	{header: "Status",dataIndex: 'status',width: 50,sortable: true},
+//	{header: "Tanggal",dataIndex: 'createdDate',width: 130,sortable: true}
+//]);
+//	
+//var pagingNews = new Ext.ux.PagingToolbar({
+//	pageSize: 25,
+//	store: dsTempIndexNews,
+//	displayInfo: true,
+//	displayMsg: 'Displaying topics {0} - {1} of {2}',
+//	emptyMsg: "No data to display",
+//	items:[
+//		'-', {
+//			pressed: false,
+//			enableToggle: true,
+//	    	icon: './js/extjs/resources/images/default/silk/icons/page_white_magnify.png',
+//			cls: 'x-btn-icon',
+//			tooltip: 'Show preview',
+//			toggleHandler: toggleDetailsNews
+//		}
+//	]	
+//});
+//	
+//var gridTempIndexNews = new xgn.EditorGridPanel({
+//	id:'gridTempIndexNews',
+//	title:'Indexing Berita',
+//	iconCls:'indexing',
+//    ds: dsTempIndexNews,
+//    cm: cmn,
+//    sm: smn,
+//    bbar: pagingNews,
+//    plugins: [ 
+//    	new Ext.ux.grid.Search({
+//    		 iconCls: 'find'
+//    	})
+//    ],
+//    tbar: [{
+//    	text: 'Delete',
+//    	icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png',
+//    	cls: 'x-btn-text-icon',
+//    	tooltip: 'Click to delete selected rows',
+//    	handler: function(){
+//    		var selectedKeys = gridTempIndexNews.selModel.selections.keys;
+//    		if (selectedKeys.length > 0)
+//    		{
+//    			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',deleteRecordTempIndexNews);
+//    		}
+//    		else
+//    		{
+//    			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+//    		}
+//    	}
+//    }, {
+//    	text: 'Refresh',
+//    	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+//    	cls: 'x-btn-text-icon',
+//    	tooltip: 'Click to Refresh the table',
+//    	handler: function(){ dsTempIndexNews.reload(); }
+//    },'-',{
+//    	text:'Indexing Catalog Article',
+//    	icon: './js/extjs/resources/images/default/silk/icons/cog.png',
+//    	cls:'x-btn-text-icon',
+//    	tooltip:'Click to index catalog',
+//    	handler:function(){
+//    		var selectedKeys = gridTempIndexNews.selModel.selections.keys;
+//    		if (selectedKeys.length > 0)
+//    		{
+//    			var selections = gridTempIndexNews.selModel.getSelections();
+//    			for(i = 0; i< gridTempIndexNews.selModel.getCount(); i++){
+//    				var conn = new Ext.data.Connection();
+//    				conn.on('beforerequest', function() {
+//    					Ext.MessageBox.wait('Indexing catalog [' + selections[i].json.title + ']');
+//    				});
+//					conn.request({
+//	    				url: './admin/widgets_indexing/indexing-catalog/format/json',
+//	    				params:{
+//	    					 guid: selections[i].json.guid
+//	    					,profile:'berita'
+//	    				},
+//	    				callback:function(options, success, response){
+//						    if (success) {
+//						    	json = Ext.decode( response.responseText );
+//						    	if ( json.success ) {
+//						    		dsTempIndexNews.reload(); 
+//						    	} else {
+//						    		if (json.error.message) {
+//						    			Ext.Msg.alert( 'Failure', json.error.message );
+//						    		}
+//						    		else
+//						    		{
+//						    			Ext.Msg.alert( 'Failure', json.error );
+//						    		}
+//						    	}
+//						    } else {
+//						    	Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+//						    }
+//	    				}
+//					});
+//					conn.on('requestcomplete', function() {
+//						Ext.MessageBox.hide();
+//					});
+//    			}
+//    		}
+//    		else
+//    		{
+//    			Ext.MessageBox.alert('Oops ...','Please select at least one item');
+////    			Ext.MessageBox.show({
+////    				 title:'Indexing'
+////    				,msg:'Indexing all temporary catalog?'
+////    				,buttons: Ext.MessageBox.YESNO
+////    				,icon: Ext.MessageBox.QUESTION
+////    				,fn: function(btn) {
+////    					if (btn=="yes") {
+////    						Ext.Ajax.request({
+////    							 url:'./admin/widgets_indexing/index-temp-all/format/json'
+////    							,params:{ profile:'berita' }
+////    							,callback: function(options, success, response ) {
+////    								if( success ) {
+////    									var result = Ext.decode( response.responseText );
+////    									if (result.success == true) {
+////    										dsTempIndexNews.reload();
+////    									}
+////    									else
+////    									{
+////								    		if (result.error.message) {
+////								    			Ext.Msg.alert( 'Failure', result.error.message );
+////								    		}
+////								    		else
+////								    		{
+////								    			Ext.Msg.alert( 'Failure', result.error );
+////								    		}
+////    										
+////    									}
+////    								}
+////    								else
+////    								{
+////    									Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+////    								}
+////    							}
+////    						});
+////    					}
+////    					else
+////    					{
+////    						dsTempIndexNews.reload();
+////    					}
+////    				}
+////    			});
+//    		}
+//    	}
+//    },{
+//    	text:'Indexing All Catalog Article',
+//    	icon: './js/extjs/resources/images/default/silk/icons/cog.png',
+//    	cls:'x-btn-text-icon',
+//    	tooltip:'Click to index catalog',
+//    	handler:function(){
+//   			Ext.MessageBox.show({
+//   				 title:'Indexing'
+//   				,msg:'Indexing all catalog peraturan may take some time, are you sure ?'
+//   				,buttons: Ext.MessageBox.YESNO
+//   				,icon: Ext.MessageBox.QUESTION
+//   				,fn: function(btn) {
+//   					if (btn=="yes") {
+//   						Ext.Ajax.request({
+//   							 url:'./admin/widgets_indexing/cekstatus/format/json'
+//   							,callback:function(options, success, response) {
+//   								if (success) {
+//   									var result = Ext.decode( response.responseText );
+//   									if (result.success == true)
+//   									{
+//   										Ext.MessageBox.show({
+//   											 title:'Confirm'
+//   											,msg:'In order indexing to run properly, change website status into Offline.'
+//   											,buttons:Ext.MessageBox.YESNO
+//   											,icon:Ext.MessageBox.QUESTION
+//   											,fn:function(btn) {
+//   												Ext.Ajax.request({
+//   													 url:'./admin/widgets_indexing/change-status/format/json'
+//   													,params:{status:'offline'}
+//   													,callback:function(options,success,response)
+//   													{
+//   														if (success)
+//   														{
+//   															var result = Ext.decode( response.responseText );
+//   															if (result.success == true)
+//   															{
+//   																ext_get_iframe("../../cron/indexing.php?m=berita",600,500,'dialog_indexing_all','Indexing Article');
+////   																Ext.Ajax.on('beforerequest',function(){
+////   																	Ext.MessageBox.show({
+////   																		msg:'Indexing peraturan, please wait...',
+////   																		progressText:'Indexing',
+////   																		icon:'ext-mb-download'
+////   																	});
+////   																		
+////   																});
+////   																Ext.Ajax.request({
+////   																	 url:'./admin/widgets_indexing/index-all/format/json'
+////   																	,params:{profile:'berita'}
+////   																	,callback:function(options,success,response)
+////   																	{
+////   																		if (success)
+////   																		{
+////   																			var result = Ext.decode( response.responseText );
+////   																			if (result.success == true)
+////   																			{
+////   																				dsTempIndexNews.reload();
+////   																			}
+////   																			else
+////   																			{
+////   																				Ext.Msg.alert('Status','Indexing article failed!!');
+////   																			}
+////   																		}
+////   																	}
+////   																});
+////   																Ext.Ajax.on('requestcomplete',function(){
+////   																	Ext.MessageBox.hide();
+////   																});
+//   															}
+//   															else
+//   															{
+//   																Ext.MessageBox.show({title:'Failure',msg:'Change status website failed!!',buttons:Ext.MessageBox.OK,icon:Ext.MessageBox.ERROR});
+//   															}
+//   														}
+//   													}
+//   												});
+//   											}
+//   										});
+//   									}
+//   									else
+//   									{
+//   										ext_get_iframe("../../cron/indexing.php?m=berita",600,500,'dialog_indexing_all','Indexing Article');
+//   									}
+//   								}
+//   							}
+//   						});
+//   					}
+//   				}
+//   			});
+//    	}
+//    }
+//    ],
+//    selModel: new xgn.RowSelectionModel({singleSelect:false}),
+//    enableColLock:false,
+//    enableDragDrop: true,
+//    stripeRows: true,
+//    ddGroup: 'GridDD', 
+//    loadMask: true,
+//    layout:'fit',
+//    forceFit:'fit'
+//});
+//
+//// render it	    
+//Ext.getCmp('ittcb').add(gridTempIndexNews);
+//Ext.getCmp('ittcb').doLayout();
+// 	
+//dsTempIndexNews.load({params:{start:0, limit:25}});
+//    
+//function toggleDetailsNews(btn, pressed){
+//    gridTempIndexNews.getView().refresh();
+//}
+//
+///**
+// * Function for Deleting record(s)
+// * @param { Object } btn
+// */
+//function deleteRecordTempIndexNews(btn) {
+//	if (btn=='yes')
+//	{
+//		var selections = gridTempIndexNews.selModel.getSelections();
+//		for(i = 0; i< gridTempIndexNews.selModel.getCount(); i++){
+//			var conn = new Ext.data.Connection();
+//			conn.on('beforerequest', function() {
+//				Ext.MessageBox.wait('Delete temporary index [' + selections[i].json.title + ']');
+//			});
+//			conn.request({
+//				url: './admin/widgets_indexing/delete/format/json',
+//				params: {
+//					guid: selections[i].json.guid
+//				},
+//                failure:function(response,options){
+//                	Ext.MessageBox.alert('Warning','Oops...');
+//               	},                                      
+//                success:function(response,options){
+//					var responseData = Ext.util.JSON.decode(response.responseText);
+//					if (responseData.success == true)
+//					{
+//						Ext.example.msg('success', responseData.message);
+//					} else {
+//						Ext.example.msg('Error', responseData.message);
+//					}
+//                    dsTempIndexNews.reload();
+//               	}                                      				
+//			});
+//			conn.on('requestcomplete', function() {
+//				Ext.MessageBox.hide();
+//			});
+//		}
+//	}
+//}
+
+// --- End of berita
+
+</script>

@@ -1,0 +1,65 @@
+<?php 
+try {
+$guid = $this->generateGuid();
+?>
+<div id="catab" style="width:785;">
+	<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+	<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+	<div id="<?=$guid;?>extTab">
+		<div id="<?=$guid;?>detail" class="x-hide-display"><?=$this->action('viewer','widgets_catalog','admin',array('guid'=>$this->catalogGuid)); ?></div>
+		<div id="<?=$guid;?>download" class="x-hide-display"><?=$this->action('document','widgets_relation','admin',array('guid'=>$this->catalogGuid)); ?></div>
+		<div id="<?=$guid;?>location" class="x-hide-display"><?=$this->action('viewfolder','widgets_relation','admin',array('guid'=>$this->catalogGuid)); ?></div>
+		<div id="<?=$guid;?>legalbasis" class="x-hide-display"><?=$this->action('viewdasarhukum','widgets_relation','admin',array('guid'=>$this->catalogGuid,'folderGuid'=>$this->folderGuid)); ?></div>
+		<div id="<?=$guid;?>implementingregulation" class="x-hide-display"><?=$this->action('peraturanpelaksana','widgets_relation','admin',array('guid'=>$this->catalogGuid,'folderGuid'=>$this->folderGuid)); ?></div>
+		<div id="<?=$guid;?>history" class="x-hide-display"><?=$this->action('viewhistory','widgets_relation','admin',array('guid'=>$this->catalogGuid)); ?></div>
+		<div id="<?=$guid;?>other" class="x-hide-display"><?=$this->action('viewother','widgets_relation','admin',array('guid'=>$this->catalogGuid)); ?></div>
+	</div>
+	</div></div></div>
+	<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+<?php 
+}
+catch (Exception $e)
+{
+	throw new Zend_Exception($e->getMessage());
+}
+?>
+<script type="text/javascript">
+var viewer = new Ext.TabPanel({
+	renderTo: '<?=$guid;?>extTab',
+	minTabWidth: 115,
+	tabWidth:135,
+	enableTabScroll:true,
+	width:750,
+	height:450,
+	defaults: {autoScroll:true},
+	activeTab: 0,
+	frame: true,
+	layoutOnTabChange:true,
+	items: [{
+		contentEl:'<?=$guid;?>detail', 
+		title: 'Detail'
+	},{
+		contentEl:'<?=$guid;?>download', 
+		id:'downloaddocument',
+		layout:'fit',
+		title:'Download Dokumen'
+	},{
+		contentEl:'<?=$guid;?>location', 
+		title:'Lokasi'
+	},{
+		contentEl:'<?=$guid;?>legalbasis', 
+		title:'Dasar Hukum'
+	},{
+		contentEl:'<?=$guid;?>implementingregulation', 
+		title:'Peraturan Pelaksana'
+	},{
+		contentEl:'<?=$guid;?>history', 
+		title:'Sejarah'
+	},{
+		contentEl:'<?=$guid;?>other', 
+		title:'Relasi'
+	}
+	]
+});
+</script>

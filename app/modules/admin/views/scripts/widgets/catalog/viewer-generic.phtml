@@ -1,0 +1,42 @@
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<div style="padding:5px;">
+				<div style="padding-top:10px"></div>
+				<strong><div style="font-size:120%;display:inline;"><?=$this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value;?></div></strong>
+				<div style="padding-top:20px"></div>
+				<table>
+				<?php foreach ($this->aAttribute as $row) { ?>
+				
+				<?php if ((!in_array($row['value'],array('no-info','-','in',''))) && (!in_array($row['name'],array('Billing')))) { ?>
+				<tr valign="top">
+					<?php 
+					if ($this->profileGuid == "kutu_putusan") { 
+						if (($row['name'] == "Title") || ($row['name'] == "Sub Title"))	{
+					?>
+					<td width="200"><strong><div style="color:#2F2F2F;font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;display:inline"></div></strong><div style="padding-top:5px"></div></td>
+					<?php } else { ?>
+					<td width="200"><strong><div style="color:#2F2F2F;font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;display:inline"><?=$row['name'];?></div></strong><div style="padding-top:5px"></div></td>
+					<?php }} else { ?>
+					<td width="200"><strong><div style="color:#2F2F2F;font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;display:inline"><?=$row['name'];?></div></strong><div style="padding-top:5px"></div></td>
+					<?php } ?>
+					<td width="10">&nbsp;</td>
+					<?php if (in_array($row['name'],array('Date','Tanggal Dibacakan','Tanggal berlaku'))) { ?>
+					<td style="font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;"><?=strftime("%d %B %Y",strtotime($row['value']));?></td>
+					<!-- get title from profile klinik -->
+					<?php } else if (in_array($row['name'],array('Name','Kategori Klinik','Mitra'))) { ?>
+					<td style="font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;"><?=$this->getCatalogTitle($row['value']);?></td>
+					<?php } else { ?>
+					<td style="font-size: 11px;font-family: verdana,arial,helvetica,sans-serif;"><?=$row['value'];?></td>
+					<?php } ?>
+				</tr>
+				<?php }} ?>
+				</table>
+				<div style="padding-bottom:10px"></div>
+			</div>
+		</td>
+	</tr>
+</table>

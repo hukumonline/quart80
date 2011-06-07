@@ -1,0 +1,42 @@
+<div id="wrapper">
+	<div id="content">
+		<div id="cetak">
+		<a href="#" onClick="javascript:window.print()"><img src="<?=$this->baseUrl();?>/resources/images/printer-blue.gif" alt="print" border="0"> cetak dokumen</a>
+		</div>
+		<div class="logo">
+		<img src="<?=$this->baseUrl();?>/resources/images/logo_hukumonline.jpg" width="151" height="65" />
+		</div>
+		<div class="clear"></div>
+		<div class="kotakisi">
+			<h2><?=$this->title; ?></h2>
+			<div class="tanggalterbit"><?=$this->date; ?></div>
+			<?php if ($this->description) { ?><div class="description"><?=$this->description; ?></div><?php }
+			$sDir = 'uploads/images';
+			$thumb = "";
+			$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+			$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->catalogGuid,'RELATED_IMAGE');
+			$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+			
+			if ($thumb == "") 
+				$screenshot = ""; 
+			else 
+				$screenshot = "<img src=\"".ROOT_URL.'/'.$thumb."\" />";
+			
+			?>
+			<?php if ($thumb == "") { $screenshot = ""; } else { ?>
+		    <div class="image"><?php echo $screenshot; ?><br><span class="fname"><?php echo $this->getFotoAttributeName($rowsetRelatedItem->itemGuid); ?></span></div>
+		    <?php } ?>
+			<p><?php echo Pandamp_Lib_Formater::_cleanMsWordHtml($this->content); ?></p>
+		</div>
+		<div id=footer><a href="<?=$this->getRootUrl();?>"><strong><?=$this->getRootUrl();?></strong></a> <br>
+			<a href="<?=$this->getRootUrl();?>/berita/baca/<?=$this->catalogGuid ?>/<?=$this->shortTitle?>"><?=$this->getRootUrl();?>/berita/baca/<?=$this->catalogGuid ?>/<?=$this->shortTitle?></a>  <br>
+		  	Dipublikasikan : <?=$this->date; ?><br>
+		  	Penulis : <?=$this->author; ?>
+		  	<br>
+		  	&copy; hukumonline.com
+		</div>
+	</div>
+</div>

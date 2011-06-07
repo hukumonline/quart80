@@ -1,0 +1,46 @@
+<div class="td_peraturan4">
+	<div class="judulnaik1">
+		<h1>Kolom</h1>
+	</div>
+	<div class="bor"></div>
+	<table>
+	<?php if ($this->numberOfRows == 0) { ?>
+	<tr>
+		<td>Kolom kosong</td>
+	</tr>
+	<?php } for ($i = 0; $i < $this->rows; $i++) { ?>
+	<tr>
+	<?php for ($j = 0; $j < $this->columns; $j++) { ?>
+	   	<td>
+	   	<div class="kotakisi">
+		<?php
+		//$sDir = 'uploads/images';
+		$sDir = $this->getRemoteImageUrl();
+		$thumb = "";
+		
+		$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+		$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->data[$i + ($j * $this->rows)][4],'RELATED_IMAGE');
+		$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+		
+		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".jpg"; 	}
+		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".gif"; 	}
+		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".png")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".png"; 	}
+		
+		$screenshot = "<img src=\"".$thumb."\" vspace=\"0\" width=\"40\" border=\"0\" height=\"40\" hspace=\"0\" align=\"left\" />";
+		
+		?>
+		
+		<? if (!empty($thumb)) : ?>
+	    <div class="imagebuku"><?=$screenshot; ?></div>
+	    <? endif; ?>
+		<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i + ($j * $this->rows)][4]; ?>/<?=$this->data[$i + ($j * $this->rows)][5]; ?>"><?=$this->data[$i + ($j * $this->rows)][0]; ?></a></h2>
+		<div class="author"><?=$this->data[$i + ($j * $this->rows)][1]; ?></div>	
+	   	<p><?=Pandamp_Lib_Formater::string_limit_words($this->data[$i + ($j * $this->rows)][2],10); ?></p>
+	   	<div class="bb"><img src="resources/images/comment.jpg" width="13" height="9" /><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i + ($j * $this->rows)][4]; ?>/<?=$this->data[$i + ($j * $this->rows)][5]; ?>#comments"> <?=$this->data[$i + ($j * $this->rows)][3]; ?> tanggapan </a> |<a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i + ($j * $this->rows)][4]; ?>/<?=$this->data[$i + ($j * $this->rows)][5]; ?>"> Selengkapnya </a></div>
+	   	</div>
+	   	</td>
+	<?php } ?>   	
+	</tr>
+	<?php } ?>
+	</table>
+</div>

@@ -1,0 +1,72 @@
+@CHARSET "ISO-8859-1";
+body {
+	font-family:Arial, Helvetica, sans-serif;
+  background: white;
+  font-size: 11pt;
+}
+#wrapper, #content {
+  width: auto;
+  margin: 0 2%;
+  padding: 0;
+  border: 0;
+  float: none !important;
+  color: black;
+  background: transparent none;
+}
+div#content {
+   margin-left: 3%;
+   padding-top: 1em;
+   border-top: 1px solid #930;
+	border-bottom:3px solid #FFD700;
+   }
+div.logo {
+  width: 100%;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #999999;
+	float:left;
+}
+.clear {clear:both;}
+a:link, a:visited {
+   color: #520;
+   background: transparent;
+   font-weight: bold;
+   text-decoration: underline;
+}
+div#cetak {font-size:10pt; float:right; margin-bottom:2%;}
+.kotakisi{padding:5px;}
+.kotakisi h2{
+	font-size:1em;
+	text-align:left;
+	font-weight: bold;
+	color: #004276;
+}
+.kotakisi .tanggalterbit{
+	font-family: arial,helvetica,sans-serif;
+	color: #808080;
+	font-size: 0.625em;
+	padding-top:1px;
+	padding-bottom:5px;
+}
+.kotakisi .description{
+	color: #333333; 
+	font-size: 0.715em; 
+	line-height: 16px;	
+	padding-bottom: 10px; 
+	font-style:italic;
+}
+.kotakisi p{
+	font-size: 0.885em;
+	line-height: 1.5em;
+	padding-top:5px;
+}
+#footer {
+	margin: 0 auto;
+	padding: 8px;
+	font-size:11px;
+	font-weight:normal;
+	color:#666666;
+	background:#eeeeee;
+	margin-top:40px;
+	border-top: 1px solid #cccccc;
+}
+#footer a { color:#000000; text-decoration:none }

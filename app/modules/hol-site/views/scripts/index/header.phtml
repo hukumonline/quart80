@@ -1,0 +1,73 @@
+<div class="unit">
+	<div class="container">
+		<div class="unit horizontal-center layout on-2 columns">
+			<div class="column">
+			<a href="<?php echo $this->getRootUrl(); ?>"><img src="<?php echo $this->baseUrl();?>/resources/images/logo_hukumonline.jpg" width="151" height="65" /></a>
+			</div>
+			<div class="column">
+				<div class="container" style="text-align:right;padding-top:5px;padding-right:5px;">
+					<?php
+					$auth = Zend_Auth::getInstance(); 
+					if($auth->hasIdentity()) : ?>
+						<div class="headerMenu" style="text-align:right">
+							<span style="color:#7079A8;"><?=$auth->getIdentity()->username; ?></span> &nbsp;|&nbsp; <a href="<?=$this->profile;?>">Profile</a> &nbsp;|&nbsp; <a href="<?php echo $this->logoutUrl;?>">logout</a>
+						</div>
+					<?php else : ?>
+						<div class="headerMenu" style="text-align:right">
+							<a href="<?php echo $this->loginUrl;?>">Masuk</a> &nbsp;|&nbsp; <a href="<?php echo $this->signUp;?>">Daftar</a>
+						</div>
+					<?php endif; ?>
+				</div>
+				<div class="container" style="text-align:right;padding-top:10px;padding-right:5px;">
+					<div class="headerMenu" style="text-align:right">
+						<a href="<?=$this->baseUrl();?>/tentangkami">Tentang Kami</a> &nbsp;|&nbsp; <a href="<?=$this->baseUrl();?>/produk">Produk dan Jasa</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="unit horizontal-center layout on-1 columns">
+			<div class="column">
+				<div id="header-local-nav">
+					<ul id="navigationlist">
+						<li><a href="<?php echo $this->getRootUrl(); ?>/karir" title="karir"><font color="red">Karir</font></a></li>
+						<li><a href="http://en.hukumonline.com" title="Hukumonline dalam Bahasa Inggris">English Version!</a></li>
+						<li><a href="http://hukumpedia.com" title="Hukumpedia">Hukumpedia</a></li>
+						<li><a href="<?php echo $this->getRootUrl(); ?>/talks" title="talks">Talks</a></li>
+						<li><a href="<?php echo $this->getRootUrl(); ?>/klinik" title="Klinik">Klinik</a></li>
+						<li><a href="<?php echo $this->getRootUrl(); ?>/pusatdata" title="Pusat Data">Peraturan</a></li>
+						<li><a href="<?php echo $this->getRootUrl(); ?>/warta" title="Warta">Berita</a></li>
+						<li><a href="<?php echo $this->getRootUrl(); ?>" title="Awal">Awal</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="unit horizontal-center layout on-2 columns">
+			<div class="fixed column" style="width:620px;">
+				<div class="container dmsAtasTicker">
+					<div class="akiriticker">
+					<?php echo $this->action('ticker','index','hol-site'); ?>
+					</div>
+				</div>
+			</div>
+			<div class="fixed column" style="width:340px;">
+				<div class="container atassearch">
+					<form id="searchForm" method="POST" action="<?=$this->baseUrl();?>/warta/cari">
+					<input name="cari" type="text" class="loginform" value="<?=$this->layout()->searchQuery;?>" />
+					<select name="a" class="loginform" id="a">
+						<option>--- Pilih ---</option>
+			            <option value="artikel">Artikel</option>
+			            <option value="klinik">Klinik</option>
+			            <option value="peraturan">Peraturan</option>
+			       	</select>
+			        <input value="Cari" class="loginform" type="submit" style="width:55px;" />
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$("#a").val('<?=$this->layout()->categorySearchQuery; ?>');
+</script>

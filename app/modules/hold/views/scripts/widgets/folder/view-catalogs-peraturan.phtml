@@ -1,0 +1,96 @@
+<?php if ($this->aData['totalCount'] != 0) { ?>
+<table>
+	<tr>
+		<td style="color: #003366;font-size: 12px;">Jumlah data yang ditemukan dalam kategori ini : <?=$this->aData['totalCountRows'];?> (<?=$this->time; ?>)</td>
+	</tr>
+</table>
+<div id='catalogContent'></div><br>
+<table>
+	<tr>
+		<td width=25%>&nbsp;</td>
+		<td align="center"><div id='catalogPagination' class="pagination"></div></td>
+	</tr>
+</table>
+
+
+<script>
+
+$(document).ready(function(){
+	
+	var isFirstTime = 1;
+	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 0;
+	
+	$("#catalogPagination").pagination(<?=$this->aData['totalCount'];?>, 
+	{items_per_page:<?=$this->aData['limit'];?>, callback:handlePaginationClick, next_text:'Berikutnya',prev_text:'Sebelumnya'}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		myPageIndex = new_page_index;
+		myStart = (<?=$this->aData['limit'];?> * myPageIndex);
+		
+		if(true)
+		{
+			if($('#tblCatalogPager-'+myPageIndex).length==0)
+			{
+				$.getJSON('<?=$this->getRootUrl();?>/api/catalog/getcatalogsinfolder/folderGuid/<?=$this->aData['folderGuid'];?>/start/'+myStart+'/limit/<?=$this->aData['limit'];?>', '', catalogResult);
+			}
+			else
+				showCatalogContent();
+		}
+		return false;
+	}
+	
+	function catalogResult(res)
+	{
+		size = res.catalogs.length;
+		var tblRow = "<a name='a-"+myPageIndex+"' ></a>"+'<table class="tblCatalogPager" id="tblCatalogPager-'+myPageIndex+'" style="margin-bottom:1.4em;width:100%;background: #FFFFFF;">';
+		tblRow += 
+			
+			"<tr valign=top>"
+			+"<td>"
+			+"<div class='td_peraturan1'>"
+			+"<div style='height:auto;'>"
+			+"<ul id='nlrulenoline'>";
+			
+		for(i=0;i<size;i++)
+		{
+			tblRow += 
+
+				"<li>"				
+				+"<a href='<?=$this->getRootUrl();?>/pusatdata/detail/"+res.catalogs[i].guid+"/nprt/"+res.folderGuid+"'>"+res.catalogs[i].title+"</a><br>"
+				+res.catalogs[i].subTitle
+				+"</li>";				
+		}
+
+		tblRow += 
+			
+			"</ul>"
+			+"</div>"
+			+"</div>"
+			+"</td>"
+			+"</tr>";
+		
+		tblRow += "</table>";
+		$(tblRow).appendTo("#catalogContent");
+		showCatalogContent();
+	}
+	function showCatalogContent()
+	{
+		$('.tblCatalogPager').hide();
+		$('#tblCatalogPager-'+myPageIndex).show();
+		if(!isFirstTime)
+			Scroller.scroll();
+		isFirstTime = 0;
+	}
+	
+	
+});
+
+
+
+</script>
+<?php } ?>

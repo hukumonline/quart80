@@ -1,0 +1,614 @@
+<?php
+/**
+ * @package kutump
+ * @author Nihki Prihadi <nihki@hukumonline.com>
+ *
+ * $Id: user.phtml 2009-01-10 19:35: $
+ */
+?>
+
+<style type="text/css">
+.status_yes { 
+   background-image:url(./js/extjs/resources/images/default/silk/icons/accept.png) !important;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.contact { 
+   background-image:url(./js/extjs/resources/images/default/silk/icons/user.png) !important;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+.redcell { background-color:#FFE5E5 !important;}
+.greenrow { background-color:#C3FF8F !important;}
+.yellowrow { background-color:#FFFF66 !important;}
+.pinkrow { background-color:#CCCCFF !important;}
+.rem-data-expand { height: 300px; overflow:auto; }
+#baseFooter { width: 600px; margin: 0 auto; }
+</style>
+
+<script type="text/javascript"> 
+
+setTimeout(function()
+{
+	dsGrouping = new Ext.data.GroupingStore({
+		proxy: new Ext.data.HttpProxy({
+			url: './services/auth/package'
+		}),	
+		reader: new Ext.data.JsonReader({
+			root: 'package',
+			totalProperty: 'totalCount',
+			id: 'packageId'
+		}, [
+				{name:'packageId'},
+				{name:'packageName'}
+		]),
+		remoteSort: true
+	});
+	
+	dsGroupingStatus = new Ext.data.GroupingStore({
+		proxy: new Ext.data.HttpProxy({
+			url: './services/auth/status'
+		}),	
+		reader: new Ext.data.JsonReader({
+			root: 'status',
+			totalProperty: 'totalCount',
+			id: 'statusId'
+		}, [
+				{name:'statusId'},
+				{name:'statusMember'}
+		]),
+		remoteSort: true
+	});
+	
+	dsContent = new Ext.data.GroupingStore({ 
+		proxy: new Ext.data.HttpProxy({
+			url: './services/auth/user'
+			,timeout: 90000
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'user',
+			totalProperty: 'totalCount',
+			id: 'guid'
+		}, [
+				{name:'guid'},
+				{name:'kopel'},
+				{name:'fullName'},
+				{name:'email'},
+				{name:'username'},
+				{name:'company'},
+				{name:'createdDate'},
+				{name:'expirationDate'},
+				{name:'paymentId'},
+				{name:'DaysLeft'},
+				{name:'packageId'},
+				{name:'value'},
+				{name:'periodeId'},
+				{name:'isEmailSent'},
+				{name:'isEmailSentOver'},
+				{name:'isActive'},
+				{name:'isContact'}
+		]),
+		remoteSort: true
+	});
+	
+	dataSource = dsContent;
+	
+    function renderPosVal(val)
+    {
+    	if (val == 0)
+    	{
+    		return "Today";
+    	}
+    	else
+    	{
+    		return val;
+    	}
+    }
+    
+    function renderContact(val, cell, record, rowIndex, columnIndex, store)
+    {
+    	if (val == 'N')
+    	{
+    		return;
+    	}
+    	else
+    	{
+    		cell.css = "contact";
+    		return;
+    	}
+    }
+    
+    function renderEmail(val, cell, record, rowIndex, columnIndex, store)
+    {
+    	if (val == 'N')
+    	{
+    		rowRecord = gridUser.getStore().getAt(rowIndex);
+    		return '<a href="javascript:;" onclick="sentEmail(\''+rowRecord.get('guid')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    	}
+    	else
+    	{
+    		cell.css = "status_yes";
+    		return;
+    	}
+    }
+    
+    function renderEmailOver(val, cell, record, rowIndex, columnIndex, store)
+    {
+    	if (val == 'N')
+    	{
+    		rowRecord = gridUser.getStore().getAt(rowIndex);
+    		return '<a href="javascript:;" onclick="sentEmailOver(\''+rowRecord.get('guid')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    	}
+    	else
+    	{
+    		cell.css = "status_yes";
+    		return;
+    	}
+    }
+    
+    function renderStatus(val, cell, record, rowIndex, columnIndex, store)
+    {
+    	rowRecord = gridUser.getStore().getAt(rowIndex);
+    	if (val == 0)
+    	{
+    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('guid')+'\',\'down\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    	}
+    	else
+    	{
+    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('guid')+'\',\'up\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/accept.png"></a>';
+    	}
+    }
+    
+	// custom RowNumberer for use with paging GridPanels
+	Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+	  renderer : function(v, p, record, rowIndex, colIndex, store){
+	    if (this.rowspan) {
+	      p.cellAttr = 'rowspan="' + this.rowspan + '"';
+	    }
+	
+	    var so = store.lastOptions;
+	    var sop = so? so.params : null;
+	    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+	  }
+	});
+
+    var storess = new Ext.data.SimpleStore({
+        fields: ['paymentId','payment'],
+        data : [['0','0'],['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8'],['9','9'],['10','10'],['11','11'],['12','12']]
+    });
+    
+    var xg = Ext.grid;
+    var sm = new xg.CheckboxSelectionModel();
+    var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+    var cm = new xg.ColumnModel
+   	([
+   		sm,
+   		pg,
+	    {header: "guid", dataIndex: 'guid', width: 100, sortable: true, hidden: true},
+	    {header: "ID", dataIndex: 'kopel', width: 70, sortable: true, hidden: true},
+	    {header: "User name", dataIndex: 'fullName', width: 120, sortable: true},
+		{header: "Login name", dataIndex: 'username', width: 100, sortable: true, hidden: true},
+		{header: "Email", dataIndex: 'email', width: 150, sortable: true},
+		{header: "Client name", dataIndex: 'company', width: 150, sortable: true},
+		{
+			header: "From", 
+			dataIndex: 'createdDate', 
+			width: 80, 
+			sortable: true,
+			hidden: false
+		},
+		{header: "Till", dataIndex: 'expirationDate', width: 80, sortable: true},
+		{
+			header: "Package", 
+			dataIndex: 'packageId', 
+			width: 180, 
+			sortable: true, 
+			hidden: false,
+			editor: new Ext.form.ComboBox({
+				width:500,
+				typeAhead: false,
+				triggerAction: 'all',
+				lazyRender:true,
+				store: dsGrouping,
+				displayField:'packageName',
+				valueField:'packageId'	
+			})
+		},
+		{
+			header: "Status", 
+			dataIndex: 'periodeId', 
+			width: 70, 
+			sortable: true, 
+			hidden: false,
+			editor: new Ext.form.ComboBox({
+				typeAhead: false,
+				triggerAction: 'all',
+				lazyRender:true,
+				store: dsGroupingStatus,
+				displayField:'statusMember',
+				valueField:'statusId'	
+			})
+		},
+		{
+			header: "P", 
+			dataIndex: 'paymentId', 
+			width: 25, 
+			sortable: true, 
+			hidden: false,
+			editor: new Ext.form.ComboBox({
+		        store: storess,
+		        displayField:'payment',
+		        typeAhead: true,
+		        mode: 'local',
+		        triggerAction: 'all',
+		        emptyText:'Select month payment...',
+		        selectOnFocus:true
+			})			
+		},
+		{header: "D", dataIndex: 'DaysLeft', width: 25, sortable: true, renderer:renderPosVal},
+		{header: "E", dataIndex: 'isEmailSent', width: 25, sortable: true, renderer:renderEmail},
+		{header: "EO", dataIndex: 'isEmailSentOver', width: 25, sortable: true, renderer:renderEmailOver},
+		{header: "S", dataIndex: 'isActive', width: 25, sortable: true, renderer:renderStatus},
+		{header: "C", dataIndex: 'isContact', width: 25, sortable: true, renderer:renderContact}
+   	]);
+	
+	var paging = new Ext.ux.PagingToolbar({
+		pageSize: 25,
+		store: dsContent,
+		displayInfo: true,
+		displayMsg: 'Displaying topics {0} - {1} of {2}',
+		emptyMsg: "No data to display",
+		items:[
+			'-', {
+				pressed: false,
+				enableToggle: true,
+		    	icon: './js/extjs/resources/images/default/silk/icons/page_white_magnify.png',
+				cls: 'x-btn-icon',
+				tooltip: 'Show preview',
+				toggleHandler: toggleDetails
+			}
+		]	
+	});
+	
+	var gridUser = new xg.EditorGridPanel({
+	    ds: dsContent,
+	    cm: cm,
+	    sm: sm,
+	    bbar: paging,
+	    plugins: [ 
+	    	new Ext.ux.grid.Search({
+	    		 iconCls: 'find'
+	    		,disableIndexes:['DaysLeft','isEmailSent','isEmailSentOver','isActive','isContact']
+	    	})
+	    ],
+	    tbar: [{
+	    	text: 'Activation',
+	    	icon: './js/extjs/resources/images/default/silk/icons/lightbulb.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to activate account',
+	    	handler: function(){ 
+	    		var selectedKeys = gridUser.selModel.selections.keys; //returns array of selected rows ids only
+	    		// note we already did an if (selectedKeys) to get here
+	    		if (selectedKeys.length > 0)
+	    		{
+		    		var selections = gridUser.selModel.getSelections();
+					for(i = 0; i< gridUser.selModel.getCount(); i++){
+						var conn = new Ext.data.Connection();
+						conn.on('beforerequest', function() {
+							Ext.MessageBox.wait('Activate user [' + selections[i].json.username + ']');
+						});
+						if (selections[i].json.isActive == 0)
+						{
+							var action = 'down';
+						}
+						else
+						{
+							var action = 'up';
+						}
+						conn.request({
+							url: './admin/membership_manager/set-active/format/json',
+							params: {
+								guid: selections[i].json.guid,
+								act:action
+							},
+			                failure:function(response,options){
+			                	Ext.MessageBox.alert('Warning','Oops...');
+			               	},                                      
+			                success:function(response,options){
+			                    dsContent.reload();
+			               	}                                      				
+						});
+						conn.on('requestcomplete', function() {
+							Ext.MessageBox.hide();
+						});
+					}
+	    		} 
+	    		else
+	    		{
+	    			Ext.MessageBox.alert('Oops ...','Please select one item to edit');
+	    		}
+	    	}
+	    }, {
+	    	text: 'Delete',
+	    	icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to delete selected rows',
+	    	handler: function(){
+	    		var selectedKeys = gridUser.selModel.selections.keys;
+	    		if (selectedKeys.length > 0)
+	    		{
+	    			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',deleteRecord);
+	    		}
+	    		else
+	    		{
+	    			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+	    		}
+	    	}
+	    }, {
+	    	text: 'Refresh',
+	    	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to Refresh the table',
+	    	handler: function(){ 
+	    		dsContent.baseParams = {group:'member_bonus'};
+	    		dsContent.load({params:{start:0, limit:25}}); 
+	    	}
+	    }
+	    ],
+	    selModel: new xg.RowSelectionModel({singleSelect:false}),
+	    clicksToEdit:2,
+	    enableColLock:false,
+	    enableDragDrop: true,
+	    stripeRows: true,
+	    ddGroup: 'GridDD', 
+	    loadMask: true,
+	    layout:'fit',
+	    forceFit:'fit'
+	});
+
+	gridUser.addListener('afteredit', handleEdit);
+
+  	// render it	    
+  	Ext.getCmp('kutu-Bonus').add(gridUser);
+  	Ext.getCmp('viewport').doLayout();
+  	
+  	dsContent.baseParams = {group:'member_bonus'};
+    dsContent.load({params:{start:0, limit:25}});
+    dsGrouping.load();
+    
+	gridUser.getView().getRowClass = function(record, index) {
+		// berarti dia masih punya waktu 
+		if ((record.data.packageId == "member_bonus") && (record.data.DaysLeft < 0))
+		{
+			return "yellowrow";
+		}
+		// berarti dia uda lewat dari batas waktu yg ditentukan
+		else if ((record.data.packageId == "member_bonus") && (record.data.DaysLeft > 0))
+		{
+			return "redcell";
+		}
+		// berarti dia due date hari ini
+		else if ((record.data.packageId == "member_bonus") && (record.data.DaysLeft == 0))
+		{
+			return "greenrow";
+		}
+		// berarti dia udah bayar
+		else if ((record.data.packageId == "member_bonus") && (record.data.DaysLeft == "-"))
+		{
+			return "pinkrow";
+		}
+	};
+        
+	function toggleDetails(btn, pressed){
+	    gridUser.getView().refresh();
+	}
+
+	/**
+	 * Function for Deleting record(s)
+	 * @param { Object } btn
+	 */
+	function deleteRecord(btn) {
+		if (btn=='yes')
+		{
+			var selections = gridUser.selModel.getSelections();
+			for(i = 0; i< gridUser.selModel.getCount(); i++){
+				var conn = new Ext.data.Connection();
+				conn.on('beforerequest', function() {
+					Ext.MessageBox.wait('delete user [' + selections[i].json.username + ']');
+				});
+				conn.request({
+					url: './admin/membership_manager/delete-user/format/json',
+					params: {
+						guid: selections[i].json.guid,
+						username: selections[i].json.username
+					},
+	                failure:function(response,options){
+	                	Ext.MessageBox.alert('Warning','Oops...');
+	               	},                                      
+	                success:function(response,options){
+						var responseData = Ext.util.JSON.decode(response.responseText);
+						if (responseData.success == true)
+						{
+							//Ext.example.msg('success', responseData.message);
+							info('Success',responseData.message);
+						} else {
+							//Ext.example.msg('Error', responseData.message);
+							info('Success',responseData.message);
+						}
+	                    dsContent.reload();
+	               	}                                      				
+				});
+				conn.on('requestcomplete', function() {
+					Ext.MessageBox.hide();
+				});
+			}
+		}
+	}
+
+	/**
+	 * Handler to control grid editing
+	 * @param {Object} oGrid_Event
+	 */
+	function handleEdit(editEvent) 
+	{
+		var gridField = editEvent.field;//determine what column is being edited
+		updateDB(editEvent);
+	}
+
+	/**
+     * Function for updating database
+     * @param {Object} oGrid_Event
+     */
+    function updateDB(oGrid_Event) {
+		//submit to server
+        Ext.Ajax.request( 
+        {   
+        	waitMsg: 'Saving changes...',
+            url: './admin/membership_manager/update-users/format/json',
+            params: { 
+            	guid: oGrid_Event.record.data.guid,//for existing records this is the unique id (dalam hal ini guid)
+                field: oGrid_Event.field,//the column name
+                value: oGrid_Event.value,//the updated value
+                originalValue: oGrid_Event.record.modified//the original value (oGrid_Event.orginalValue does not work for some reason)
+                                                          //this might be a way to 'undo' changes other than by cookie?
+													  	  //when the response comes back from the server can we make an undo array?                         
+           	},
+            failure:function(response,options){
+				Ext.MessageBox.alert('Warning','Oops...');
+                	//ds.rejectChanges();//undo any changes
+            },//end failure block                                      
+           	success:function(response,options){
+           		var responseData = Ext.util.JSON.decode(response.responseText);
+           		//Ext.example.msg('Confirm', responseData.message);
+           		info('Confirm',responseData.message);
+				dsContent.commitChanges();//commit changes (removes the red triangle which indicates a 'dirty' field)
+				dsContent.reload();
+          	}                               
+  		}); 
+   	}; 
+   	
+   	sentEmail = function ( guid )
+   	{
+   		var conn = new Ext.data.Connection();
+		conn.on('beforerequest', function() {
+			Ext.MessageBox.wait('Email sending');
+		});
+   		conn.request({
+   			url:'./admin/membership_manager/sent-email',
+   			params: {
+   				guid:guid
+   			},
+   			failure:function(response, options){
+   				Ext.MessageBox.alert('Warning', 'Oops ...');
+   				dsContent.rejectChanges();
+   			},
+   			success:function(response,options){
+   				var rd = Ext.util.JSON.decode(response.responseText);
+				if (rd.success == true)
+				{
+					//Ext.example.msg('Sent Email', rd.message);
+					info('Sent Email',rd.message);
+				} else {
+					//Ext.example.msg('Sent Email', rd.message);
+					info('Sent Email',rd.message);
+				}
+   				dsContent.commitChanges();
+   				dsContent.reload();
+   			}
+   		});
+		conn.on('requestcomplete', function() {
+			Ext.MessageBox.hide();
+		});
+   	}
+   	
+   	sentEmailOver = function ( guid )
+   	{
+   		var conn = new Ext.data.Connection();
+		conn.on('beforerequest', function() {
+			Ext.MessageBox.wait('Email sending');
+		});
+   		conn.request({
+   			url:'./admin/membership_manager/sent-email-over',
+   			params: {
+   				guid:guid
+   			},
+   			failure:function(response, options){
+   				Ext.MessageBox.alert('Warning', 'Oops ...');
+   				dsContent.rejectChanges();
+   			},
+   			success:function(response,options){
+   				var rd = Ext.util.JSON.decode(response.responseText);
+				if (rd.success == true)
+				{
+					//Ext.example.msg('Expired Email', rd.message);
+					info('Expired Email', rd.message);
+				} else {
+					//Ext.example.msg('Expired Email', rd.message);
+					info('Expired Email', rd.message);
+				}
+   				dsContent.commitChanges();
+   				dsContent.reload();
+   			}
+   		});
+		conn.on('requestcomplete', function() {
+			Ext.MessageBox.hide();
+		});
+   	}
+   	
+   	changeStatus = function ( guid,action )
+   	{
+   		var conn = new Ext.data.Connection();
+		conn.on('beforerequest', function() {
+			Ext.MessageBox.wait('Change status');
+		});
+   		conn.request({
+   			url:'./admin/membership_manager/set-active/format/json',
+   			params: {
+   				guid:guid,
+   				act:action
+   			},
+   			failure:function(response, options){
+   				Ext.MessageBox.alert('Warning', 'Oops ...');
+   				dsContent.rejectChanges();
+   			},
+   			success:function(response,options){
+   				dsContent.commitChanges();
+   				dsContent.reload();
+   			}
+   		});
+		conn.on('requestcomplete', function() {
+			Ext.MessageBox.hide();
+		});
+   	}
+
+	gridUser.on('rowcontextmenu',showRowContextMenu);
+	
+	function showRowContextMenu(grid, rowIndex, e)
+	{
+		var coords = e.getXY();
+		rowRecord = dsContent.getAt(rowIndex);
+		e.stopEvent();
+		menuG.showAt([coords[0], coords[1]]);
+	}
+	    
+	var menuG = new Ext.menu.Menu('mainGridRowContext');
+	menuG.add({ 
+		text:'Detail', 
+		handler: function(){ ext_get("./admin/membership_manager/edit-users/guid/"+rowRecord.get('guid')+"/uid/"+rowRecord.get('kopel'),950,500,'dialog_window3') } 
+	},{
+		text:'Edit',
+		iconCls:'user_edit',
+		handler:function(){ ext_get("./admin/membership_manager/edit/guid/"+rowRecord.get('guid'),700,500); }	
+	},{
+		text:'Sent Email',
+		handler:function(){
+			sentEmail(rowRecord.get('guid'));
+		}
+	},{
+		 text:'Upload image'
+		,handler:function(){ ext_get("./admin/membership_manager/add-upload/"+rowRecord.get('guid'),520,135,'dialog_upload'); }
+	}
+	);
+	
+}, 10);
+</script>

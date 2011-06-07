@@ -1,0 +1,28 @@
+<div class="kategoriisi">
+<?php for($i=0; $i<$this->numberOfRows;$i++) { 
+	$sDir = ROOT_URL.'/uploads/images';
+	$thumb = "";
+		
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->data[$i][3],'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+		
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".png")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".png"; 	}
+		
+	if ($thumb == "") 
+		$screenshot = ""; 
+	else 
+		$screenshot = "<img src=\"".$thumb."\" vspace=\"0\" width=\"40\" border=\"0\" height=\"40\" hspace=\"0\" align=\"left\" />";
+		
+?>
+		
+<?php if ($thumb == "") { $screenshot = ""; } else { ?>
+<div class="imagekategori"><?=$screenshot; ?></div>
+<?php } ?>
+<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][3]; ?>/<?=$this->data[$i][4]; ?>"><?=$this->data[$i][0]; ?></a></h2>
+<div class="tanggalterbit"><?=$this->data[$i][1]; ?></div>	
+<p><?=$this->data[$i][2]; ?></p>
+<?php } ?>
+</div>

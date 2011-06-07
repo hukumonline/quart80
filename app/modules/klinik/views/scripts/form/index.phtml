@@ -1,0 +1,22 @@
+<div class="unit">
+	<div class="container">
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:640px;padding-right:20px;">
+			<?php $auth = Zend_Auth::getInstance(); 
+			if (!$auth->hasIdentity()) {
+			?>
+			Harap login terlebih dahulu
+			<?php } else { ?>
+			<?=$this->action('add-clinic','form','klinik'); ?>
+			<?php } ?>
+			<div style="padding-top:15px;"></div>
+			<?=$this->action('disclaimer','index','klinik'); ?>
+			<div style="padding-top:15px;"></div>
+			<?=$this->action('mitra-klinik','mitra','klinik'); ?>
+		</div>
+		<div class="fixed column" style="width:300px;">
+			<?=$this->action('kategori','widgets_content','klinik'); ?>
+		</div>
+	</div>
+ 	</div>
+</div>

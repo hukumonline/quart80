@@ -1,0 +1,36 @@
+<div class="td_peraturan4">
+	<div class="judulnaik1">
+		<h1>Resensi</h1>
+	</div>
+	<div class="bor"></div>
+	<div class="kotakisi">
+		<?php
+		//$sDir = 'uploads/images'; 
+		$sDir = $this->getRemoteImageUrl();
+		for($i=0; $i<$this->numberOfRows;$i++) { 
+			
+			$thumb = "";
+			$guid = $this->data[$i][4];
+			
+			$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+			$rowsetRelatedItem = $modelRelatedItem->getDocumentById($guid,'RELATED_IMAGE');
+			$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+			
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+			
+			$screenshot = "<img src=\"".$thumb."\" vspace=\"0\" width=\"40\" border=\"0\" height=\"40\" hspace=\"0\" align=\"left\" />";
+			
+			?>
+			
+		<? if (!empty($thumb)) : ?>
+		<div class="imagebuku"><?=$screenshot; ?></div>
+		<? endif; ?>
+		<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][4]; ?>/<?=$this->data[$i][5]; ?>"><?=$this->data[$i][0]; ?></a></h2>
+		<div class="author"><?=$this->data[$i][1]; ?></div>
+		<p><?=Pandamp_Lib_Formater::string_limit_words($this->data[$i][2],10);?></p>
+	    <div class="bb"><img src="resources/images/comment.jpg" width="13" height="9" /><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][4]; ?>/<?=$this->data[$i][5]; ?>#comments"> <?=$this->data[$i][3]; ?> tanggapan </a> |<a href="<?=$this->getRootUrl(); ?>/warta/tokoh"> Index </a></div>
+		<?php } ?>
+	</div>
+</div>

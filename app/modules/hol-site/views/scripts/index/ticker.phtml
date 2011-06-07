@@ -1,0 +1,24 @@
+<ul id="news">
+<?php
+$modelCatalog = new Pandamp_Modules_Dms_Catalog_Model_Catalog();
+$decorator = new Pandamp_BeanContext_Decorator($modelCatalog);
+$rowset = $decorator->fetchFromFolderAsEntity('fb29',0,5);
+
+foreach($rowset as $row)
+{
+	$modelCatalogAttribute = new Pandamp_Modules_Dms_Catalog_Model_CatalogAttribute();
+?>
+	<li><a href="<?php echo $this->getRootUrl(); ?>/berita/baca/<?php echo $row->getId(); ?>/<?php echo $row->getShortTitle(); ?>" class='aktual'><?php echo '('.date("d/m",strtotime($row->getCreatedDate())) . ') ' . $modelCatalogAttribute->getCatalogAttributeValue($row->getId(),'fixedTitle'); ?></a>&nbsp;[<a href="<?php echo $this->getRootUrl(); ?>/warta/aktual">index</a>]</li>
+	
+<?php 	
+}
+?>
+</ul>
+<script language="JavaScript">
+$(document).ready(
+	function()
+	{
+		$("#news").newsTicker();
+	}
+);
+</script>

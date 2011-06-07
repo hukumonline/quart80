@@ -1,0 +1,78 @@
+<style type="text/css">
+#FileUploadFormEd label.error { margin-left: 20px; width: auto; display: inline; }
+form.rfgform label.error, label.error {
+	/* remove the next line when you have trouble in IE6 with labels in list */
+	display: none;
+	color: red;
+}
+div.error { display: none; }
+input.error { border: 1px dotted red; }
+div.requiredNotice { width: 140px; float: right; padding: 0; }
+</style>
+
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./library/js/extjs/resources/images/default/silk/icons/folder_edit.png">&nbsp;Edit Upload form ...</h3><br>
+        <div id="editUploadForm">
+			<form id="FileUploadFormEd" enctype="multipart/form-data">
+				
+				<?php 
+				$i = 1;
+				foreach ($this->selectedRows as $cid) : 
+				
+				$tblCatalog = new Pandamp_Modules_Dms_Catalog_Model_Catalog();
+				$rowset = $tblCatalog->find($cid)->current();
+				$rowsetCatalogAttribute = $rowset->findDependentRowsetCatalogAttribute();
+				$oriName = $rowsetCatalogAttribute->findByAttributeGuid('docOriginalName')->value;
+				
+				echo $oriName.'<br>';
+				
+				?>
+				
+				<input type='file' name='uploadedFile<?php echo $i ?>' id='uploadedFile' size='50'/><br>
+				<input type='hidden' name='itemGuid<?php echo $i ?>' id='itemGuid' value='<?php echo $cid ?>'>
+				
+				<?php 
+				$i++;
+				endforeach; 
+				?>
+				
+				<input type='hidden' name='profileGuid' id='profileGuid' value='kutu_doc'>
+				<input type='hidden' name='relatedGuid' id='relatedGuid' value='<?php echo $this->relatedGuid; ?>'>
+				<input type="hidden" name="id" id="id" value="<?php echo $this->numberOfRows; ?>">
+							
+				<br><p class="buttons"><input value="Save" type="submit"><input type="button" name="cancel" id="cancel" value="Cancel"><!--<input name="chkavailable1" id="chkavailable1" type="button" value="Cek Judul" onClick='chkavailable(); return false;'>&nbsp;--><span id="msgbox" style="display:none"></span></p>
+			</form>
+        </div>
+        <div id="uploaderSpinner" style="color:red; display:none;"><img src="./resources/img/wait-trans.gif" border="0"> Sending Request</div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+	var options = {
+		type:'post',
+		url: './admin/api_fileuploader/edit',
+		beforeSubmit: prepareData,
+		success: showResponse
+	};
+	$('#FileUploadFormEd').ajaxForm(options);
+    function prepareData() 
+    { 
+	  	$('#uploaderSpinner').show();
+	} 
+	function showResponse(responseText, statusText) 
+	{ 
+	    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+	        '\n\nThe output div should have already been updated with the responseText.'); 
+	        
+	    $('#uploaderSpinner').hide();
+	}
+	$('#cancel').click(function() {
+		dialog.destroy();
+		dialog.hide();
+		dsDocument.reload();
+	});
+
+</script>

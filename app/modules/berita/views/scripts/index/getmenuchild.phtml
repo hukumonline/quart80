@@ -1,0 +1,13 @@
+<?php if(count($this->rowset)>0) {?>
+<ul>
+	<?php foreach($this->rowset as $row) {
+	$json = new Zend_Json();
+	$aData = $json->decode($row->cmsParams);
+		?>
+		<li>
+			<a href="<?=$this->baseUrl(); ?>/page/<?=$aData['st']?>"><?=$row->title;?></a>
+			<?=$this->action('getmenuchild','index','berita',array('node'=>$row->guid))?>
+		</li>
+	<?php }?>
+</ul>
+<?php }?>

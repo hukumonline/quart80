@@ -1,0 +1,121 @@
+June 10, 2010
+-- Hampir disetiap query menggunakan cache untuk mengurangi response time
+   cache menggunakan key dengan format:[nama fungsi]_[nama var]_[value]
+   jika nilai nya > 1 maka formatnya:[nama fungsi]_[nama var1]_[value1]_[nama var2]_[value2] dst
+   contoh: 
+   "gcav_cg_".$catalogGuid."_ag_".$attributeGuid;
+   bacanya;
+   .:gcav - nama fungsi untuk getCatalogAttributeValue
+   .:cg   - nama var1 untuk catalogGuid
+   .:ag   - nama var2 untuk attributeGuid
+   
+June 08, 2010
+-- Cache key berubah dengan format:[nama fungsi]_[nama var]_[value]_[page]
+
+July 28, 2010
+-- Cache key tambahan untuk warta date dengan format:[nama fungsi]_[nama var]_[value]_[y]_[m]_[d]
+
+August 01, 2010
+-- Cache key tambahan untuk banner pada fungsi query fetchBanner 
+-- Image center style pada view banner
+-- update style image center pada detail sidebar
+-- update banner position pada detail berita
+-- add banner position pada warta
+-- pada upload foto di admin penulisan title Foto: tidak boleh harap ganti dengan Foto- atau terserah
+   karena Foto: dianggap solr sebagai field
+-- diadmin dibawah site->cache ada fungsi baru
+   - clear cache
+     clean only outdated
+   - clear all cache 
+     clean all records   (dilakukan hanya bila perlu)
+-- Banner position
+   - topA1 = 685px max. 690
+   - topA2 = 310px
+   - topA3 = 997px max. 1000px
+   - middleA = 310px
+   - middleB     ----------------------------> zone baru dibawah klinik 
+     - width = 330px max. 332px
+     - height = 250px
+   - middleB2 = 310px max. 330px  ---------|
+   - middleB3 = 310px max. 330px           |-----> disarankan 310px
+   - middleB4 = 310px max. 330px  ---------|        
+   - bottomA1-A4 = 232px max. 250px
+   - bottomA5 = 997px
+   
+August 02, 2010
+-- Migrasi comment ke sistem baru
+   jalankan modul dev/comment
+      
+August 05, 2010
+-- Set ssh dengan tortoiseGit > pageant dengan file my.ppk dan password:mydreams
+-- menambahkan node pada header module berita untuk rubrikasi
+   
+August 25, 2010
+-- menonaktifkan cache
+   - Dms/Catalog/Model/Catalog.php
+   - Dms/Catalog/Model/CatalogAttribute.php
+   - Misc/Banner/Model/Powerban.php
+   - Extension/Comment/Model/Comment.php
+   - Core/Hol/Banner.php
+   - Core/Hol/Catalog.php
+   - admin/controllers/Api/CommentController.php
+   - talks/controllers/Widgets/CatalogController.php
+   - hol-site/controllers/Widgets/PageController.php
+   - klinik/controllers/Widgets/ContentController.php
+   - berita/controllers/Widgets/ContentController.php
+   - api/controllers/ClinicController.php
+-- fixed Banner position
+   - berita/views/scripts/index/header.phtml
+ 
+Sept 01, 2010
+-- update css 
+   - klinik/views/scripts/mitra/detail.phtml
+   - klinik/views/scripts/form/index.phtml
+   - klinik/views/scripts/browser/search.phtml
+   - klinik/views/scripts/browser/index.phtml
+   - klinik/views/scripts/browser/detail.phtml
+   - klinik/views/scripts/browser/category.phtml
+   - klinik/views/scripts/browser/author.phtml
+   - klinik/views/scripts/index/index.phtml
+   - berita/views/scripts/browser/search.phtml
+   - berita/views/scripts/index/header.phtml
+   - berita/views/scripts/index/index.phtml
+   - berita/views/scripts/index/search.phtml
+   - hold/views/scripts/widgets/catalog/viewer.phtml
+   - hold/views/scripts/browser/search.phtml
+   - hold/views/scripts/browser/forbidden.phtml
+   - hold/views/scripts/browser/advancedsearch.phtml
+   - hold/views/scripts/browser/detail.phtml
+   - hold/views/scripts/browser/view.phtml
+   - hol-site/views/scripts/browser/detail-issue.phtml
+   - hol-site/views/scripts/browser/detail.phtml
+   - hol-site/views/scripts/index/headerkategori.phtml
+   - hol-site/views/scripts/index/header.phtml
+   - hol-site/views/scripts/index/footer.phtml
+   - hol-site/views/scripts/index/index.phtml
+   - hol-site/views/scripts/widgets/content/terbaru.phtml
+   - polling/views/scripts/manager/browse.phtml
+   - agenda/views/scripts/manager/browse.phtml
+   - identity/views/scripts/account/login.phtml
+   - identity/views/scripts/account/feedback.phtml
+   - identity/views/scripts/account/lupasandi.phtml
+   - talks/views/scripts/index/index.phtml
+   - talks/layouts/footer.phtml
+   - resources/css/typography.css
+   - resources/css/typography-1.css
+   - resources/css/talks.css
+   
+Sept 16, 2010
+-- update table KutuCatalog
+   - menambah field price 
+   
+Sept 17, 2010
+-- add table KutuOrder
+-- add table KutuOrderDetail
+
+Sept 29, 2010
+-- Banner management diganti dengan OpenX
+   halaman:index, detail, kanan pada module Hol-Site
+   
+April 21, 2011
+ChangeLog: SSO integration with pmg.hukumonline.n1,admin.hukumonline.n1,id.hukumonline.n1

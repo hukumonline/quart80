@@ -1,0 +1,483 @@
+<!DOCTYPE htmlPUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style type="text/css">
+.messagebox { position:absolute; width:100px; margin-left:30px; border:1px solid #c93; background:#ffc; padding:3px; }
+.messageboxok { position:absolute; width:auto; margin-left:30px; border:1px solid #349534; background:#C9FFCA; padding:3px; font-weight:bold; color:#008000; }
+.messageboxerror { position:absolute; width:auto; margin-left:30px; border:1px solid #CC0000; background:#F7CBCA; padding:3px; font-weight:bold; color:#CC0000; }
+form.rfgform label.error, label.error {
+	/* remove the next line when you have trouble in IE6 with labels in list */
+	display: none;
+	color: red;
+}
+div.error { display: none; }
+input.error { border: 1px dotted red; }
+#registration_form label.error { margin-left: 10px; width: auto; display: inline; }
+.password { 
+	font-size : 12px; width : 200px; font-family : arial, sans-serif;
+}
+.pstrength-minchar {
+	font-size : 10px; color: #777;
+}		
+</style>
+
+</head>
+<body>
+
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/user_edit.png">&nbsp;Edit Account::<?=$this->rowset->username; ?></h3>
+    	
+		<form enctype="multipart/form-data" id="registration_form" class="rfgform">
+		<p align="justify">Hukumonline akun anda memberi kamu akses ke layanan Hukumonline lainnya.</p>
+		<h2>1. Informasi yang diperlukan untuk Akun Hukumonline</h2>
+
+    	<?php $formater = new Pandamp_Lib_Form(); ?>
+		<table width="100%" cellspacing="5" cellpadding="5">
+		<tbody>
+		<tr>
+			<td><label for="promotionCode">Kode Promosi</label></td>
+			<td><input name="promotionCode" id="promotionCode" value="<?=$this->rowset->promotionId; ?>" type="text" maxlength="25" style="width:250px"><br><span class="example"><i>.:To be filled by Hukumonline</i></span></td>
+		</tr>
+		<tr>
+			<td><label for="fullName" class="input required">Nama Lengkap</label></td>
+			<td><input name="fullName" id="fullName" value="<?=$this->rowset->fullName; ?>" type="text" maxlength="25" style="width:340px"></td>
+		</tr>
+		<tr>
+			<td><label for="chkGender">Gender</label></td>
+			<td>
+				<?php if ($this->rowset->gender == "L") { ?>
+				Pria&nbsp;<input name="chkGender" id="chkGender" value="1" type="radio" checked>
+				Wanita&nbsp;<input name="chkGender" id="chkGender" value="0" type="radio">
+				<?php } else { ?>
+				Pria&nbsp;<input name="chkGender" id="chkGender" value="1" type="radio">
+				Wanita&nbsp;<input name="chkGender" id="chkGender" value="0" type="radio" checked>
+				<?php } ?>
+			</td>
+		</tr>
+		<?php $lang['months'] = array("Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"); ?>
+		<?php if ($this->rowset->birthday) { ?>
+		<?php 
+			$bdate = $this->rowset->birthday;
+			$adate = explode('-',$bdate);
+			$year = $adate[0];
+			$month = $adate[1];
+			$day = $adate[2];
+		?>
+		<tr>
+			<td><label for="birthOfDate" class="input required">Tgl. Lahir</label></td>
+			<td><?=$formater->monthPullDown($month,$lang['months']).$formater->dayPullDown(str_replace(0,'',$day)) ?><input name="year" id="year" type="text" maxlength="4" value="<?=$year ?>" style="width:60px" class="required year"></td>
+		</tr>
+		<?php } else { ?>
+		<tr>
+			<td><label for="birthOfDate" class="input required">Tgl. Lahir</label></td>
+			<td><?=$formater->monthPullDown(date("n"),$lang['months']).$formater->dayPullDown(); ?><input name="year" id="year" type="text" maxlength="4" style="width:60px"></td>
+		</tr>
+		<?php } ?>		
+		<tr>
+			<td><label for="education" class="input required">Pendidikan</label></td>
+			<td><?=$formater->educationPullDown($this->rowset->educationId) ?></td>
+		</tr>
+		<tr>
+			<td><label for="expense" class="input required">Pengeluaran dalam Sebulan</label></td>
+			<td><?=$formater->expensePullDown($this->rowset->expenseId) ?></td>
+		</tr>
+		<tr>
+			<td><label for="company">Nama Perusahaan</label></td>
+			<td><input name="company" id="company" type="text" maxlength="255" value="<?=$this->rowset->company ?>" style="width:400px"></td>
+		</tr>
+		<tr>
+			<td><label for="businessType" class="input required">Jenis Usaha</label></td>
+			<td><?=$formater->businessTypePullDown($this->rowset->businessTypeId) ?></td>
+		</tr>
+		<tr>
+			<td><label for="billing" class="input required">Alamat Penagihan</label></td>
+			<td><textarea name="billing" cols="30" rows="5"><?=$this->rowset->billingAddress ?></textarea><br><span class="example"><i>.:corporate subscriber</i></span></td>
+		</tr>
+		<tr>
+			<td><label for="phone">Telp</label></td>
+			<td><input name="phone" id="phone" type="text" maxlength="30" value="<?=$this->rowset->phone; ?>" style="width:150px"></td>
+		</tr>
+		<tr>
+			<td><label for="fax">Fax</label></td>
+			<td><input name="fax" id="fax" type="text" maxlength="30" value="<?=$this->rowset->fax; ?>" style="width:150px" class="fax"></td>
+		</tr>
+		<tr>
+			<td><label for="payment" class="input required">Periode Pembayaran</label></td>
+			<td><input name="payment" id="payment" type="text" size="5" value="<?=$this->rowset->paymentId; ?>">&nbsp;<span class="example"><i>.:corporate subscriber</i></span></td>
+		</tr>
+		</tbody>
+		</table>
+		
+		<h2>2. Masukkan alamat surat kamu</h2>
+		
+			<p>Alamat email kamu penting, dengan memberikan alamat email akan dapat membantu kamu<br> jika
+			suatu saat kamu lupa informasi akunmu.</p>
+		
+		<div style="display: none;"></div>
+		
+		<table>
+		<tbody>
+		<tr>
+			<td width="20%"><label for="email" class="input required">E-mail</label></td>
+			<td><input name="email" id="email" type="text" maxlength="50" value="<?=$this->rowset->email; ?>" style="width:250px"><br><span class="example">Contoh:zapatista@hukumonline.com</span></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input name="chkavailable2" id="chkavailable2" type="button" value="Cek emailku" onClick='chkavailableEmail(); return false;'><span id="msgbox1" style="display:none"></span></td>
+		</tr>
+		</tbody>
+		</table><br>
+		
+		<h2>3. Pilih Group Pelanggan</h2>
+		
+			<p>Pilih dari salah satu paket pelanggan.</p>
+		
+		<div style="display: none;"></div>
+		
+		<table>
+		<tbody>
+		<tr>
+			<td width="20%"><label for="package" class="input required">Paket</label></td>
+			<td><select name="aro_groups" size="8"><?=$formater->groupTree(array($this->rowset->packageId)); ?></select></td>
+		</tr>
+		</tbody>
+		</table><br>
+		
+		<!--
+		<h2>4. Upload foto</h2>
+		
+		<table>
+		<tbody>
+		<tr>
+			<td><label for="upload">Foto</label></td>
+			<td>&nbsp;</td>
+			<td><input name='uploadedFile' id='uploadedFile' type="file" /><br><span class="example">Free & Individual Subscriber</span></td>
+		</tr>
+		</tbody>
+		</table><br>
+		-->
+			
+		<h2>4. Keamanan</h2>
+		
+			<p>Konfigurasi akun pengguna dimana untuk pelanggan korporasi akun bisa lebih dari satu.</p>
+			
+		<h2>Kontak</h2>
+		
+		<table>
+		<tbody>
+		<tr>
+		<td>
+		<?php
+		if ($this->rowset->isContact == 'Y')
+			$isContact = 'checked';
+		else 
+			$isContact = '';
+		?>
+		<input name="iscontact" id="iscontact1" type="checkbox" value="1" <?=$isContact ?>>&nbsp;Kontak Pengguna
+		</td>
+		</tr>
+		</tbody>
+		</table>
+		
+		<!--	
+		<h2>4.1. Ketik Nama Pengguna</h2>
+		
+		<p>Kamu bisa pilih nama pengguna untuk digunakan di Hukumonline.</p>
+		
+		<table>
+		<tbody>
+		<tr>
+			<td width="20%"><label for="username1" class="input required">Nama Pengguna</label></td>
+			<td><input name="username1" id="username1" type="text" maxlength="50" style="width:340px"><br><span class="example">Contoh:zapatista</span></td>
+			<td width="20%" valign="top">
+			<?php
+			/*
+			if ($this->rowset->isContact == 'Y')
+				$isContact = 'checked';
+			else 
+				$isContact = '';
+			*/
+			?>
+			<input name="iscontact" id="iscontact1" type="radio" value="1" <?php // echo $isContact ?>>&nbsp;Kontak Pengguna
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input name="chkavailable1" id="chkavailable1" type="button" value="Cek nama penggunaku" onClick='chkavailable(1); return false;'></td>
+		</tr>
+		<tr class='row1'></tr>
+		</tbody>
+		</table>
+		-->
+			
+		<h2>4.1. <span>Ketik Sandi</span></h2>
+		
+		<div style="display: none;"></div>
+		
+		<p>Nama Sandi ini akan digunakan jika anda ingin mengakses ke Hukumonline.</p>
+			
+		<table>
+		<tbody>
+		<tr>
+		  	<td width="30%"><label for="password" class="input required">Sandi baru</label></td>
+		   	<td><input id="password1" name="password1" type="password" class="password"></td>
+		</tr>
+		<tr>
+		   	<td width="30%"><label for="password-confirm" class="input required">Masukkan lagi</label></td>
+		   	<td><input name="confirmpassword1" type="password"></td>
+		</tr>
+		</tbody>
+		</table>
+		
+		<input type="hidden" name="guid1" id="guid1" value="<?=$this->rowset->guid ?>">	
+		<input type="hidden" name="id" id="id" value="2">
+					
+		<div id="nameFields"></div><br>
+				
+		<p><a href="javascript:;" onClick="addFormField(); return false;">Tambah akun</a></p>		
+		
+		<table>
+		<tbody>
+		<tr>
+			<td width="12%">Berita</td>
+			<td>
+		    	<?php 
+					if ($this->rowset->newArticle == 'Y') {
+						$newArticlechecked = 'checked';
+					} else {
+						$newArticlechecked = '';
+					}
+					if ($this->rowset->weeklyList == 'Y') {
+						$weeklyListchecked = 'checked';
+					} else {
+						$weeklyListchecked = '';
+					}
+					if ($this->rowset->monthlyList == 'Y') {
+						$monthlyListchecked = 'checked';
+					} else {
+						$monthlyListchecked = '';
+					}
+		    	?>
+				<input type="checkbox" name="newArtikel" value="1" <?=$newArticlechecked ?>>&nbsp;Artikel Berita Terbaru<br>
+				<input type="checkbox" name="newWeeklyRegulation" value="1" <?=$weeklyListchecked ?>>&nbsp;Daftar Peraturan Mingguan<br>
+				<input type="checkbox" name="newRegulation" value="1" <?=$monthlyListchecked ?>>&nbsp;Daftar Peraturan Bulanan
+			</td>
+		</tr>				
+		</tbody>
+		</table><br>
+		
+		<h2>5. <span>Konfirmasi Email</span></h2>
+		
+		<div style="display: none;"></div>
+		
+		<p>Apakah konfirmasi email ingin dikirimkan ke user bersangkutan.</p>
+			
+		<table>
+		<tbody>
+		<tr>
+			<td><input type="checkbox" name="ec" value="1">&nbsp;Kirim konfirmasi email<br></td>
+		</tr>				
+		</tbody>
+		</table><br>
+		
+    	<p class="buttons"><input value="Buat akunku" type="submit"><span id="msgbox" style="display:none"></span></p>
+    	</form><div id="membershipSpinner" style="color:red; display:none;"><img src="<?=$this->getRootUrl();?>/view-resources/img/wait-trans.gif" border="0"> Sending Request</div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+$.validator.setDefaults({
+	submitHandler: function() {
+		var options = {
+			type: 'post',
+			dataType: 'json',
+			url: '<?=$this->getControllerUrl(); ?>/process/format/json',
+			resetForm:true,
+			beforeSubmit: prepareData,
+			success: function(response) {
+				if (response.success == true)
+				{
+				  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+					{ 
+						$(this).html('Update successfully').addClass('messageboxok').fadeTo(900,1,
+						function(){
+							dialog.destroy();
+							dialog.hide();
+							dsContent.reload();
+						});
+					});
+				}
+				else
+				{
+				  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+					{ 
+						//add message and change the class of the box and start fading
+					  	$(this).html(response.error.message).addClass('messageboxerror').fadeTo(900,1);
+					});		
+				}
+				$('#membershipSpinner').hide();
+			}
+		};
+		$('#registration_form').ajaxForm(options);
+	}
+});
+
+// validate registration_form on keyup and submit
+$('#registration_form').validate({
+	rules : {
+		year:{
+			digits:true
+		},
+		fax:{
+			digits:true
+		},
+		phone:{
+			digits:true
+		},
+		email: { 
+			required: true, 
+			email: true 
+		},
+		aro_groups:"required",
+//		username1: { minLength: 2 },
+		password1: { required: true, minLength: 8 },
+		confirmpassword1: { required: true, minLength: 8, equalTo: "#password1" }		
+	},
+	messages : {
+		year:{
+			digits:"Masukkan hanya angka"
+		},
+		fax:{
+			digits:"Masukkan hanya angka"
+		},
+		phone:{
+			digits:"Masukkan hanya angka"
+		},
+		email: "Masukkan email kamu",
+		aro_groups:"Pilih paket",
+//		username1: {
+//			minLength: "Nama pengguna paling sedikit 2 karakter"
+//		},
+		password1: {
+			required: "Masukkan kata sandi",
+			minLength: "Kata sandi panjangnya paling sedikit 8 karakter"
+		},
+		confirmpassword1: {
+			required: "Masukkan konfirmasi kata sandi",
+			minLength: "Kata sandi panjangnya paling sedikit 8 karakter",
+			equalTo: "Masukkan kata sandi sama dengan yang diatas"
+		}
+	}
+});
+
+function prepareData() 
+{ 
+   	$('#membershipSpinner').show();
+   	$("#msgbox").removeClass().addClass('messagebox').text('Saving ...').fadeIn(1000);
+} 
+		
+function addFormField() {
+	var id = document.getElementById("id").value;
+	$("#nameFields").append("<table id='row" + id + "'><tbody><tr><td colspan='2'><hr></td></tr><tr><td width='20%'><label for='username" + id + "'>Nama Pengguna</label></td><td><input type='text' name='username" + id + "' id='username" + id + "' maxlength='50' style='width:260px' /><br><span class=\"example\">Contoh:zapatista</span></td><td nowrap valign='top'><input type='radio' name='iscontact' id='iscontact" + id + "' value=" + id + ">&nbsp;Kontak Pengguna</td></tr><tr><td>&nbsp;</td><td><input name='chkavailable" + id + "' id='chkavailable" + id + "' type='button' value='Cek nama penggunaku' onClick='chkavailable(\"" + id + "\"); return false;'></td></tr><tr class='row" + id + "'></tr><tr><td width='20%'><label for='password" + id + "'>Buat sandi</label></td><td><input class='Epassword" + id + "' name='password" + id + "' id='password" + id + "' type='password' maxlength='50' style='width:260px'></td></tr><tr><td>&nbsp;&nbsp<a href='#' onClick='removeFormField(\"#row" + id + "\"); return false;'>Remove</a></td></tr><tr class='error" + id + "'></tr><br/><tbody><table>");	
+		
+	$('#row' + id).highlightFade({
+		speed:1000
+	});
+		
+	$('.Epassword' + id).pstrength();
+	
+	id = (id - 1) + 2;
+	document.getElementById("id").value = id;
+}
+
+function removeFormField(id) { 
+	$(id).remove();
+}
+
+function chkavailable(id) {
+	var uname = $('#username'+id).attr('value');
+	
+	/* Just to be sure .. remove any changes from previous submit */
+	$('tr.row' + id).empty();												
+	
+	if (uname != "") {
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: '<?=$this->getControllerUrl(); ?>/get-me-username/format/json',
+			data: 'username='+ uname,
+			success: function(json) {
+				if( json.success == true ) {
+					var html = '<td colspan="5" style="color: #7ebddd;margin-bottom: 1.5em; padding-left: 11.2em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.data + '</td>';
+					$('tr.row' + id).prepend(html);						
+				} else {
+					if (json.error == "1") {
+						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 11.2em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err1 + '</td>';
+						$('tr.row' + id).prepend(html);						
+					} else if (json.error == "2") {
+						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 11.2em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err2 + '</td>';
+						$('tr.row' + id).prepend(html);												
+					} else if (json.error == "3") {
+						var html = '<td colspan="5" style="color: #f00;margin-bottom: 1.5em; padding-left: 11.2em; background-repeat: no-repeat; background-position: 0 .2em;">' + json.err3 + '</td>';
+						$('tr.row' + id).prepend(html);																		
+					}
+				}
+			},
+			failure: function(json) {
+				
+			}
+		});
+	} 
+}
+
+function chkavailableEmail() {
+	var email = $('#email').attr('value');
+	
+	if (email != "") {
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: '<?=$this->getControllerUrl(); ?>/get-me-email/format/json',
+			beforeSend: GetprepareData,
+			data: 'email='+ email,
+			success: function(json) {
+				if (json.success == true)
+				{
+				  	$("#msgbox1").fadeTo(200,0.1,function()  //start fading the messagebox
+					{ 
+						$(this).html(json.message).addClass('messageboxok').fadeTo(900,1);
+					});
+				}
+				else
+				{
+				  	$("#msgbox1").fadeTo(200,0.1,function() //start fading the messagebox
+					{ 
+						//add message and change the class of the box and start fading
+					  	$(this).html(json.message).addClass('messageboxerror').fadeTo(900,1);
+					});		
+				}
+			},
+			failure: function(json) {
+				
+			}
+		});
+	} 
+}
+
+function GetprepareData()
+{
+   	$("#msgbox1").removeClass().addClass('messagebox').text('Validating ...').fadeIn(1000);
+}
+
+$('.password').pstrength();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<script type="text/javascript" src="./js/datepicker/datetimepicker.js"></script>
+<link href="./js/datepicker/rfnet.css" type="text/css" rel="stylesheet">
+	
+<style type="text/css" media="screen">
+	#answerClinicForm label.error {
+		margin-left: 20px;
+		width: auto;
+		display: inline;
+	}
+	form.rfgform label.error, label.error {
+		/* remove the next line when you have trouble in IE6 with labels in list */
+		display: none;
+		color: red;
+	}
+	div.error { display: none; }
+	input.error { border: 1px dotted red; }
+	div.requiredNotice {
+		width: 140px;
+		float: right;
+		padding: 0;
+	}
+</style>
+
+	<div style="width: auto;">
+		<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+		<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+	   	<h3 style="margin-bottom:5px;"><img src="<?=$this->baseUrl(); ?>/js/extjs/resources/images/default/silk/icons/application_form_add.png">&nbsp;Clinic</h3>
+		<form id="answerClinicForm">
+		<table width="100%">
+		<?php foreach ($this->aRenderedAttributes['baseForm'] as $a) { ?>	
+		<tr>
+			<td width="120"><label for="<?=$a['description']; ?>" class="input required"><?=$a['description']; ?></label></td>
+			<td><?=$a['form']; ?></td>
+		</tr>
+		<?php } ?>
+		</table>
+		<table width="100%">
+		<?php foreach ($this->aRenderedAttributes['attributeForm'] as $a) { ?>	
+		<tr>
+			<td width="120"><label for="<?=$a['description']; ?>" class="input required"><?=$a['description']; ?></label></td>
+			<td><?=$a['form']; ?></td>
+		</tr>
+		<?php } ?>
+		</table><br>
+		<p class="buttons"><input value="Save" type="submit"><span id="msgbox" style="display:none"></span>&nbsp;<input type="button" name="cancel" id="cancel" value="Cancel"></p>
+		</form>
+		</div>
+		</div></div></div>
+		<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+	</div>
+	
+<script type="text/javascript"> 
+setTimeout(function()
+{ 
+		$.validator.setDefaults({
+			submitHandler: function() {
+				var options = {
+					type:'post',
+					dataType: 'json',
+					url: './admin/api_catalog/save/format/json',
+					beforeSubmit: prepareData,
+					success: function(response){
+						if (response.success == true)
+						{
+						  	$("#msgbox").fadeTo(200,0.1,function()  //start fading the messagebox
+							{ 
+							  	//add message and change the class of the box and start fading
+							    info( 'success', response.message );
+								dsKlinik.reload();
+								dialog.destroy();
+								dialog.hide();
+							});
+						}
+						else
+						{
+						  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+							{ 
+								//add message and change the class of the box and start fading
+								info( 'Oops..', response.message );
+							});		
+						}
+						Ext.MessageBox.hide();
+					}
+			};
+			$('#answerClinicForm').ajaxForm(options);
+			}
+		});
+		// validate catalogInputForm on keyup and submit
+		$('#answerClinicForm').validate({
+			rules : {
+				fixedAnswer: "required"
+			},
+			messages : {
+				fixedAnswer: "<br>Please enter Your answer"
+			}
+		});
+    function prepareData(a, jqForm, options) 
+    { 
+   		Ext.MessageBox.wait('Saving Clinic');
+       	try
+       	{
+	   		for (var i=0; i < a.length; i++) 
+		   	{
+		   		if(FCKeditorAPI.GetInstance(a[i].name))
+		   		{
+		   			var val = FCKeditorAPI.GetInstance(a[i].name).GetXHTML(true);
+		   			a[i].value = val;
+		   		}
+		   			
+      		}
+		    return true; 
+        }
+        catch(e)
+        {
+			return true
+        }
+	} 
+		
+	$('#cancel').click(function() {
+		dialog.destroy();
+		dialog.hide();
+	});
+		
+},20); 
+</script> 

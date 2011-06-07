@@ -1,0 +1,64 @@
+<?php $guid = $this->generateGuid();?>
+<div id="location-page">
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<div style="padding:5px;">
+				<div id="<?=$guid;?>spinner" style="color:red; display:none;"><img src="<?=$this->baseUrl();?>/resources/images/wait-trans.gif" border="0"> Sending Request</div>
+				<?php foreach ($this->rowsetFolder as $row){?>
+					<div style="padding-top:5px"></div>
+					<a href="javascript:;" onclick="chDir('<?=$row->guid;?>');"><?=$row->title; ?></a>
+					<?php //if($this->isAllowed($this->catalogGuid, 'update','content')){?>
+					- <a href="javascript:;" onclick="<?=$guid;?>rem('<?=$this->catalogGuid;?>', '<?=$row->guid;?>');return false;">Remove</a>
+					<?php //} ?>
+					<div style="padding-top:5px"></div>
+				<?php } ?>
+				<div style="padding-bottom:5px"></div>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+<script type="text/javascript">
+function <?=$guid;?>rem(guid, folderGuid)
+{
+	Ext.MessageBox.show({
+       	title: 'Warning',
+       	msg: "Are you sure to remove this location ?",
+       	buttons: Ext.MessageBox.YESNO,
+       	icon: Ext.MessageBox.WARNING,			
+       	fn: function(btn) {
+      		if (btn=="yes") {
+				Ext.Ajax.request
+				({ 
+					url: "<?=ROOT_URL; ?>/admin/api_catalog/remove-from-folder/guid/" + guid + "/folderGuid/" + folderGuid + "/format/json",
+					success: function(response,options)
+					{
+						var responseData = Ext.util.JSON.decode(response.responseText);
+						info( 'success', responseData.message );
+						Ext.get('location-page').load({
+							url:'<?=$this->getRootUrl(); ?>/admin/widgets_relation/viewfolder',
+							scripts:true,
+							params:"guid=<?=$this->catalogGuid ?>"
+						});						
+					}
+				});
+       		} else {
+				Ext.MessageBox.alert('Status', 'Deleted canceled.');
+       		}
+       	}
+	});
+}
+function <?=$guid; ?>goLocation(guid,title)
+{
+//	loadTab('browser/view-in-new-tab/catalogGuid/'+guid,title);
+//	var node = tree.getNodeById(guid);
+//	dialog.hide();
+//	dialog.destroy();
+//	tree.expandAll();
+//	tree.getSelectionModel().select(node);
+}
+</script>

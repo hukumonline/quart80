@@ -1,0 +1,101 @@
+<html>
+<head>
+<style type="text/css">
+body { background: #fff; color: #555555; }
+a:link, body_alink { color: #175c9e; text-decoration: none; }
+a:visited, body_avisited { color: #175c9e; text-decoration: none; }
+a:hover, a:active, body_ahover { color: #385F95; text-decoration: underline; }
+.tborder { background: #ffffff;	color: #000000;	border: 1px solid #dadada; }
+.tcat {	background: #ddd url(/assets/images/item-hd.gif) repeat-x 0 bottom;	color: #222; font-size: 12px; font-weight:bold;	padding:3px; }
+.tcat a:link, .tcat_alink {	color: #222; text-decoration: none; }
+.tcat a:visited, .tcat_avisited { color: #222; text-decoration: none; }
+.tcat a:hover, .tcat a:active, .tcat_ahover { color: #222; text-decoration: underline; }
+.panel { background: #f1f1f1; color: #000000; padding: 10px; border:0 none; }
+.panelsurround { background: #f1f1f1; color: #000000; }
+.smallfont { font-family:verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif; font-size:11px; }
+td { padding: 3px; }
+td.alt1,td.alt1Active,td.alt2 { border-left:1px solid #dddddd; border-bottom:1px solid #dddddd; padding:8px; }
+td.alt1 table td,td.alt1Active table td,td.alt2 table td { padding:0; }
+</style>
+<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
+</head>
+<body>
+
+<? 
+	// INITIALIZE JCART AFTER SESSION START
+	$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
+	// INCLUDE CONFIG SO THIS SCRIPT HAS ACCESS USER FIELD NAMES
+	include(ROOT_DIR.'/js/jcart/jcart-config.php');
+	// INCLUDE DEFAULT VALUES SINCE WE NEED TO PASS THE VALUE OF THE UPDATE BUTTON BACK TO jcart.php IF UPDATING AN ITEM QTY
+	// IF NO VALUE IS SET IN CONFIG, THERE HAS TO BE A DEFAULT VALUE SINCE SIMPLY CHECKING FOR THE VAR ITSELF FAILS
+	include(ROOT_DIR.'/js/jcart/jcart-defaults.php');
+?>
+
+<script type="text/javascript" src="<?=ROOT_URL;?>/js/jcart/jcart-javascript.php"></script>
+
+<table class="tborder" cellpadding="6" cellspacing="1" border="0" width="70%" align="center">
+<tr>
+	<td class="tcat">Selamat Datang di Hukumonline.</td>
+</tr>
+<tr>
+	<td class="panelsurround" align="center">
+	<div class="panel">
+			
+		<blockquote>
+
+			<p>&nbsp;</p>
+			<p><strong>Kepada Yth,</strong></p>			
+			
+				<p class="smallfont"><?=$this->rowUser->fullName;?></p><br>
+				<?php
+				if ($this->rowUser->packageId == 26 || $this->rowUser->packageId == 27) {
+					
+					$tblPackage = new Pandamp_Modules_Identity_Package_Model_Package();
+					$rowPackage = $tblPackage->find($this->rowUser->packageId)->current();
+					
+					if ($this->rowUser->packageId == 26) {
+						$group = "Subsciption for Member Individual";
+						
+					} else if ($this->rowUser->packageId == 27) {
+						$group = "Subsciption for Member Corporate";
+					}
+				?>
+				<h3 style='color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;'>SELECT PAYMENT METHOD</h3><br>
+				<form method='post' action="http://luna.nsiapay.com/ipg_payment/RegisterOrderInfo">
+				<select name='method' id='method' style='width:200px;'>
+				<option value='pilih'>-- Pilih --</option>
+				<option value='manual'>Bank Transfer</option>
+				<option value='nsiapay'>NsiaPay</option>
+				</select>
+				<div style='padding-top:15px;'></div>
+				<input type="hidden" name="TYPE" value="IMMEDIATE">
+				<input type="hidden" name="BASKET" value="<?=$group.",".$rowPackage->charge.".00,1,".$rowPackage->charge.".00"?>">
+				<input type="hidden" name="MERCHANTID" value="000100090000028">
+				<input type="hidden" name="CHAINNUM" value="NA">
+				<input type="hidden" name="TRANSIDMERCHANT" value="<?=$this->rowUser->kopel?>">
+				<input type="hidden" name="AMOUNT" value="<?=$rowPackage->charge.".00"?>">
+				<input type="hidden" name="CURRENCY" value="360">
+				<input type="hidden" name="PurchaseCurrency" value="360">
+				<input type="hidden" name="acquirerBIN" value="NSIAPAY">
+				<input type="hidden" name="password" value="123456">
+				<input type="hidden" name="URL" value="http://www.hukumonline.com">
+				<input type="hidden" name="MALLID" value="199">
+				<input type="hidden" name="SESSIONID" value="<?=Zend_Session::getId()?>">
+				<?php
+				$sha1 = sha1($rowPackage->charge.".0000010009000002808iIWbWvO16w".$this->rowUser->kopel);
+//				echo $rowPackage->charge.".0000010009000002808iIWbWvO16w".$this->rowUser->kopel."<br>";
+//				echo $sha1; 
+				?>
+				<input type="hidden" name="WORDS" value="<?=$sha1?>">
+				<input type='submit' value='Process' />
+				</form>
+				<?php } ?>
+			
+		</blockquote>
+			
+	</div>
+	</td>
+</tr>
+</table>
+</body>
+</html>

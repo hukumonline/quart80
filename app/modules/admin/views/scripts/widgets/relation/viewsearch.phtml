@@ -1,0 +1,257 @@
+<script type="text/javascript">
+	storesearch = new Ext.data.Store({ 
+		proxy: new Ext.data.HttpProxy({
+			url: './services/catalog/search'
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'search',
+			totalProperty: 'totalCount',
+			id: 'guid'
+		}, [
+				'title', 
+				{name:'guid',mapping:'guid'},
+				'subtitle','value'
+		])
+	});
+	
+	storerelate = new Ext.data.SimpleStore({
+		id:'relate',
+		fields: ['value','selvalue'],
+		data:[['RELATED_OTHER','Berita Terkait'],['RELATED_BASE','Dasar Hukum'],['RELATED_ISSUE','Isu Hangat'],['RELATED_Clinic','Klinik'],['RELATED_HISTORY','Sejarah']]
+	});
+	
+	storechoice = new Ext.data.SimpleStore({
+		id:'choice',
+		fields: ['thechoice','choicevalue'],
+		data:[['Artikel','1'],['Klinik','2'],['Peraturan','3']]
+	});
+	
+    function renderTitleSearch(value, p, record){ 
+    	if (value.indexOf('File') > -1) {
+        return String.format(
+                '<div class="topic"><span style="color:green;"><b>{0}</b></span></div>',
+                value, record.id, record.data.guid);
+    	} else {
+        return String.format(
+                '<div class="topic"><b>{0}</b></div>',
+                value, record.id, record.data.guid);
+    	}
+    }
+    
+	// custom RowNumberer for use with paging GridPanels
+	Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+	  renderer : function(v, p, record, rowIndex, colIndex, store){
+	    if (this.rowspan) {
+	    	p.cellAttr = 'rowspan="' + this.rowspan + '"';
+	    }
+	
+	    var so = store.lastOptions;
+	    var sop = so? so.params : null;
+	    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+	  }
+	});
+
+    var xg = Ext.grid;
+    var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+    var typeRenderer = function(value, p, record) {
+	var rec = storerelate.getById(value);
+	return rec? rec.get('value') : 'select rel';
+}
+    var cm = new xg.ColumnModel
+   	([
+   		pg,
+		{header: "Title", dataIndex: 'title', width: 370, renderer:renderTitleSearch},
+		{
+			header: "RELATE AS", 
+			dataIndex:'value',
+			hidden : false,
+			width: 50, 
+			sortable: true,
+			editor: new Ext.form.ComboBox({
+				mode: 'local',
+				typeAhead: false,
+				triggerAction:"all",
+				lazyRender: true,
+				store:storerelate,
+				valueField: 'value',
+				displayField: 'selvalue'
+			}),
+			renderer: 
+				function(data) {
+					record = storerelate.getById(data);
+					if(record) {
+						return record.get('value');
+					}
+					else
+					{
+						return 'Select Relation';
+					}
+				}
+		}
+   	]);
+
+   	var pagingViewSearch = new Ext.ux.PagingToolbar({
+		pageSize: 25,
+		store: storesearch,
+		displayInfo: true,
+		displayMsg: 'Displaying topics {0} - {1} of {2}',
+		emptyMsg: "No data to display"
+	});
+	
+	var filter_search = new Ext.form.TextField( { name: 'query',emptyText:'Search here...',width:180	});
+	var selectbox = new Ext.form.ComboBox({
+				emptyText:'-- Please choose --',
+				mode: 'local',
+				triggerAction:"all",
+				selectOnFocus: true,
+				store:storechoice,
+				valueField: 'choicevalue',
+				displayField: 'thechoice'
+			});
+
+	// create the editor grid
+	var gridViewSearch = new xg.EditorGridPanel({
+		id:'view-search-grid',
+		iconCls:'relation',
+	    ds: storesearch,
+	    cm: cm,
+	    bbar: pagingViewSearch,
+		viewConfig: {
+			forceFit:true,
+			enableRowBody:true,
+			showPreview:true,
+			getRowClass : function(record, rowIndex, p, ds)
+			{
+              	if (this.showPreview) { 
+           			p.body = '<p> ' + record.data.subtitle + ' </p>';
+                	return 'x-grid3-row-expanded';
+            	}
+            	return 'x-grid3-row-collapsed';
+			}
+        },
+	    tbar: [{
+	    	text: 'Refresh',
+	    	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to Refresh',
+	    	handler: function(){ storesearch.reload(); }
+	    },'-',
+	    {
+	        	pressed: true,
+	            enableToggle:true,
+	            text:'&nbsp;Preview',
+	            tooltip: 'View a short summary of each post in the list',
+	            iconCls: 'summary',
+	            toggleHandler: toggleSearchDetails
+		},'-',
+		filter_search,
+		selectbox,
+		new Ext.Toolbar.Button({
+			text:'Go',
+			iconCls:'find',
+			handler: function(btn,e) {
+				var filterVal = filter_search.getValue();
+				var sbox = selectbox.getValue();
+				if( filterVal.length > 1 ) {
+					storesearch.baseParams = {query:filterVal,qbox:sbox,isrelate:true};
+					storesearch.load({params:{start:0, limit:25, query:filterVal, qbox:sbox }});
+					Ext.Ajax.request({
+						url:'./services/catalog/suggestioncollation',
+						params:{collation:filterVal},
+						callback: function(options, success, response ) {
+							if( success ) {
+								var result = Ext.decode( response.responseText );
+								if (result.success == true) {
+								Ext.MessageBox.show({
+									title:'Suggestion',
+									msg:"Did you mean: <b>'"+result.collation+"'</b> ?",
+									buttons: Ext.MessageBox.YESNO,
+									icon: Ext.MessageBox.QUESTION,
+									fn: function(btn) {
+										if (btn=="yes") {
+											storesearch.baseParams = {query:result.collation};
+											storesearch.load({params:{start:0, limit:25, query:result.collation, isrelate:true }});
+										} 
+										else
+										{
+											storesearch.load();
+										}
+									}
+								}
+								);
+								} else {
+									
+								}
+							}
+						}
+					});
+				} else {
+					storesearch.clearFilter();
+				}
+			}
+		}
+		)
+	    ],
+	    selModel: new xg.RowSelectionModel({singleSelect:false}),
+	    clicksToEdit:2,
+	    stripeRows: true,
+	    loadMask: true,
+	    layout:'fit'
+	});
+	
+	gridViewSearch.addListener('afteredit',handleEdit);
+
+  	// render it	    
+  	Ext.getCmp('viewsearch').add(gridViewSearch);
+  	Ext.getCmp('viewsearch').doLayout();
+  	
+	storesearch.load();
+	
+    function toggleSearchDetails(btn, pressed){
+        var view = Ext.getCmp('view-search-grid').getView();
+        view.showPreview = pressed;
+        view.refresh();
+    }
+    
+	/**
+	 * Handler to control grid editing
+	 * @param {Object} oGrid_Event
+	 */
+	function handleEdit(editEvent) 
+	{
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg:'Are you sure to relate this?',
+			buttons: Ext.MessageBox.YESNO,
+			icon: Ext.MessageBox.WARNING,
+			fn: function(btn) {
+				if (btn=="yes") {
+					Ext.Ajax.request({
+						url:'./admin/api_relation/create',
+						params:{
+							itemGuid:editEvent.record.data.guid,
+							relatedGuid:'<?php echo $this->catalogGuid; ?>',
+							relateAs:editEvent.value
+						},
+						failure:function(response,options){
+							Ext.MessageBox.alert('Failure','Oops...');
+//							storesearch.rejectChanges();
+						},
+						success:function(response,options){
+							var responseData = Ext.util.JSON.decode(response.responseText);
+							info('Success', responseData.msg);
+							storesearch.commitChanges();
+							storesearch.reload();
+						}
+					});
+				}
+				else
+				{
+					Ext.MessageBox.alert('Status', 'Relate canceled.');
+				}
+			}
+		});
+		
+	}
+	
+</script>

@@ -1,0 +1,16 @@
+<div class="td_peraturan1">
+	<div class="judulnaik">
+		<h1>Polling</h1>
+	</div>
+	<div class="bor"></div>
+	<div id="poll-container">
+		<form action="<?=$this->getRootUrl();?>/polling" method="post" name="polling">
+		<div class="barjudul"><?=$this->rowPoll->title; ?></div>
+		<?php foreach ($this->rowOpt as $row) { ?>
+	   	<div class="baroption"><input id='<?=$row->guid; ?>' name="poll" value='<?=$row->guid; ?>' type=radio>&nbsp;<?=$row->text; ?></div>
+	   	<?php } ?>
+	   	<input type="hidden" name="id" id="id" value="<?=$this->rowPoll->guid; ?>">
+	   	<input type="submit" value="Pilih &rarr;" style="font-size:12px;" />&nbsp;<a href="<?=$this->getRootUrl();?>/polling/<?=$this->rowPoll->guid; ?>" style="font-size:12px;">Hasil Polling</a>
+	   	</form>
+	</div>
+</div>

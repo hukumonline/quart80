@@ -1,0 +1,87 @@
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">	
+        <div id="adminForm"></div>
+        <div class="ext_statusbar" id="statusBar"></div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+
+<script type="text/javascript">
+var addEventCal = new Ext.FormPanel({
+	labelWidth: 75, // label settings here cascade unless overridden
+    url:'./admin/api_calendar/save',
+    frame:true,
+    title: 'Add New Event Calendar ...',
+    bodyStyle:'padding:5px 5px 0',
+    width: 650,
+    defaultType: 'textfield',
+
+    items: [
+        new Ext.form.DateField({
+            	fieldLabel: 'Date',
+                name: 'dateOfEvent',
+                format: 'd-m-Y',
+                readOnly:true,
+                value: '<?=$this->dateOfEvent; ?>'
+            }), {
+            	fieldLabel: 'Title',
+            	name: 'title',
+        		anchor: '98%',
+        		value: '<?=$this->title; ?>',
+            	allowBlank: false	
+            }, {
+            	xtype: 'htmleditor',
+            	name: 'text',
+            	fieldLabel: 'Text',
+            	height:200,
+            	anchor:'98%',
+            	value: '<?=$this->text; ?>'
+            }, new Ext.form.TimeField({
+            	fieldLabel: 'Start',
+            	name: 'starttime',
+            	format: 'H:i:s',
+            	value: '<?=$this->starttime; ?>',
+            	allowBlank:false
+            }), 
+            new Ext.form.TimeField({
+            	fieldLabel: 'End',
+            	name: 'endtime',
+            	format: 'H:i:s',
+            	value: '<?=$this->endtime; ?>',
+            	allowBlank:false
+            })
+            ],
+
+        buttons: [{
+            text: 'Save',
+            handler: function() {
+            	addEventCal.form.submit({
+              		reset: true,
+	          		waitMsg: 'Saving event ...',
+            		success: function(form, action) {
+						dialog.destroy();
+            			dialog.hide();
+            			dsEvent.reload();
+            			Ext.Msg.alert('Failure',action.result.message);
+            		},
+            		failure: function(form, action) {
+            			Ext.Msg.alert('Failure',action.result.message);
+            		},
+            		scope: addEventCal,
+            		params: {
+            			cid: <?=$this->pid ?>
+            		}
+            	});
+            }
+        }, {
+        	text: 'Cancel',
+        	handler: function() {
+        		dialog.destroy();
+        		dialog.hide();
+        	}
+        }]
+    });
+
+addEventCal.render('adminForm');
+</script>

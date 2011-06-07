@@ -1,0 +1,12 @@
+<div class="td_peraturan2">
+	<h1>Berita Terbaru</h1>
+</div>
+<div class="td_peraturan1">
+	<div style="height:auto;">
+		<ul id="navlistnoline">
+			<?php for($i=0; $i<$this->numberOfRows;$i++) { ?>
+			<li><span style="font:11px verdana,arial,helvetica,sans-serif;">[<?php echo $this->data[$i][2]; ?>]</span>&nbsp;<a href="<?php echo $this->getRootUrl(); ?>/berita/baca/<?php echo $this->data[$i][3]; ?>/<?php echo $this->data[$i][1]; ?>" title="<?php echo $this->data[$i][4]; ?>"><?php echo $this->data[$i][0]; ?></a></li>
+		<?php } ?>
+		</ul>
+	</div>
+</div>

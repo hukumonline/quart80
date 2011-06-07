@@ -1,0 +1,10 @@
+<div class=c-isi>
+	<div class="judulnaik">
+		<h1>::Polling Lainnya</h1>
+	</div>
+	<ul id="pollingline">
+	<?php $i=1;foreach($this->rowPoll as $row) { ?>
+		<li><span style="font:11px verdana,arial,helvetica,sans-serif;"><?=$i?>.</span>&nbsp;<a href="<?=$this->getRootUrl(); ?>/polling/<?=$row->guid; ?>"><?=$row->title; ?></a></li>
+	<?php $i++; } ?>
+	</ul>
+</div>

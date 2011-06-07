@@ -1,0 +1,19 @@
+<?php if (count($this->aData) > 0) { ?>
+<fieldset>
+	<legend>Sejarah</legend>
+	<ul id="ppline">
+	<?php foreach ($this->aData as $data){?>
+	<li>
+		<?php if($data['node']==$this->catalogGuid) {?>
+		<img src="<?=$this->baseUrl(); ?>/resources/images/page_right.gif">
+		<?php } ?>
+			<a href="<?=$this->baseUrl();?>/pusatdata/detail/<?=$data['node'];?>/node/<?=$this->node; ?>"><?=$data['title']; ?></a><br>		
+			<?=$data['subTitle']; ?>
+		<?php if ($data['description']) { ?>
+		<br><strong>Catatan: </strong><?=$data['description']; ?>
+		<?php } ?>
+	</li>
+	<?php } ?>
+	</ul>
+</fieldset>
+<?php } ?>

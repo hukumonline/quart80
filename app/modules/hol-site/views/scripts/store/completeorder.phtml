@@ -1,0 +1,138 @@
+<? 
+	// INITIALIZE JCART AFTER SESSION START
+	$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
+	// INCLUDE CONFIG SO THIS SCRIPT HAS ACCESS USER FIELD NAMES
+	include(ROOT_DIR.'/js/jcart/jcart-config.php');
+	// INCLUDE DEFAULT VALUES SINCE WE NEED TO PASS THE VALUE OF THE UPDATE BUTTON BACK TO jcart.php IF UPDATING AN ITEM QTY
+	// IF NO VALUE IS SET IN CONFIG, THERE HAS TO BE A DEFAULT VALUE SINCE SIMPLY CHECKING FOR THE VAR ITSELF FAILS
+	include(ROOT_DIR.'/js/jcart/jcart-defaults.php');
+?>
+
+<script type="text/javascript" src="<?=ROOT_URL;?>/js/jcart/jcart-javascript.php"></script>
+
+<div class="unit horizontal-center layout">
+	<h2 style="font-weight:bold;">YOUR ORDER HAS BEEN COMPLETED</h2>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">INVOICE</h3>
+	<div style="padding-top:15px;"></div>
+	<strong>Number: <?echo $this->invoiceNumber;?></strong>
+	<br>
+	<strong>Date: <?=Pandamp_Lib_Formater::get_date($this->datePurchased);?></strong>
+	
+</div>
+<div class="unit horizontal-center layout">
+	<div style="padding-top:15px;"></div>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">ORDER DETAILS</h3>
+
+<table cellspacing="0" border="0" cellpadding="0" id="shopping-cart-table" class="data-table box-table shopping-cart">
+<thead>
+<tr>
+	<th rowspan="1" colspan="2" class="a-left" style="padding-left:23px;border-left: 1px solid #cacaca;">Product Name</th>
+	<th class="a-center" colspan="1">Price</th>
+	<th rowspan="1" class="a-center">Quantity</th>
+	<th class="a-center last" colspan="1">Total</th>
+</tr>
+</thead>
+	<?
+		$bpmCatalog = new Pandamp_Core_Hol_Catalog();
+		$jcartId = $this->cart['items'];
+
+		$iCart = 0;
+		$cartTotal = 0;
+		$price = 0;
+		for($iCart=0;$iCart<count($jcartId);$iCart++)
+		{
+			$modelCatalogAttribute = new Pandamp_Modules_Dms_Catalog_Model_CatalogAttribute();
+			$price = $bpmCatalog->getPrice($jcartId[$iCart]['itemId']);
+//			$cartTotal += $price;
+			
+			$sDir = ROOT_URL.'/uploads/images';
+			$thumb = "";
+			
+			$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+			$rowsetRelatedItem = $modelRelatedItem->getDocumentById($jcartId[$iCart]['itemId'],'RELATED_IMAGE');
+			$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+			
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+			if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+			
+			if ($thumb == "") { $thumb = "resources/images/nothumb.jpg"; }
+			
+			$screenshot = "<img src=\"".$thumb."\" width=\"125\" />";
+			
+	?>
+
+	<tr>
+		<?php 	
+		if ($thumb == "") { $screenshot = ""; } else { ?>
+	    <td><a href=""><?=$screenshot; ?></a></td>
+	    <?php } ?>
+		<td class="attributes-col">
+			<h4 class="title" style="margin-bottom:5px;"><a href=""><?echo $jcartId[$iCart]['item_name'];?></a></h4>
+		</td>
+		<td class="a-right">
+		<div class="cart-price">
+		<span class="price">Rp. <?echo number_format($price,2);?></span> 
+		</div>
+		</td>
+		<td class="a-center"><?echo $jcartId[$iCart]['qty'];?></td>
+		<td class="a-right last">
+		<div class="cart-price">
+		<?php
+		$total =  $price * $jcartId[$iCart]['qty'];
+		$cartTotal += $total;
+		?>
+		<span class="price">Rp. <?echo number_format($jcartId[$iCart]['itemTotal'],2);?></span>
+		</div>
+		</td>
+	</tr>
+	<?	}?>
+	</tbody>
+	</table>
+	<table style="border: 1px solid #cacaca; border-top: 0;width:90%;">
+	<tr>
+		<td style="padding: 0px 0px 0px 10px;" valign="top">
+		<div class="shopping-cart-totals">
+		<table cellspacing="0" id="shopping-cart-totals-table">
+		<tbody>
+		<tr>
+			<td valign="middle" align="right" style="color: #444;text-transform: uppercase;" class="a-right" colspan="2">
+			Sub Total
+			</td>
+			<td>:</td>
+			<td class="a-right" width="20%">
+			<span class="price">Rp. <?echo number_format($cartTotal,2);?></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="middle" align="right" style="color: #444;text-transform: uppercase;" class="a-right" colspan="2">
+			Grand Total
+			</td>
+			<td>:</td>
+			<td class="a-right" width="20%">
+			<span class="price">Rp. <?echo number_format($this->cart['grandTotal'],2);?></span>
+			</td>
+		</tr>
+		</tbody>
+		</table>
+		</div>
+		</td>
+	</tr>
+	</table>
+
+
+	<div style="padding-top:15px;"></div>
+	<div class="bor"></div>
+	<div style="padding-top:15px;"></div>
+	
+	<h3 style="color:#EE1625;font-weight:bold;font-size:1em;line-height:1;margin-bottom:1em;">PAYMENT METHOD: <?=$this->data['paymentMethod'];?></h3>
+	<form method="get" action="<?=ROOT_URL;?>/store/payment/orderId/<?=$this->orderId;?>">
+		<input type="submit" value="Continue with Payment" />
+	</form>
+
+</div>

@@ -1,0 +1,114 @@
+<?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+		
+require_once("Spreadsheet/Excel/Writer/Format.php");
+require_once("Spreadsheet/Excel/Writer/BIFFwriter.php");
+require_once("Spreadsheet/Excel/Writer/Worksheet.php");
+require_once("Spreadsheet/Excel/Writer/Workbook.php");
+require_once("Spreadsheet/Excel/Writer/Parser.php");
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer_Workbook("-");
+$worksheet = &$workbook->addWorksheet('Peraturan');
+
+/* set judul */
+$judul =& $workbook->addformat();
+$judul->setsize(12);
+$judul->setbold();
+$judul->setalign('center');
+/* set for each header judul */
+$judul1 =& $workbook->addformat();
+$judul1->setsize(8);
+$judul1->setbold();
+$judul1->setalign('center');
+$judul1->setalign('vcenter');
+$judul1->setborder(1);
+/* set for each value of database */
+$judul2 =& $workbook->addformat();
+$judul2->setsize(8);
+$judul2->setalign('center');
+$judul2->setalign('vcenter');
+
+$judul3 =& $workbook->addformat();
+$judul3->setsize(8);
+$judul3->setalign('left');
+$judul3->setTextWrap();
+$judul3->setalign('vcenter');
+
+/* set for each header judul */
+$judul5 =& $workbook->addformat();
+$judul5->setsize(8);
+$judul5->setbold();
+$judul5->setalign('center');
+$judul5->setalign('vcenter');
+$judul5->setborder(1);
+
+/* set value for line */
+$judul7 =& $workbook->addformat();
+$judul7->setsize(8);
+$judul7->setbold();
+$judul7->setborder(1);
+
+$worksheet->writestring(0, 0, "Daftar Peraturan",$judul);
+$worksheet->mergecells(0,0,0,3);
+
+$worksheet->writestring(2, 0, "No.",$judul5);
+$worksheet->writestring(3, 0, "",$judul7);
+$worksheet->mergecells(2,0,3,0);
+$worksheet->setColumn(0,0,5);
+$worksheet->writestring(2,1, "Folder",$judul1);
+$worksheet->writestring(3,1,"",$judul7);
+$worksheet->mergecells(2,1,3,1);
+$worksheet->setColumn(2,2,30);
+$worksheet->writestring(2,2,"Field",$judul1);
+$worksheet->writestring(3,2,"",$judul7);
+$worksheet->mergecells(2,2,3,2);
+$worksheet->writestring(2, 3, "Peraturan/Putusan",$judul1);
+$worksheet->writestring(3, 3, "",$judul7);
+$worksheet->mergecells(2,3,3,3);
+$worksheet->setColumn(3,3,100);
+
+$j=0;
+$i=4;
+
+foreach ($this->selectedRows as $rows_id)
+{
+	$tblCatalog = new Pandamp_Modules_Dms_Catalog_Model_Catalog();
+	$rowset = $tblCatalog->find($rows_id)->current();
+	$rowsetCatalogAttribute = $rowset->findDependentRowsetCatalogAttribute(); 
+	$tableProfileAttribute = new Pandamp_Modules_Dms_Profile_Model_ProfileAttribute();
+	$profileGuid = $rowset->profileGuid;
+	$where = $tableProfileAttribute->getAdapter()->quoteInto('profileGuid=?', $profileGuid);
+	$rowsetProfileAttribute = $tableProfileAttribute->fetchAll($where,'viewOrder ASC');
+	$worksheet->writenumber($i, 0, ++$j,$judul2);
+	$aAttribute = array();
+	$n=2;
+	$tblAttribute = new Pandamp_Modules_Dms_Catalog_Model_Attribute();
+	foreach ($rowsetProfileAttribute as $rowProfileAttribute)
+	{
+		if($rowsetCatalogAttribute->findByAttributeGuid($rowProfileAttribute->attributeGuid))
+		{
+			$rowCatalogAttribute = $rowsetCatalogAttribute->findByAttributeGuid($rowProfileAttribute->attributeGuid);
+			$rowsetAttribute = $tblAttribute->find($rowCatalogAttribute->attributeGuid);
+			if(count($rowsetAttribute))
+			{
+				$rowAttribute = $rowsetAttribute->current();
+				$worksheet->writestring($i, 2, "$rowAttribute->name",$judul3);
+				$worksheet->writestring($i, 3, "$rowCatalogAttribute->value",$judul3);
+			}
+		}
+		$i++;
+	}
+	
+//	$rowCatalogAttributeTitle = $rowsetCatalogAttribute->findByAttributeGuid('fixedTitle');
+//	$rowCatalogAttributeSubTitle = $rowsetCatalogAttribute->findByAttributeGuid('fixedSubTitle');
+//	
+//	$worksheet->writenumber($i, 0, ++$j,$judul2);
+//	$worksheet->writestring($i, 3, "$rowCatalogAttributeTitle->value",$judul3);
+	$i++;
+}
+
+//$workbook->send('FUPP.xls');
+$workbook->close();		
+
+?>

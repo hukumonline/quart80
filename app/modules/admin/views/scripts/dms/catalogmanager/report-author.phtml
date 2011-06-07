@@ -1,0 +1,71 @@
+<script type="text/javascript">
+
+prfAuth = new Ext.data.GroupingStore({
+	proxy: new Ext.data.HttpProxy({
+		url: './services/catalog/fetch-author'
+	}),	
+	reader: new Ext.data.JsonReader({
+		root: 'user',
+		totalProperty: 'totalCount',
+		id: 'guid'
+	}, [
+			{name:'guid'},
+			{name:'username'}
+	]),
+	remoteSort: true
+});
+
+
+comboPrfAuth = new Ext.form.ComboBox({
+  	id:'comboprfauth',
+	typeAhead: false,
+	triggerAction: 'all',
+	emptyText:'Select author...',
+	lazyRender:true,
+	store: prfAuth,
+	displayField:'username',
+	valueField:'username',
+	fieldLabel:'Author'	    	
+});
+
+var reportAuthor = new Ext.FormPanel({
+	labelWidth: 75,
+	url:'',
+	frame:true,
+	title:'Laporan per Author',
+	bodyStyle:'padding:5px 5px 0',
+	items:[comboPrfAuth
+	, new Ext.Button({
+		text:'Generate',
+		handler:function(btn,e){
+			var profAuth = Ext.getCmp('comboprfauth').getValue();
+			Ext.Ajax.on('beforerequest',function(){
+				Ext.MessageBox.wait('Process ...');
+			});
+			Ext.Ajax.request({
+				url:'./services/catalog/fetch-catalogs-in-folder',
+				params:{
+					profAuth:profAuth
+				},
+				callback: function(options, success, response ) {
+					if( success ) {
+						store.baseParams = {profAuth:profAuth};
+						store.load({params:{start:0, limit:25, profAuth:profAuth }});
+						dialog.destroy();
+						dialog.hide();
+					}
+				}
+			});
+			Ext.Ajax.on('requestcomplete',function(){
+				Ext.MessageBox.hide();
+			});
+		}
+	})
+	]
+});
+
+Ext.getCmp('dialog_window1').add(reportAuthor);
+Ext.getCmp('dialog_window1').doLayout();
+
+
+</script>

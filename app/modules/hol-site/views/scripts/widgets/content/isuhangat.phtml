@@ -1,0 +1,14 @@
+<div class="td_news1">
+	<div class="td_news2">
+		<h1>Isu Hangat</h1>
+	</div>
+	<div id="terbaru_border">
+		<div class="terbaru_box active">
+		<ul>
+			<?php for($i=0; $i<$this->numberOfRows;$i++) { ?>
+			<li><div>[<?=$this->data[$i][2]; ?>]</div><a href="<?=$this->baseUrl(); ?>/berita/isuhangat/<?=$this->data[$i][3]; ?>/<?=$this->data[$i][1]; ?>" class="terbaru"><?=$this->data[$i][0]; ?></a></li>
+			<?php } ?>
+		</ul>
+		</div>
+	</div>
+</div>

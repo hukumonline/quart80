@@ -1,0 +1,134 @@
+<div class="unit horizontal-center layout">
+<h2 style="font-weight:bold;">Order History</h2>
+<div class="bor"></div>
+<div style="padding-top:15px;"></div>
+</div>
+<div class="unit horizontal-center layout on-2 columns">
+	<div class="fixed column" style="width:560px;padding-right:20px;float:left;">
+	<a href="<? echo ROOT_URL;?>/identity/personal.setting">My Account</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/list">Order </a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/transaction">Transaction </a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/confirm">Confirmation</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/billing">Billing Info</a> || 
+	<a href="<? echo ROOT_URL;?>/store/payment/document">Documents</a>
+	
+	</div>
+	<div class="fixed column" style="width:360px;padding-right:10px;padding-left:5px;float:right;">
+	<form id="frmSearch" name="frmSearch" method="POST" >
+		<input id="Query" name="Query" size=30 value="<?echo $this->Query;?>"> 
+		<input type="hidden" id="Limit" name="Limit" value="10">
+		<input type="hidden" id="Offset" name="Offset" value="<?echo $this->Offset;?>">
+		<input type="submit" id="btnGoSearch" value="Search">
+	</form>
+	
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<link rel="stylesheet" href="<?=ROOT_URL;?>/js/jquery/paging/pagination.css" />
+<script type="text/javascript" src="<?=ROOT_URL;?>/js/jquery/paging/jquery.pagination.js"></script>
+<script>
+$(document).ready(function(){
+	
+	var isFirstTime = 1;
+	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 0;
+	var itemsPerPage = <?=$this->itemsPerPage;?>;
+	var currentOffset = <?=$this->offset;?>;
+	var limit = <?=$this->limit;?>;
+	var currentNode = "<?=$this->currentNode;?>";
+	var totalItems = <?=$this->numCount;?>;
+	var sort = "<?=$this->sort;?>";
+	
+	
+	var tmpCurrentPageIndex = currentOffset/itemsPerPage;
+	
+	$("#catalogPagination").pagination(totalItems, 
+	{items_per_page:itemsPerPage, callback:handlePaginationClick, current_page:tmpCurrentPageIndex}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		if(!isFirstTime)
+		{
+			myPageIndex = new_page_index;
+			var nextOffset = (itemsPerPage * myPageIndex);
+		
+			$("#sOffset").val(nextOffset);
+			//$("#frmSearch").submit();
+			
+			var url = "<?=ROOT_URL;?>/store/payment/list"+currentNode+"/offset/"+nextOffset+"/limit/"+limit+"/Query/<?=$this->Query;?>/sort/"+sort+"/";
+			window.location = url;
+		}
+		isFirstTime = 0;
+		return false;
+	}
+	
+	
+});
+</script>
+<div class="unit horizontal-center layout">
+<div style="padding-top:15px;"></div>
+<b>Data number <?=($this->offset+1>$this->numCount)?$this->numCount:$this->offset+1; ?> to <?=($this->offset+$this->limit>$this->numCount)?$this->numCount:$this->offset+$this->limit>$this->numCount; ?> from <?=$this->numCount;?> data(s)</b>
+<div class="bor"></div>
+<div style="padding-top:15px;"></div>
+</div>
+<div class="unit horizontal-center layout on-9 columns">
+	<div class="fixed column">No&nbsp;</div>
+	<div class="fixed column">Order ID&nbsp;</div>
+	<div class="fixed column">Invoice&nbsp;</div>
+	<div class="fixed column">date Purchased&nbsp;</div>
+	<div class="fixed column">Total Price&nbsp;</div>
+	<div class="fixed column">Qty&nbsp;</div>
+	<div class="fixed column">Method&nbsp;</div>
+	<div class="fixed column">Status&nbsp;</div>
+	<div class="fixed column">Action&nbsp;</div>
+</div>
+<div class="unit horizontal-center layout on-9 columns">
+<? $i = $this->offset + 1; ?>
+<? if(!empty($_POST['searchid'])):?>
+    <?=header('Location: '.$this->url(array('controller'=>'store_payment', 
+            'action'=>'detail', 'id'=>$_POST['searchid'])));?>
+<? endif; ?>
+<? foreach($this->listOrder as $value): ?>
+<? if($value['orderStatus'] == 3 or $value['orderStatus'] == 5){
+	$anchor = 'trdetail';
+	}else{
+	$anchor = 'detail';
+	}
+?>
+	<div class="fixed column"><a href="<?=$this->url(array('controller'=>'store_payment', 
+        'action'=>$anchor, 'id'=>$value['orderId'])); ?>"><?=$i;?></a>&nbsp;</div>
+	<div class="fixed column"><a href="<?=$this->url(array('controller'=>'store_payment', 
+        'action'=>$anchor, 'id'=>$value['orderId'])); ?>"><?=$value['orderId'];?></a>&nbsp;</div>
+	<div class="fixed column"><a href="<?=$this->url(array('controller'=>'store_payment', 
+        'action'=>$anchor, 'id'=>$value['orderId'])); ?>"><?=$value['invoiceNumber']; ?></a>&nbsp;</div>
+	<div class="fixed column" align="center"><?=strftime("%Y-%m-%d", strtotime($value['datePurchased'])); ?>&nbsp;</div>
+	<div class="fixed column" align="right"><?=$value['orderTotal']; ?>&nbsp;</div>
+	<div class="fixed column" align="center"><?=$value['countTotal']; ?>&nbsp;</div>
+	<div class="fixed column"><?=$value['paymentMethod']; ?>&nbsp;</div>
+	<div class="fixed column"><?=$value['ordersStatus']; ?>&nbsp;</div>
+	<div class="fixed column">
+	<? if($value['orderStatus']==1){
+	?>
+	<form method="get" action="<?=ROOT_URL?>/store/viewinvoice">
+	<input type="hidden" name="orderId" value="<?=$value['orderId']?>">
+	<input type="submit" value="Pay Now">
+	</form>
+	<?
+	}
+	?>
+	&nbsp;</div>
+	<div style="padding-top:50px;"></div>
+	
+<? $i++; endforeach;  ?>
+</div>
+
+<div style="padding-top:15px;"></div>
+<table width='100%'>
+	<tr>
+		<td width=35%>&nbsp;</td>
+		<td align=right><div id='catalogPagination' class="pagination">&nbsp;</div></td>
+	</tr>
+</table>

@@ -1,0 +1,16 @@
+<div id="panelBeritaBawah">
+<?php if ($this->numberOfRows == 0) { ?>
+<span style="font:11px verdana,arial,helvetica,sans-serif;">kosong</span>
+<?php } ?>
+<ol>
+	<?php for($i=0; $i<$this->numberOfRows;$i++) { ?>
+	<li>
+		<div id="index_jam"><span class="jam">[<?=$this->data[$i][1]; ?>]</span></div>
+		<div id="index_berita">
+			<a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][2]; ?>/<?=$this->data[$i][3]; ?>"><?=$this->data[$i][0]; ?></a>
+			<span style="font:11px verdana,arial,helvetica,sans-serif;color:#009933;"><?=$this->data[$i][4]; ?></span>
+		</div>
+	</li>
+	<?php } ?>
+</ol>
+</div>

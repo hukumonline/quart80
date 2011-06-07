@@ -1,0 +1,204 @@
+<script type="text/javascript" src="./js/datepicker/datetimepicker.js"></script>
+<link href="./js/datepicker/rfnet.css" type="text/css" rel="stylesheet" />
+<div style="width:auto;">
+    <div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>
+    <div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">
+    	<h3 style="margin-bottom:5px;"><img border="0" height="14" width="14" src="./js/extjs/resources/images/default/silk/icons/folder_add.png">&nbsp;Add New Banner ...</h3>
+        <div id="AddNewBanner">
+        <form id="anb" name="anb" enctype='multipart/form-data'>
+        <table>
+        <tr>
+        	<td>Format</td>
+        	<td>
+        	<select name='new_type' id="new_type">
+        	<option value='1' selected>Picture Format</option>
+        	<option value='2'>Flash Format</option>
+        	</select>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Name</td>
+        	<td><input type='text' name='new_name' size='60'></td>
+        </tr>
+        <tr>
+        	<td>Source</td>
+        	<td><input type='file' name='new_src' size='60'></td>
+        </tr>
+        <tr>
+        	<td>Alt. Text</td>
+        	<td><input type='text' name='new_alt' size='60'></td>
+        </tr>
+        <tr>
+        	<td>Folder attachment</td>
+        	<td><input type='text' name='fa' size='60'></td>
+        </tr>
+        <tr>
+        	<td>Attachment</td>
+        	<td><input type='file' name='attachfile[]' id="attachfile" size='60' class="multi"></td>
+        </tr>
+        <tr>
+        	<td>URL</td>
+        	<td><input type='text' name='new_url' id="new_url" size='60' value='http://'></td>
+        </tr>
+        <tr>
+        	<td>Width x Height</td>
+        	<td><input type='text' name='new_url1' id="new_url1" size='20' disabled> x <input type='text' id="new_url2" name='new_url2' size='20' disabled></td>
+        </tr>
+        <tr>
+        	<td>Banner Zone</td>
+        	<td>
+        	<?php 
+        	$formater = new Pandamp_Lib_Form(); 
+        	echo $formater->zone('new_ban_zone');
+        	?>
+        	</td>
+        </tr>
+        <tr>
+        	<td>How many times banner<br>can be displayed</td>
+        	<td>
+        	<select name='new_dis_times' id="new_dis_times">
+        	<option value='0'>Unlimited</option>
+        	<option value='EV'>- Enter Value -</option>
+        	<option value='100'>100</option>
+        	<option value='200'>200</option>
+        	<option value='300'>300</option>
+        	<option value='400'>400</option>
+        	<option value='500'>500</option>
+        	<option value='600'>600</option>
+        	<option value='700'>700</option>
+        	<option value='800'>800</option>
+        	<option value='900'>900</option>
+        	<option value='1000'>1000</option>
+        	</select> Enter Value <input type='text' name='new_dis_times_ev' id="new_dis_times_ev" size='29' value='' disabled>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Display Type</td>
+        	<td>
+        	<select name='new_dis_type' readonly>
+        	<option value='1'>Standard HTML</option>
+        	<option value='2'>PopUp Window</option>
+        	</select> - upcoming feature -
+        	</td>
+        </tr>
+        <tr>
+        	<td>On Click, Target Window</td>
+        	<td>
+        	<select name='new_target'>
+        	<option value='_self'>Open in Current Window</option>
+        	<option value='_blank' selected>Open in New Window</option>
+        	</select>
+        	</td>
+        </tr><br>
+       	<?php $today = date('Y-m-d H:i:s'); ?>
+        <tr>
+        	<td>Published Date</td>
+        	<td>
+        	<input type="Text" id="publishedDate" maxlength="25" size="25" name="publishedDate" value="<?=$today ?>"><a href="javascript:NewCal('publishedDate','yyyymmdd',true,24)"><img src="./js/extjs/resources/images/default/custom/img.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Expired Date</td>
+        	<td>
+        	<input type="Text" id="expiredDate" maxlength="25" size="25" name="expiredDate"><a href="javascript:NewCal('expiredDate','yyyymmdd',true,24)"><img src="./js/extjs/resources/images/default/custom/img.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Created on</td>
+        	<td>
+        	<?=$today ?><input type='hidden' name='createdDate' id='createdDate' value='<?=$today ?>'>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Modified on</td>
+        	<td>
+        	0000-00-00 00:00:00<input type='hidden' name='modifiedDate' id='modifiedDate' value='0000-00-00 00:00:00'>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Deleted on</td>
+        	<td>
+        	0000-00-00 00:00:00<input type='hidden' name='deletedDate' id='deletedDate' value='0000-00-00 00:00:00'>
+        	</td>
+        </tr>
+        <tr>
+        	<td>Status</td>
+        	<td>
+        	<?php 
+        	require_once(CONFIG_PATH.'/master-status.php'); 
+        	$aStatus = MasterStatus::getPublishingStatus();
+        	?>
+			<select name="status" id="status">
+				<?php foreach($aStatus as $val => $label) {?>
+					<option value="<?=$val;?>" 
+						<?php 
+							if($val == 99) echo 'selected';
+						?>
+						>
+						<?=$label;?>
+					</option>
+				<?php }?>
+			</select>
+        	</td>
+        </tr>
+        </table><br>
+        <p class="buttons"><input value="Save" type="submit"><input type="button" name="cancel" id="cancel" value="Cancel">
+        </form>
+        </div>
+    </div></div></div>
+    <div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>
+</div>
+<script type="text/javascript">
+var options = {
+	type:'post',
+	url: './admin/api_banner/save',
+	beforeSubmit: prepareData,
+	success: showResponse
+};
+$('#anb').ajaxForm(options);
+function prepareData() {
+	Ext.MessageBox.wait('Saving Banner');
+}
+function showResponse(responseText, statusText) {
+    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+        '\n\nThe output div should have already been updated with the responseText.'); 
+		        
+	Ext.MessageBox.hide();
+}
+$('#attachfile').MultiFile(); 
+$('#new_type').click( 
+function() 
+{ 
+    if ($('#new_type').val() == 2)
+    {
+    	$('#new_url').attr('disabled',true);
+    	$('#new_url1').removeAttr('disabled');
+    	$('#new_url2').removeAttr('disabled');
+    }
+    else
+    {
+    	$('#new_url').removeAttr('disabled');
+    	$('#new_url1').attr('disabled',true);
+    	$('#new_url2').attr('disabled',true);
+    }
+});
+$('#new_dis_times').click( 
+function() 
+{ 
+    if ($('#new_dis_times').val() == "EV")
+    {
+    	$('#new_dis_times_ev').removeAttr('disabled');
+    }
+    else
+    {
+    	$('#new_dis_times_ev').attr('disabled',true);
+    }
+});
+
+$('#cancel').click(function() {
+	dialog.destroy();
+	dialog.hide();
+	dsBanner.reload();
+});
+
+</script>

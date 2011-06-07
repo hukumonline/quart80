@@ -1,0 +1,237 @@
+<style type="text/css">
+.display_header		{ font-size:16px; font-family:arial, helvetica; font-weight:bold }
+.display_title		{ font-size:12px; font-family:arial, helvetica; color:#FFFFFF; font-weight:bold }
+.display_txt		{ font-size:12px; font-family:arial, helvetica; color:#000000 }
+.display_user		{ font-size:10px; font-family:verdana, helvetica, arial; color:#999999; font-weight:bold }
+.display_edit		{ font-size:10px; font-family:verdana, arial, helvetica }
+.display_title_bg	{ background-color:#2663E2 }
+.display_txt_bg		{ background-color:#EDECD8 }
+</style>
+<script type="text/javascript"> 
+setTimeout(function()
+{
+	dsEvent = new Ext.data.Store({ 
+		proxy: new Ext.data.HttpProxy({
+			url: './services/calendar/fetch-event-calendar'	
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'calendar',
+			totalProperty: 'totalCount',
+			id: 'guid',
+		}, [
+				'title','guid','body'
+				,'author','dateline','wday'
+				,'timestr','month','year'
+		]),
+		remoteSort: true
+	});
+	
+	// custom RowNumberer for use with paging GridPanels
+	Ext.ux.grid.PagingRowNumberer = Ext.extend(Ext.grid.RowNumberer, {
+	  renderer : function(v, p, record, rowIndex, colIndex, store){
+	    if (this.rowspan) {
+	    	p.cellAttr = 'rowspan="' + this.rowspan + '"';
+	    }
+	
+	    var so = store.lastOptions;
+	    var sop = so? so.params : null;
+	    return ((sop && sop.start)? sop.start : 0) + rowIndex + 1;
+	  }
+	});
+
+    var xg = Ext.grid;
+    var sm = new xg.CheckboxSelectionModel();
+    var pg = new Ext.ux.grid.PagingRowNumberer({header:'No.',width:30});
+    var cm = new xg.ColumnModel
+   	([
+   		sm,
+   		pg,
+		{header: "Title", dataIndex: 'title', width: 277}
+   	]);
+	
+	// add a paging toolbar to the grid's footer
+	var paging = new Ext.ux.PagingToolbar({
+		pageSize: 25,
+		store: dsEvent,
+		displayInfo: true,
+		displayMsg: 'Displaying topics {0} - {1} of {2}',
+		emptyMsg: "No data to display"
+	});
+	
+	var gridEvent = new xg.GridPanel({
+		id:'eventcalendar-grid',
+	    ds: dsEvent,
+	    cm: cm,
+	    sm: sm,
+	    bbar: paging,
+		viewConfig: {
+			forceFit:true,
+			enableRowBody:true,
+			showPreview:true,
+			getRowClass : function(record, rowIndex, p, ds)
+			{
+              	if (this.showPreview) { 
+              		this.tplView = new Ext.XTemplate(
+              		'<div style="padding-left:20px;">',
+					'<table cellspadding="0" cellspacing="0" border="0" width="600" align="left"><br />',
+					'<tr>',
+						'<td><span class="display_header">{dateline}</span></td>',
+						'<td align="right"><span class="display_header">{wday}</span></td>',
+					'</tr>',
+					'</table>',
+					'<img src="./js/extjs/resources/images/default/custom/clear.gif" width="1" height="3" border="0"><br clear="all">',
+					'<table cellspacing="0" cellpadding="0" border="0" width="600" align="left">',
+						'<tr>',
+						'<td bgcolor="#000000">',
+							'<table cellspacing="1" cellpadding="1" border="0" width="100%">',
+								'<tr>',
+									'<td class="display_title_bg">',
+										'<table cellspacing="0" cellpadding="0" border="0" width="100%">',
+											'<tr>',
+												'<td width="50%"><span class="display_title">&nbsp;{title}</span></td>',
+												'<td><img src="./js/extjs/resources/images/default/custom/clear.gif" width="20" height="1" border="0"></td>',
+												'<td align="right" nowrap="yes"><span class="display_title">{timestr}&nbsp;</span></td>',
+											'</tr>',
+										'</table>',
+									'</td>',
+								'</tr>',
+								'<tr>',
+									'<td class="display_txt_bg">',
+										'<table cellspacing="1" cellpadding="1" border="0" width="100%">',
+											'<tr>',
+												'<td><span class="display_txt">{body}</span></td>',
+											'</tr>',
+											'<tr>',
+												'<td align="right"><span class="display_user">{postedby}</td>',
+											'</tr>',
+										'</table>',
+									'</td>',
+								'</tr>',
+							'</table>',
+						'</td>',
+						'</tr>',
+					'</table></div>'
+              		);
+              		this.tplView.compile();
+               		p.body = this.tplView.apply({body:record.data.body,dateline:record.data.dateline,wday:record.data.wday,title:Ext.util.Format.htmlEncode(record.data.title),timestr:record.data.timestr,postedby:Ext.util.Format.htmlEncode(record.data.author)});
+                	return 'x-grid3-row-expanded';
+            	}
+            	return 'x-grid3-row-collapsed';
+			}
+        },
+	    tbar: [{
+	    	text:'Add Event',
+	    	icon: './js/extjs/resources/images/default/silk/icons/report_add.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to add event',
+	    	handler:function(){ ext_get("./admin/calendar_manager/postmessage",700,540); }
+	    },
+	    {
+	    	text: 'Delete',
+	    	icon: './js/extjs/resources/images/default/silk/icons/bin_empty.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to delete selected rows',
+	    	handler: function(){
+	    		var selectedKeys = gridEvent.selModel.selections.keys;
+	    		if (selectedKeys.length > 0)
+	    		{
+	    			Ext.MessageBox.confirm('Confirm','Do you really want to delete selection?',deleteRecordEvent);
+	    		}
+	    		else
+	    		{
+	    			Ext.MessageBox.alert('Oops ...','Please select at least one item to delete');
+	    		}
+	    	}
+	    },{
+	    	text: 'Refresh',
+	    	icon: './js/extjs/resources/images/default/silk/icons/database_refresh.png',
+	    	cls: 'x-btn-text-icon',
+	    	tooltip: 'Click to Refresh the table',
+	    	handler: function(){ dsEvent.reload(); }
+	    },
+	    '-', {
+	        	pressed: true,
+	            enableToggle:true,
+	            text:'&nbsp;Preview',
+	            tooltip: 'View a short summary of each post in the list',
+	            iconCls: 'summary',
+	            toggleHandler: toggleDetails
+		}
+	    ],
+	    selModel: new xg.RowSelectionModel({singleSelect:false}),
+	    enableColLock:false,
+	    enableDragDrop: true,
+	    stripeRows: true,
+	    ddGroup: 'GridDD', 
+	    loadMask: true,
+	    layout:'fit',
+	    forceFit:'fit'
+	});
+
+  	// render it	    
+  	Ext.getCmp('kutu-Calendar').add(gridEvent);
+  	Ext.getCmp('kutu-Calendar').doLayout();
+	dsEvent.load({params:{start:0, limit:25}});
+	
+	/**
+	 * Function for Deleting record(s)
+	 * @param { Object } btn
+	 */
+	function deleteRecordEvent(btn) {
+		if (btn=='yes')
+		{
+	    	var selections = gridEvent.selModel.getSelections();
+			for(j = 0; j < gridEvent.selModel.getCount(); j++){
+				var conn = new Ext.data.Connection();
+				conn.on('beforerequest', function() {
+					Ext.MessageBox.wait('delete event [' + selections[j].json.title + ']'); 
+				});						
+				conn.request({
+					url: './admin/api_calendar/delete',
+					params:{guid: selections[j].json.guid},
+					callback:function(options, success, response){
+						if (success) {
+							json = Ext.decode( response.responseText );
+							if ( json.success ) {
+								dsEvent.reload(); 
+								info( 'success', json.message );
+							} else {
+								Ext.Msg.alert( 'Failure', json.error );
+							}
+						} else {
+							Ext.Msg.alert( 'Error', 'Failed to connect to the server.');
+						}
+					}
+				});
+				conn.on('requestcomplete', function() {
+					Ext.MessageBox.hide();
+				});						
+			}
+		}
+	}
+
+    function toggleDetails(btn, pressed){
+        var view = Ext.getCmp('eventcalendar-grid').getView();
+        view.showPreview = pressed;
+        view.refresh();
+    }
+	
+	gridEvent.on('rowcontextmenu',showRowContextMenu);
+	
+	function showRowContextMenu(grid, rowIndex, e)
+	{
+		var coords = e.getXY();
+		rowRecord = dsEvent.getAt(rowIndex);
+		e.stopEvent();
+		menuG.showAt([coords[0], coords[1]]);
+	}
+	    
+	var menuG = new Ext.menu.Menu('mainGridRowContext');
+	menuG.add({
+		text:'Edit', 
+		icon: './js/extjs/resources/images/default/silk/icons/report_edit.png',
+		handler: function(){ ext_get("./admin/calendar_manager/editpost/pid/"+rowRecord['id'],700,540) }
+	});
+	
+}, 10);
+</script>

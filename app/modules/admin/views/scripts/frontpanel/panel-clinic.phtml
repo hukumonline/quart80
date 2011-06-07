@@ -1,0 +1,27 @@
+<div class="info">
+	<div class="x-layout-panel-hd" style="cursor: pointer;" onclick="BI.infoView.toggle(this)">
+		<div class="x-layout-panel-hd-text header x-layout-expand-north">Klinik</div>
+	</div>
+	<div style="display: block;">
+	<div class="toolbar"></div>
+	<div class="body">
+		<table>
+		<tr>
+			<td>Pertanyaan baru</td>
+			<td>:</td>
+			<td><?=$this->numDocsOfNewQuestion; ?></td>
+		</tr>
+		<tr>
+			<td>Jawaban</td>
+			<td>:</td>
+			<td><?=$this->numberOfRowsAnswer; ?></td>
+		</tr>
+		<tr>
+			<td>Terbit</td>
+			<td>:</td>
+			<td><?=$this->numDocsOfPublished; ?></td>
+		</tr>
+		</table>		
+	</div>
+	</div>
+</div>

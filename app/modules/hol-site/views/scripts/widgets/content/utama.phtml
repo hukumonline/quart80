@@ -1,0 +1,74 @@
+<div id="mynews">
+<?php 
+//$sDir = 'uploads/images';
+$sDir = $this->getRemoteImageUrl();
+for($i=0; $i<$this->numberOfRows;$i++) { 
+
+	$thumb = "";
+	$guid = $this->data[$i][2];
+	
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($guid,'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+	
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+	
+	if ($thumb == "") { $thumb = "resources/images/nothumb.jpg"; }
+	
+	$screenshot = "<img src=\"".$thumb."\" border=\"1\" width=\"280\" height=\"200\" />";
+	
+?>
+
+	<div id="news" class="news_style" rel="<?=$this->data[$i][0]; ?>">
+	<div class="image"><?=$screenshot; ?></div>
+	<div class="kotakisi">
+		<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$guid; ?>/<?=$this->data[$i][3];?>"><?=$this->data[$i][0];?></a></h2>
+		<div class="author"><?=$this->data[$i][4]; ?></div>
+		<p><?=Pandamp_Lib_Formater::string_limit_words($this->data[$i][5],10);?></p>
+		<div class="bb"><img src="<?=$this->getRootUrl(); ?>/resources/images/comment.jpg" width="13" height="9" /><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$guid; ?>/<?=$this->data[$i][3];?>#comments"> <?=$this->data[$i][6]; ?> tanggapan </a> |<a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$guid; ?>/<?=$this->data[$i][3];?>"> Selengkapnya </a> |<a href="<?=$this->getRootUrl(); ?>/warta/utama"> Index</a></div>
+		
+	</div>
+	</div>
+
+<?php } ?>
+</div>
+
+
+<div align="left" id="mynewsdis">
+<div class="c_kr1">
+<h1>HEADLINE</h1>
+	<div class="news_border">
+		<div id="showhere" class="news_show"></div>
+	</div>
+	
+	<div class="buttondiv" id="news_button" style="float:right">
+		<img src="resources/images/news/example/prev.gif" align="absmiddle" id="news_prev"><img src="resources/images/news/example/pause.gif" align="absmiddle" id="news_pause"><img src="resources/images/news/example/next.gif" align="absmiddle" id="news_next">
+		<div style='display:none'>
+		<img src=resources/images/news/example/prev0.gif id=news_prev0><img src=resources/images/news/example/pause0.gif id=news_pause0><img src=resources/images/news/example/next0.gif id=news_next0>
+		</div>	
+	</div>
+	</div>
+	
+</div>
+
+<script>
+$(document).ready(function(){
+var newsoption1 = {
+  firstname: "mynews",
+  secondname: "showhere",
+  fourthname:"news_button",
+   newsspeed:'6000'
+}
+$.init_news(newsoption1);
+
+
+var myoffset=$('#news_button').offset();
+
+var mytop=myoffset.top-1;
+
+$('#news_button').css({top:mytop});
+
+});
+</script>

@@ -1,0 +1,16 @@
+<div class="unit">
+	<div class="container">
+	<div class="unit horizontal-center layout on-2 columns">
+		<div class="fixed column" style="width:640px;padding-right:20px;">
+			<?=$this->action('detailmitra','widgets_catalog','klinik',array('guid'=>$this->partnerGuid)); ?>
+			<div style="padding-top:15px;"></div>
+			<?=$this->action('pengasuh','widgets_catalog','klinik',array('guid'=>$this->catalogGuid)); ?>
+			<div style="padding-top:15px;"></div>
+			<?=$this->ajaxActionRenderer(ROOT_URL.'/klinik/mviewerklinikauthor/'.$this->catalogGuid);?>
+		</div>
+		<div class="fixed column" style="width:300px;">
+			<?=$this->action('kategori','widgets_content','klinik'); ?>
+		</div>
+	</div>
+ 	</div>
+</div>

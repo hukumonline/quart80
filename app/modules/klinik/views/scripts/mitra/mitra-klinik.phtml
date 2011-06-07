@@ -1,0 +1,29 @@
+<fieldset>
+	<legend>Mitra Klinik</legend>
+<?php for ($i=0;$i<$this->numberOfRows;$i++) { 
+	$sDir = $this->getRemoteImageUrl();
+	//$sDir = 'uploads/images';
+	$thumb = "";
+	
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->aData[$i][2],'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+	
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".jpg")) 	{ $thumb = $sDir."/".$itemGuid.".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".gif")) 	{ $thumb = $sDir."/".$itemGuid.".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".png")) 	{ $thumb = $sDir."/".$itemGuid.".png"; 	}
+	
+	$screenshot = "<img src=\"".$thumb."\" width=\"90\" />";
+?>
+	<div class="mitraisi">
+	<? if (!empty($thumb)) : ?>
+    <div class="image"><?=$screenshot; ?></div>
+    <? endif; ?>
+	<h2><a href="<?=$this->getRootUrl(); ?>/klinik/mitra/<?=$this->aData[$i][2]; ?>"><?=$this->aData[$i][0]; ?></a></h2>
+	<?=$this->aData[$i][1]; ?>
+	<div class="bersih"></div>
+	<div class="bor"></div>
+	</div>
+<?php } ?>
+
+</fieldset>

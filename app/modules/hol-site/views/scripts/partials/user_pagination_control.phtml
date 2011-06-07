@@ -1,0 +1,17 @@
+<?php if ($this->pageCount): ?>
+<select name="paginationControl" id="paginationControl" size="1">
+<?php foreach ($this->pagesInRange as $page): ?>
+  <?php $selected = ($page == $this->current) ? ' selected="selected"' : ''; ?>
+  <option value="<?php
+        echo $this->url(array('page' => $page));?>"<?php echo $selected ?>>
+    <?php echo $page; ?>
+  </option>
+<?php endforeach; ?>
+</select>
+<?php endif; ?>
+
+<script type="text/javascript">
+$('#paginationControl').change(function(){
+	window.location = this.options[this.selectedIndex].value+'#comments';
+});
+</script>

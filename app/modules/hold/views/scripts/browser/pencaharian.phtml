@@ -1,0 +1,8 @@
+<form id="searchForm" method="POST" action="<?=$this->getRootUrl();?>/pusatdata/search">
+	<fieldset>
+		<legend>Pencarian</legend>
+		<div style="padding-left:20px;font-size:14px;"><input type="text" class="text" id="searchQuery" name="searchQuery" value='<?=$this->layout()->searchQuery;?>' style="width:500px;margin:0.5em 0;padding:5px;"></div>
+		<div style="padding-top:5px;"></div>
+		<div style="padding-left:2em;font-size:14px;"><input type="submit" value="Cari" style="width:55px;">&nbsp;&nbsp;<a href="<?=$this->getRootUrl(); ?>/pusatdata/advanced_search">&raquo;&nbsp;Pencarian Lanjutan</a>&nbsp;<a href="">&raquo;&nbsp;Bantuan</a></div>
+	</fieldset>
+</form>

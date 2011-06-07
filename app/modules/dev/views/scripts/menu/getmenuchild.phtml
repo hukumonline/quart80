@@ -1,0 +1,13 @@
+<?if(count($this->rowset)>0) {?>
+<ul>
+	<?foreach($this->rowset as $row) {
+	$json = new Zend_Json();
+	$aData = $json->decode($row->cmsParams);
+		?>
+		<li>
+			<a href="<?php echo $this->url(array('controller'=>$aData['c'],'action'=>$aData['a'],'module'=>$aData['m'],'node'=>$row->guid)); ?>"><?echo $row->title;?></a>
+			<?=$this->action('getmenuchild','menu','dev',array('node'=>$row->guid))?>
+		</li>
+	<?}?>
+</ul>
+<?}?>

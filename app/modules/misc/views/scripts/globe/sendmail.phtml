@@ -1,0 +1,97 @@
+<div id="container">
+	<div id="content">
+		<div class="logo"><img src="<?=$this->baseUrl();?>/resources/images/logo_hukumonline.jpg" width="151" height="65" /></div>
+		<div class="kotakisi">
+			<h2><?=$this->title; ?></h2>
+			<div class="tanggalterbit"><?=$this->date; ?></div>
+			<?php if ($this->description) { ?><div class="description"><?=$this->description; ?></div><?php } ?>
+		</div>
+		<div class="kirimemail">
+			<!-- our error cc -->
+			<div class="cc">
+				<ol>
+					<li></li>
+				</ol>
+			</div><br>
+			<form id="sendmail">
+				<div class="lbl">Nama Anda:</div>
+				<input name="name" style="width:200px" />
+				<div class="clear" style="height:3px;"></div>
+				<div class="lbl">Email Anda:</div>
+				<input name="email" style="width:200px" />
+				<div class="clear" style="height:10px;"></div>
+				<div class="lbl">Email Rekan Anda:</div>
+				<textarea name="emails" rows="3" cols="30" style="width:200px"></textarea>
+				<div class="clear" style="height:1px;"></div>
+				<div style="margin-left:100px;">gunakan koma "," untuk membatasi tiap email.</div>
+				<div class="clear" style="height:10px;"></div>
+				<input type="hidden" name="guid" value="<?=$this->catalogGuid; ?>" />
+				<input name="submit" type="submit" value="Submit" /><span id="msgbox" style="display:none"></span>
+			</form>
+		</div>
+		<div id=footer><a href="<?=$this->getRootUrl();?>"><strong><?=$this->getRootUrl();?></strong></a> <br>
+			<a href="<?=$this->getRootUrl();?>/berita/baca/<?=$this->catalogGuid ?>/<?=$this->shortTitle?>"><?=$this->getRootUrl();?>/berita/baca/<?=$this->catalogGuid ?>/<?=$this->shortTitle?></a>  <br>
+		  	Dipublikasikan : <?=$this->date; ?><br>
+		  	Penulis : <?=$this->author; ?>
+		  	<br>
+		  	&copy; hukumonline.com
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+setTimeout(function(){
+	var cc = $('div.cc');
+	$.validator.setDefaults({
+		submitHandler: function(){
+			var options = {
+				 type:'post'
+				,dataType:'json'
+				,url:'<?=$this->getRootUrl(); ?>/sendshare'
+				,beforeSubmit:prepareData
+				,success:function(response){
+					if (response.success == true)
+					{
+						$('#msgbox').fadeTo(200,0.1,function(){
+							$(this).html(response.message).addClass('messageboxok').fadeTo(900,1,
+							function(){
+								//window.close();
+							});
+						});
+					}
+					else
+					{
+					  	$("#msgbox").fadeTo(200,0.1,function() //start fading the messagebox
+						{ 
+						  	$(this).html(response.message).addClass('messageboxerror').fadeTo(900,1);
+						});		
+					}
+				}
+			};
+			$('#sendmail').ajaxForm(options);
+		}
+	});
+	$('#sendmail').validate({
+		errorContainer: cc,
+		errorLabelContainer: $("ol", cc),
+		wrapper: 'li',
+		meta: "validate",
+		rules:{
+			 name:'required'
+			,email:{
+				 required:true
+				,email:true
+			}
+			,emails:'required'
+		},
+		messages:{
+			 name: "Masukan nama anda!"
+			,email: "Masukan email anda!"
+			,emails: "Masukan email tujuan!"
+		}
+	});
+	function prepareData()
+	{
+		$("#msgbox").removeClass().addClass('messagebox').text('Kirim email ...').fadeIn(1000);
+	}
+});
+</script>

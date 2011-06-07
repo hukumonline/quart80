@@ -1,0 +1,75 @@
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+	<div style="padding:5px;">
+		<?php 
+		
+		$formater = new Kutu_Lib_Formater();
+		
+		$strRoot = $this->strRoot;
+		echo $strRoot;
+		
+		$iSpace=4;
+		$strSpace="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		
+		if (count($this->aData) > 0)
+		{
+			$isRoot = false;
+			
+			$tblCatalog = new Kutu_Core_Orm_Table_DmsExpRoot();
+			$rowIsRoot = $tblCatalog->fetchRow("DocumentID=".$this->catalogGuid);
+			
+			if (isset($rowIsRoot)) $isRoot = true;
+			
+			foreach ($this->aData as $data) 
+			{
+				if ($data['relationType'] <= 2) {
+					if ($iSpace >= 0) {
+						$tempSpace = "";
+						for ($x=0;$x <= (($iSpace/2)-2);++$x)
+						{
+							$tempSpace .= $tempSpace . $strSpace;
+						}
+						$iSpace = $iSpace + 2;
+					}
+					
+					$strImage=$formater->checkImage($data['relationType']);
+					if ($isRoot)
+					{
+						$strImage = "hol_round";;
+					}
+					$currentImage="<img src='./resources/img/sejarah/" . $strImage . ".gif' align='absmiddle' WIDTH='15' HEIGHT='15'>&nbsp;";
+					if($data['node'] == $this->catalogGuid) {
+						$tempSejarah="<font color=blue>" . $data['title'] . "</font>";
+					}
+					else 
+					{
+						$tempSejarah=$data['title'];
+					}
+					$strPeraturan= $tempSpace . $currentImage . $tempSejarah . " &nbsp;<BR>";
+					echo $strPeraturan;
+					
+				}
+				if ($iSpace>=0) 
+				{
+					$iSpace=$iSpace-1;
+				}
+			}
+		}
+		else 
+		{
+			if ($iSpace >= 0)	
+			{
+				$iSpace=$iSpace-1;
+			}
+		}
+		
+		?>
+			
+	</div>
+	</td>
+</tr>
+</table>

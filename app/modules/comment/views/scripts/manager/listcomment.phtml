@@ -1,0 +1,88 @@
+<?php if ($this->numberOfRows == 0) { ?>
+<div id="blokIsiKomen">
+	Belum ada tanggapan untuk ditampilkan pada artikel ini.
+</div>
+<?php } else { ?>
+<div id="comments">
+<div id="blokIsiKomen">
+	<b>Komentar terkini (<?=$this->numberOfRows; ?> Komentar)</b>
+</div>
+<?php foreach ($this->rows as $comment) : ?>
+	<div id="blokIsiKomen">			
+		<div class="comment-avatar">
+		<?php
+			$registry = Zend_Registry::getInstance(); 
+			$application = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
+			$fp =  $application->getOption('file_picture');
+			$fpu =  $application->getOption('file_picture_url');
+		
+			$arraypictureformat = array("jpg", "jpeg", "gif");
+			$sDir = $fp;
+			$sDir2 = $fpu;
+			$x = 0;
+			foreach ($arraypictureformat as $key => $val) {
+				if (is_file($sDir."/".$comment->guid.".".$val)) {
+					$myphoto = $sDir."/".$comment->guid.".".$val;
+					$myext = $val;
+					$x = 1;
+					break;
+				}
+			}
+			if ($x == 1) {
+				$myphotosize = getimagesize($myphoto);
+				$dis = "";
+				if (isset($myext) && is_file($sDir."/".$comment->guid.".".$myext)) 
+					$txt_existence = "<img src=\"".$sDir2.$comment->guid.".".$myext."\" width=\"52\" height=\"52\" />";
+				
+			}
+			else 
+			{
+				$txt_existence = "<img src=\"".ROOT_URL."/resources/images/gravatar-140.png\" border=\"0\" />";
+			}
+			
+			echo $txt_existence;
+			
+			$modelCatalogAttribute = new Pandamp_Modules_Dms_Catalog_Model_CatalogAttribute();
+		?>
+		
+		</div>
+		<div class="comment-box">
+			<div class="avatar-indent">
+				<span class="comment-title"><?php echo $modelCatalogAttribute->getCatalogAttributeValue($comment->guid,'fixedJudul');?></span> &mdash;
+				<span class="comment-author"><?php echo $modelCatalogAttribute->getCatalogAttributeValue($comment->guid,'fixedName');?></span>
+				<span class="comment-date"><?php echo Pandamp_Lib_Formater::get_date($comment->createdDate);?></span>
+				<div class="comment-body"><?php echo $modelCatalogAttribute->getCatalogAttributeValue($comment->guid,'fixedComment'); ?></div>
+			</div>
+		</div>
+		<div id="divClear"></div>
+	</div>
+<?php endforeach; ?>
+</div>
+<?php if ($this->numberOfRows > $this->limit) : ?>
+<ul id="pagination">
+	<?php echo $this->pagination; ?>
+</ul>
+<?php endif; ?>
+<script type="text/javascript">
+$(function(){
+	$('#comments').ajaxStart(function(){
+		$(this).empty().fadeOut('slow').append('<p id="loading">&nbsp;</p>'); // Sebelum : kosongkan isi tbody
+	}).ajaxStop(function(){
+		$(this).fadeIn('slow'); // Setelah : tampilkan tbody dengan isi yang baru
+	});
+	// Fungsi pagination
+	$('#pagination li a').click(function(){ // Bila link yang ada di <li> dari <ul id="pagination"> diklik, maka lakukan :
+		$.ajax({ // Gunakan fungsi ajax JQuery
+			type: 'POST', // Pakai metode POST, salah satu alasannya agar pagination tetap bekerja apabila javascript tidak aktif
+			url:'<?php echo $this->getRootUrl(); ?>/comment/list',
+			data: 'page=' + $(this).attr('rev') + '&guid=<?php echo $this->catalogGuid ?>', // Data yang diambil adalah dari attribut rev (<a href="" title="" rev="">)
+			success: function(data){ // Bila ajax berhasil dilakukan, lanjutkan dengan :
+			$('#comments').empty().append(data); 
+			}
+		});
+		return false;
+	});
+});
+</script>
+
+<?php } ?>

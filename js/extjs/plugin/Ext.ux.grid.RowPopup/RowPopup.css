@@ -1,0 +1,49 @@
+html, body {
+	font:normal 12px verdana;
+	margin:0;
+	padding:0;
+	border:0 none;
+	height:100%;
+}
+p {
+	margin:5px;
+}
+.settings {
+	background-image:url(../ext/shared/icons/fam/folder_wrench.png);
+}
+.nav {
+	background-image:url(../ext/shared/icons/fam/folder_go.png);
+}
+.floatLeft { 
+	float: left; 
+	margin: 7px; 
+}
+.popupTitle {
+	font-family: Verdana, sans-serif;
+	font-size: .75em;
+	font-weight: bold;
+	margin: 5;
+}
+.popupText {
+	font: Verdana, sans-serif;
+	font-size: .80em;
+	font-weight: normal;
+	margin: 5;
+	padding: 15px 15px 0 0;
+}
+.popupInfo {
+	font: Verdana, sans-serif;
+	font-size: .80em;
+	font-weight: normal;
+	margin: 5;
+}
+img.floatLeft{
+	float: left; 
+	margin: 7px;
+	border: 1px solid #CCCCCC;
+}
+
+.diableRowPopup{
+	background-image:url(images/application_double.png) ! important;
+}
+	

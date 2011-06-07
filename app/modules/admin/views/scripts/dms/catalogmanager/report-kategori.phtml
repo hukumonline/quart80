@@ -1,0 +1,118 @@
+<script type="text/javascript">
+
+// Add the additional 'advanced' VTypes
+Ext.apply(Ext.form.VTypes, {
+    daterange : function(val, field) {
+        var date = field.parseDate(val);
+
+        if(!date){
+            return;
+        }
+        if (field.startDateField && (!this.dateRangeMax || (date.getTime() != this.dateRangeMax.getTime()))) {
+            var start = Ext.getCmp(field.startDateField);
+            start.setMaxValue(date);
+            start.validate();
+            this.dateRangeMax = date;
+        } 
+        else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
+            var end = Ext.getCmp(field.endDateField);
+            end.setMinValue(date);
+            end.validate();
+            this.dateRangeMin = date;
+        }
+        /*
+         * Always return true since we're only using this vtype to set the
+         * min/max allowed values (these are tested for after the vtype test)
+         */
+        return true;
+    }
+});
+
+prf = new Ext.data.GroupingStore({
+	proxy: new Ext.data.HttpProxy({
+		url: './services/catalog/fetch-profile-for-report'
+	}),	
+	reader: new Ext.data.JsonReader({
+		root: 'profile',
+		totalProperty: 'totalCount',
+		id: 'guid'
+	}, [
+			{name:'guid'},
+			{name:'title'}
+	]),
+	remoteSort: true
+});
+
+
+comboPrf = new Ext.form.ComboBox({
+  	id:'comboprf',
+	typeAhead: false,
+	triggerAction: 'all',
+	emptyText:'Select a profile...',
+	lazyRender:true,
+	store: prf,
+	displayField:'title',
+	valueField:'guid',
+	fieldLabel:'Profile'	    	
+});
+
+var report = new Ext.FormPanel({
+	labelWidth: 75,
+	url:'',
+	frame:true,
+	title:'Laporan per Profile',
+	bodyStyle:'padding:5px 5px 0',
+	defaultType:'datefield',
+	items:[comboPrf,{
+		fieldLabel:'Start Date',
+		name:'startdt',
+		id:'startdt',
+		vtype:'daterange',
+		endDateField:'enddt',
+		format:'Y-m-d'
+	},{
+		fieldLabel:'End Date',
+		name:'enddt',
+		id:'enddt',
+		vtype:'daterange',
+		startDateField:'startdt',
+		format:'Y-m-d'
+	}
+	, new Ext.Button({
+		text:'Generate',
+		handler:function(btn,e){
+			var prof = Ext.getCmp('comboprf').getValue();
+			var startdt = Ext.get('startdt').getValue();
+			var enddt = Ext.get('enddt').getValue();
+			Ext.Ajax.on('beforerequest',function(){
+				Ext.MessageBox.wait('Process ...');
+			});
+			Ext.Ajax.request({
+				url:'./services/catalog/fetch-catalogs-in-folder',
+				params:{
+					prof:prof,
+					startdt:startdt,
+					enddt:enddt
+				},
+				callback: function(options, success, response ) {
+					if( success ) {
+						store.baseParams = {startdt:startdt,enddt:enddt,prof:prof};
+						store.load({params:{start:0, limit:25, startdt:startdt,enddt:enddt,prof:prof }});
+						dialog.destroy();
+						dialog.hide();
+					}
+				}
+			});
+			Ext.Ajax.on('requestcomplete',function(){
+				Ext.MessageBox.hide();
+			});
+		}
+	})
+	]
+});
+
+Ext.getCmp('dialog_window1').add(report);
+Ext.getCmp('dialog_window1').doLayout();
+
+
+</script>

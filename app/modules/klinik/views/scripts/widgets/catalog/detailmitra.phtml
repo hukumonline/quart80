@@ -1,0 +1,27 @@
+<fieldset>
+	<legend>Mitra</legend>
+<?php	
+	//$sDir = 'uploads/images';
+	$sDir = $this->getRemoteImageUrl();
+	$thumb = "";
+	
+	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->catalogGuid,'RELATED_IMAGE');
+	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
+	
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".jpg")) 	{ $thumb = $sDir."/".$itemGuid.".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".gif")) 	{ $thumb = $sDir."/".$itemGuid.".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($sDir."/".$itemGuid.".png")) 	{ $thumb = $sDir."/".$itemGuid.".png"; 	}
+	
+	$screenshot = "<img src=\"".$thumb."\" width=\"90\" />";
+?>
+	<div class="mitraisi">
+	<? if (!empty($thumb)) : ?>
+    <div class="image"><?=$screenshot; ?></div>
+    <? endif; ?>
+	<h2><?=$this->title;?></h2>
+	<?=$this->content; ?>
+	<div class="bersih"></div>
+	</div>
+	
+</fieldset>
