@@ -1,0 +1,17 @@
+.settings/
+app/configs/
+data/
+iklan/
+uploads/
+library/Apache/
+library/FCKeditor/
+library/PdfTool/
+library/Tera-WURFL/
+library/adodb/
+library/phpgacl/
+library/phpseclib/
+.buildpath
+.project
+.zfproject.xml
+app_log.txt
+paypal.ipn_results.log
