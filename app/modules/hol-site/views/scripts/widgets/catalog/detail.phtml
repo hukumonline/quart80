@@ -73,12 +73,12 @@
 		<!-- <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4be57092018a90f9"></script> -->
 		<!-- AddThis Button END -->
 		<div class="ico_ft">
-			<img src="<?php echo $this->getRootUrl(); ?>/resources/ico/facebook.gif" width="13" height="13" />&nbsp;<a target="_blank" href="http://www.facebook.com/sharer.php?u=<?php echo $this->getRootUrl(); ?>/berita/baca/<?php echo $this->catalogGuid?>/<?php echo $this->title; ?>&t=<?php echo $this->title; ?>">Bagi ke Facebook</a>
-			| <img src="<?php echo $this->getRootUrl(); ?>/resources/ico/twitter.png" width="15" height="11" />&nbsp;<a target="_blank" href="http://twitter.com/home?status=[ hukumonline.com ] <?php echo $this->title; ?> - <?php echo $this->shortUrl; ?>" class="linkbawah">Bagi ke Twitter</a>
+			<?=$this->ajaxActionRenderer(ROOT_URL."/share/guid/$this->catalogGuid");?>
 		</div>
 		<div id="fontsizer"></div>
 	</div>
 	<div class="bersih"></div>
+	<div id="msg" style="display:none;"></div>
 </div>
 <div class="bersih"></div>
 <div style="padding-top:5px;"></div>

@@ -8,11 +8,11 @@ class Pandamp_Controller_Action_Helper_AjaxActionRenderer
 		$s = "
 		<div id='out$guid'></div>
 		<div id='progress$guid'>&nbsp;Loading...</div>
-		
+
 			<script type='text/javascript'>
-			$(document).ready(function() 
+			$(document).ready(function()
 			//setTimeout(function()
-			{ 
+			{
 				   $.ajax({
 				   type: 'POST',
 				   url: '$url',
@@ -23,15 +23,17 @@ class Pandamp_Controller_Action_Helper_AjaxActionRenderer
 				   success: function(msg){
 				     $('#out$guid').html(msg);
 				     $('#progress$guid').hide();
-				   }
+				   },
+                                   error: function(xhr){
+                                   		$('#msg').show('slow').html('Error!  Status = ' + xhr.status);
+                                   }
 				 });
 			 //}, 50);
 			});
 			</script>
-		
+
 		";
-		
+
 		return $s;
 	}
 }
-?>

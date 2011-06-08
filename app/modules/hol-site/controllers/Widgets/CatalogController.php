@@ -67,53 +67,75 @@ class HolSite_Widgets_CatalogController extends Zend_Controller_Action
 		
 		$this->view->catalogGuid = $catalogGuid;
 		$this->view->page = $page;
-		
-			/*Wawan :: short url :: begin */
-		//echo $title;
-		
-		$temp = $rowset->toArray();
-		$sub = $temp["shortTitle"];
-		
-		$sub="";
-		if($temp["shortTitle"] != null ) { $sub = '/'.$temp["shortTitle"]; }
-		
-		
-		$http = new Zend_Http_Client();
-		$longUrl=ROOT_URL."/berita/baca/".$catalogGuid.$sub;
-		
-		//echo $longUrl;
-		 $http->setUri('http://api.bit.ly/shorten?version=2.0.1&longUrl='.$longUrl.'&login=hukumonline&apiKey=R_77ba1fce98783c1734e24bc28dfdb8c7');
-		$shortUrl="";
+	}
+    function shareAction()
+    {
+        $this->_helper->layout->disableLayout();
+        
+        $catalogGuid = ($this->_getParam('guid'))? $this->_getParam('guid') : '';
+
+        $this->view->catalogGuid = $catalogGuid;
+
+		$modelCatalog = new Pandamp_Modules_Dms_Catalog_Model_Catalog();
+		$decorator = new Pandamp_BeanContext_Decorator($modelCatalog);
+		$rowset = $decorator->getCatalogByGuidAsEntity($catalogGuid);
+
+		$modelCatalogAttribute = new Pandamp_Modules_Dms_Catalog_Model_CatalogAttribute();
+		$title = $modelCatalogAttribute->getCatalogAttributeValue($rowset->getId(),'fixedTitle');
+
+        $this->view->title = $title;
+
+                /*Wawan :: short url :: begin */
+        //echo $title;
+
+        $temp = $rowset->toArray();
+        //$temp = $rowset;
+        $sub = $temp["shortTitle"];
+
+        $sub="";
+        if($temp["shortTitle"] != null ) { $sub = '/'.$temp["shortTitle"]; }
+
+
+        $http = new Zend_Http_Client();
+        $longUrl=ROOT_URL."/berita/baca/".$catalogGuid.$sub;
+
+        //echo $longUrl;
+         $http->setUri('http://api.bit.ly/shorten?version=2.0.1&longUrl='.$longUrl.'&login=hukumonline&apiKey=R_77ba1fce98783c1734e24bc28dfdb8c7');
+        $shortUrl="";
+
           $response = $http->request();
-          if ($response->isSuccessful()) 
+          if ($response->isSuccessful())
          {
-              $result = Zend_Json::decode($response->getBody()); 
+              $result = Zend_Json::decode($response->getBody());
               if (isset($result["results"][$longUrl]["shortUrl"])) {
-			  $shortUrl =  $result["results"][$longUrl]["shortUrl"];
+                  $shortUrl =  $result["results"][$longUrl]["shortUrl"];
               }
+
 			  //print_r($result["results"]);
 			  //echo "<pre>";print_r( $result);echo "</pre>";
 			  //echo $shortUrl;
-			  
+
           }
-		  $statsShortUrl="";
-		 $http->setUri('http://api.bit.ly/stats?version=2.0.1&shortUrl='.$shortUrl.'&login=hukumonline&apiKey=R_77ba1fce98783c1734e24bc28dfdb8c7');
-		 $response = $http->request();
-          if ($response->isSuccessful()) 
+
+          $statsShortUrl="";
+         $http->setUri('http://api.bit.ly/stats?version=2.0.1&shortUrl='.$shortUrl.'&login=hukumonline&apiKey=R_77ba1fce98783c1734e24bc28dfdb8c7');
+         $response = $http->request();
+
+          if ($response->isSuccessful())
          {
-              $result = Zend_Json::decode($response->getBody()); 
-			  $statsShortUrl =  $result["results"]["clicks"];
-			  
-			  //print_r($result["results"]);
-			//  echo "<pre>";print_r( $result);echo "</pre>";
-			  //echo $statsShortUrl;
-			  
+              $result = Zend_Json::decode($response->getBody());
+              $statsShortUrl =  $result["results"]["clicks"];
+
+              //print_r($result["results"]);
+            //  echo "<pre>";print_r( $result);echo "</pre>";
+              //echo $statsShortUrl;
+
           }
-		  
-		  $this->view->shortUrl = $shortUrl;
-		  $this->view->statsShortUrl = $statsShortUrl;
-		/*Wawan :: short url :: end */	
-	}
+
+          $this->view->shortUrl = $shortUrl;
+          $this->view->statsShortUrl = $statsShortUrl;
+        /*Wawan :: short url :: end */
+    }
 	function detailIssueAction()
 	{
 		$catalogGuid = ($this->_getParam('guid'))? $this->_getParam('guid') : '';
