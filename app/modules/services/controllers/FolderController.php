@@ -12,24 +12,11 @@ class Services_FolderController extends Zend_Controller_Action
 		// get group information
 		$acl = Pandamp_Acl::manager();
 		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
-		if ($acl->getPermissionsOnContent('', $aReturn[1], 'all-access'))
-		{
-			echo 'allowed';
-		}
-		else 
-		{
-			echo 'denied';
-		}
-		die();
 		
 		if(!empty($parentGuid))
 		{
 			$aJson = array();
 			$rowset = $tblFolder->fetchChildren($parentGuid);
-			
-			echo '<pre>';
-			print_r($rowset);
-			echo '</pre>';
 			
 			$i=0;
 			foreach ($rowset as $row)
@@ -49,6 +36,11 @@ class Services_FolderController extends Zend_Controller_Action
 				{
 					$title = $row->title;
 				}
+				
+				echo '<pre>';
+				echo $title;
+				echo '</pre>';
+			
 				$aJson[$i]['text'] = $title; //. '&nbsp;('.$tblCatalogFolder->countCatalogsInFolderAndChildren($row->guid).')';
 				$aJson[$i]['id'] = $row->guid;
 				$checkLeaf = $tblFolder->fetchAll("path like '%$row->guid%'");
