@@ -18,6 +18,10 @@ class Services_FolderController extends Zend_Controller_Action
 			$aJson = array();
 			$rowset = $tblFolder->fetchChildren($parentGuid);
 			
+			echo '<pre>';
+			print_r($rowset);
+			echo '</pre>';
+			
 			$i=0;
 			foreach ($rowset as $row)
 			{
