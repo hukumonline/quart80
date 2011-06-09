@@ -39,7 +39,7 @@ class Services_FolderController extends Zend_Controller_Action
 				
 				echo '<pre>';
 				echo $title;
-				echo '</pre>';
+				echo '</pre>';die();
 			
 				$aJson[$i]['text'] = $title; //. '&nbsp;('.$tblCatalogFolder->countCatalogsInFolderAndChildren($row->guid).')';
 				$aJson[$i]['id'] = $row->guid;
