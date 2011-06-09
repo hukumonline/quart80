@@ -31,7 +31,7 @@ class Admin_Clinic_ManagerController extends Zend_Controller_Action
 			if (isset($aReturn[1]))
 			{
 				//if (($aReturn[1] !== "admin") && ($aReturn[1] !== "klinik_admin") && ($aReturn[1] !== "klinik_editor"))
-				if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin") && ($aReturn[1] !== "clinicAdmin") && ($aReturn[1] !== "clinicEditor"))
+				if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin") && ($aReturn[1] !== "Clinic Admin") && ($aReturn[1] !== "Clinic Editor"))
 					{
 					$this->_helper->redirector('restricted', "error", 'admin');
 				}
@@ -49,7 +49,7 @@ class Admin_Clinic_ManagerController extends Zend_Controller_Action
 					if (isset($aReturn[1]))
 					{
 						//if (($aReturn[1] !== "admin"))
-						if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin"))
+						if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin"))
 						{
 							$this->_forward('temporary','error','admin'); 
 						}
