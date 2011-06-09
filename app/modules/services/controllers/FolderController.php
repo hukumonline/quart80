@@ -12,6 +12,15 @@ class Services_FolderController extends Zend_Controller_Action
 		// get group information
 		$acl = Pandamp_Acl::manager();
 		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
+		if ($acl->getPermissionsOnContent('', $aReturn[1], $content))
+		{
+			echo 'allowed';
+		}
+		else 
+		{
+			echo 'denied';
+		}
+		die();
 		
 		if(!empty($parentGuid))
 		{
