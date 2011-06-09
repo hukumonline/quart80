@@ -29,7 +29,7 @@ class Admin_Api_PollingController extends Zend_Controller_Action
 			if (isset($aReturn[1]))
 			{
 				//if (($aReturn[1] !== "admin") && ($aReturn[1] !== "news_admin"))
-				if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin") && ($aReturn[1] !== "newsAdmin"))
+				if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin") && ($aReturn[1] !== "News Admin"))
 					{
 					echo "{success:false, error:'Page restricted!!'}";
 					die();
@@ -48,7 +48,7 @@ class Admin_Api_PollingController extends Zend_Controller_Action
 					if (isset($aReturn[1]))
 					{
 						//if (($aReturn[1] !== "admin"))
-						if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin"))
+						if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin"))
 						{
 							echo "{success:false, error:'The page you are looking for is temporarily unavailable.<br/>Please try again later.'}";
 							die();

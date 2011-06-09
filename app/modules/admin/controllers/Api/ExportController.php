@@ -56,7 +56,7 @@ class Admin_Api_ExportController extends Zend_Controller_Action
 			
 			if (isset($aReturn[1]))
 			{
-				if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin") && ($aReturn[1] !== "dcAdmin"))
+				if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin") && ($aReturn[1] !== "Dc Admin"))
 				//if (($aReturn[1] !== "admin") && ($aReturn[1] !== "dc_admin"))
 					{
 						echo "{success:false, error:'Page restricted!!'}";
@@ -75,7 +75,7 @@ class Admin_Api_ExportController extends Zend_Controller_Action
 					if (isset($aReturn[1]))
 					{
 						//if (($aReturn[1] !== "admin"))
-						if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin"))
+						if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin"))
 						{
 							echo "{success:false, error:'The page you are looking for is temporarily unavailable.<br/>Please try again later.'}";
 						}

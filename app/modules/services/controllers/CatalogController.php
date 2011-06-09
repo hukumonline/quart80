@@ -122,7 +122,7 @@ class Services_CatalogController extends Zend_Controller_Action
 			foreach ($rowset as $row)
 			{
 				$aReturn = $acl->getUserGroupIds($auth->getIdentity()->username);
-				if (($aReturn[1] == "master") && ($aReturn[1] == "superAdmin"))
+				if (($aReturn[1] == "Master") && ($aReturn[1] == "Super Admin"))
 					$content = 'all-access';
 				else 
 					$content = $row->profileType;

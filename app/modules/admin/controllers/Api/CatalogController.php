@@ -47,7 +47,7 @@ class Admin_Api_CatalogController extends Zend_Controller_Action
 					// it means that user offline other than admin
 					if (isset($aReturn[1]))
 					{
-						if (($aReturn[1] !== "master") && ($aReturn[1] !== "superAdmin"))
+						if (($aReturn[1] !== "Master") && ($aReturn[1] !== "Super Admin"))
 						{
 							$this->_forward('temporary','error','admin'); 
 						}
