@@ -16,6 +16,45 @@ img.floatLeft	{ float: left; margin: 7px; border: 1px solid #CCCCCC; }
 
 <?php
 
+$registry = Zend_Registry::getInstance();
+$config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
+$cdn = $config->getOption('cdn');
+$ftp = $config->getOption('ftp');
+
+$strServer = $ftp['remote']['server'];
+$strServerPort = $ftp['remote']['port'];
+$strServerUsername = $ftp['remote']['username'];
+$strServerPassword = $ftp['remote']['passwd'];
+
+//connect to server
+$resConnection = ssh2_connect($strServer, $strServerPort);
+if(ssh2_auth_password($resConnection, $strServerUsername, $strServerPassword)){
+	$resSFTP = ssh2_sftp($resConnection);
+	$sDir = $cdn['remote']['dir']['photo'];
+	$sDir2 = $cdn['static']['url']['photo'].'/';
+    $x = 0;
+    foreach ($arraypictureformat as $key => $val) {
+        if (is_file("ssh2.sftp://{$resSFTP}".$sDir."/".$this->rowset->kopel.".".$val)) {
+            $myphoto = "ssh2.sftp://{$resSFTP}".$sDir."/".$this->rowset->kopel.".".$val;
+            $myext = $val;
+            $x = 1;
+            break;
+        }
+    }
+    if ($x == 1) {
+        $myphotosize = getimagesize($myphoto);
+        if (isset($myext) && is_file("ssh2.sftp://{$resSFTP}".$sDir."/".$this->rowset->kopel.".".$myext))
+                $txt_existence = "<img src=\"".$sDir2.$this->rowset->kopel.".".$myext."\" width=".$myphotosize[0]." height=".$myphotosize[1]." />";
+
+    }
+    else
+    {
+        $txt_existence = "<img src=\"".$this->cdn('images')."/gravatar-140.png\" border=\"0\" />";
+    }
+		
+}
+
+/*
 $sDir = ROOT_URL.'/uploads/images/'.$this->rowset->guid.'/'.$this->rowset->picture;
 if ($this->rowset->picture)
 {
@@ -25,6 +64,7 @@ else
 {
 	$img = '<img alt="hukumonline" src="../../resources/images/noimage.jpg" align="left" class="floatLeft"/>';
 }
+*/
 	
 if ($this->rowset->gender == "L") { 
 	$gender = "Laki-laki";	
@@ -104,7 +144,7 @@ else
 	
 <table>
 <tr>
-	<td rowspan="11"><?=$img; ?></td>
+	<td rowspan="11"><?=$txt_existence; ?></td>
 </tr>
 <tr>
 	<td width="120">Kode Pelanggan</td>
@@ -181,7 +221,7 @@ else
 <?php
 	$db = Zend_Db_Table::getDefaultAdapter()->query("SELECT gag.value as package, kud.promotionId, kue.description as education, kuex.description as expense, 
 	kud.paymentId as payment, kub.description as business, kus.status as status, kud.activationDate, kud.createdDate, kud.createdBy, kud.updatedDate,
-	kud.updatedBy, kud.isActive	FROM KutuUserDetail kud INNER JOIN gacl_aro_groups gag ON kud.packageId=gag.id INNER JOIN KutuUserBusiness kub ON kud.businessTypeId=kub.businessTypeId INNER JOIN KutuUserEducation kue ON kud.educationId=kue.educationId INNER JOIN KutuUserExpense kuex ON kud.expenseId=kuex.expenseId INNER JOIN KutuUserStatus kus ON kud.periodeId=kus.accountStatusId WHERE kud.uid = '".$this->rowset->guid."'");
+	kud.updatedBy, kud.isActive	FROM KutuUserDetail kud INNER JOIN gacl_aro_groups gag ON kud.packageId=gag.id INNER JOIN KutuUserBusiness kub ON kud.businessTypeId=kub.businessTypeId INNER JOIN KutuUserEducation kue ON kud.educationId=kue.educationId INNER JOIN KutuUserExpense kuex ON kud.expenseId=kuex.expenseId INNER JOIN KutuUserStatus kus ON kud.periodeId=kus.accountStatusId WHERE kud.uid = '".$this->rowset->kopel."'");
 	$rowset = $db->fetchAll(Zend_Db::FETCH_OBJ);
 ?>
 	
