@@ -22,10 +22,12 @@ class Services_FolderController extends Zend_Controller_Action
 			foreach ($rowset as $row)
 			{
 				if (($aReturn[1] == "master") || ($aReturn[1] == "superAdmin"))
+				{
 					$content = 'all-access';
-				else 
+				} else {
 					$content = $row->type;
-					
+				}
+				echo $content.'<br>';	
 				if ($acl->getPermissionsOnContent('', $aReturn[1], $content))
 				{
 				if ($row->title == "Kategori" || $row->title == "Peraturan" || $row->title == "Putusan")
@@ -39,7 +41,7 @@ class Services_FolderController extends Zend_Controller_Action
 				
 				echo '<pre>';
 				echo $row->title;
-				echo '</pre>';die('f');
+				echo '</pre><br>';
 			
 				$aJson[$i]['text'] = $title; //. '&nbsp;('.$tblCatalogFolder->countCatalogsInFolderAndChildren($row->guid).')';
 				$aJson[$i]['id'] = $row->guid;
