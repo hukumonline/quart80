@@ -12,7 +12,7 @@ class Services_FolderController extends Zend_Controller_Action
 		// get group information
 		$acl = Pandamp_Acl::manager();
 		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
-		
+		echo $aReturn[1].'<br>';
 		if(!empty($parentGuid))
 		{
 			$aJson = array();
