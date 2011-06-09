@@ -221,7 +221,7 @@ else
 <?php
 	$db = Zend_Db_Table::getDefaultAdapter()->query("SELECT gag.value as package, kud.promotionId, kue.description as education, kuex.description as expense, 
 	kud.paymentId as payment, kub.description as business, kus.status as status, kud.activationDate, kud.createdDate, kud.createdBy, kud.updatedDate,
-	kud.updatedBy, kud.isActive	FROM KutuUserDetail kud INNER JOIN gacl_aro_groups gag ON kud.packageId=gag.id INNER JOIN KutuUserBusiness kub ON kud.businessTypeId=kub.businessTypeId INNER JOIN KutuUserEducation kue ON kud.educationId=kue.educationId INNER JOIN KutuUserExpense kuex ON kud.expenseId=kuex.expenseId INNER JOIN KutuUserStatus kus ON kud.periodeId=kus.accountStatusId WHERE kud.uid = '".$this->rowset->kopel."'");
+	kud.updatedBy, kud.isActive	FROM hid.KutuUserDetail kud INNER JOIN hid.gacl_aro_groups gag ON kud.packageId=gag.id INNER JOIN hid.KutuUserBusiness kub ON kud.businessTypeId=kub.businessTypeId INNER JOIN hid.KutuUserEducation kue ON kud.educationId=kue.educationId INNER JOIN hid.KutuUserExpense kuex ON kud.expenseId=kuex.expenseId INNER JOIN hid.KutuUserStatus kus ON kud.periodeId=kus.accountStatusId WHERE kud.uid = '".$this->rowset->kopel."'");
 	$rowset = $db->fetchAll(Zend_Db::FETCH_OBJ);
 ?>
 	
