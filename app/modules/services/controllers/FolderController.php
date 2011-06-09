@@ -12,7 +12,7 @@ class Services_FolderController extends Zend_Controller_Action
 		// get group information
 		$acl = Pandamp_Acl::manager();
 		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
-		echo $aReturn[1].'<br>';
+		
 		if(!empty($parentGuid))
 		{
 			$aJson = array();
@@ -21,39 +21,33 @@ class Services_FolderController extends Zend_Controller_Action
 			$i=0;
 			foreach ($rowset as $row)
 			{
-				if (($aReturn[1] == "master") || ($aReturn[1] == "superAdmin"))
-				{
+				if (($aReturn[1] == "Master") || ($aReturn[1] == "Super Admin"))
 					$content = 'all-access';
-				} else {
+				else 
 					$content = $row->type;
-				}
-				echo $content.'<br>';	
+
 				if ($acl->getPermissionsOnContent('', $aReturn[1], $content))
 				{
-				if ($row->title == "Kategori" || $row->title == "Peraturan" || $row->title == "Putusan")
-				{
-					$title = "<font color=red><b>".$row->title."</b></font>";
-				}
-				else 
-				{
-					$title = $row->title;
-				}
-				
-				echo '<pre>';
-				echo $row->title;
-				echo '</pre><br>';
-			
-				$aJson[$i]['text'] = $title; //. '&nbsp;('.$tblCatalogFolder->countCatalogsInFolderAndChildren($row->guid).')';
-				$aJson[$i]['id'] = $row->guid;
-				$checkLeaf = $tblFolder->fetchAll("path like '%$row->guid%'");
-				if ($checkLeaf->count() > 0)
-				{
-					$aJson[$i]['leaf'] = 0;
-					$aJson[$i]['cls'] = 'folder';					
-				} else {
-					$aJson[$i]['leaf'] = 1;
-					$aJson[$i]['cls'] = 'leaf';					
-				}
+					if ($row->title == "Kategori" || $row->title == "Peraturan" || $row->title == "Putusan")
+					{
+						$title = "<font color=red><b>".$row->title."</b></font>";
+					}
+					else 
+					{
+						$title = $row->title;
+					}
+					
+					$aJson[$i]['text'] = $title; //. '&nbsp;('.$tblCatalogFolder->countCatalogsInFolderAndChildren($row->guid).')';
+					$aJson[$i]['id'] = $row->guid;
+					$checkLeaf = $tblFolder->fetchAll("path like '%$row->guid%'");
+					if ($checkLeaf->count() > 0)
+					{
+						$aJson[$i]['leaf'] = 0;
+						$aJson[$i]['cls'] = 'folder';					
+					} else {
+						$aJson[$i]['leaf'] = 1;
+						$aJson[$i]['cls'] = 'leaf';					
+					}
 				}
 				else 
 				{
