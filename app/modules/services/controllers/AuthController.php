@@ -40,7 +40,7 @@ class Services_AuthController extends Zend_Controller_Action
 				if ($a['totalCount']!=0) {
 					foreach ($rowset as $row)
 					{
-						$a['user'][$i]['guid'] 				= $row->guid;
+						//$a['user'][$i]['guid'] 				= $row->guid;
 						$a['user'][$i]['kopel'] 			= $row->kopel;
 						$a['user'][$i]['fullName'] 			= $row->fullName;
 						$a['user'][$i]['username'] 			= $row->username;
@@ -90,7 +90,7 @@ class Services_AuthController extends Zend_Controller_Action
 						}
 						*/
 						
-						$a['user'][$i]['guid'] 				= $row->guid;
+						//$a['user'][$i]['guid'] 				= $row->guid;
 						$a['user'][$i]['kopel'] 			= $row->kopel;
 						$a['user'][$i]['fullName'] 			= $row->fullName;
 						$a['user'][$i]['username'] 			= $row->username;
@@ -135,7 +135,7 @@ class Services_AuthController extends Zend_Controller_Action
 						}
 						*/
 						
-						$a['user'][$i]['guid'] 				= $row->guid;
+						//$a['user'][$i]['guid'] 				= $row->guid;
 						$a['user'][$i]['kopel'] 			= $row->kopel;
 						$a['user'][$i]['fullName'] 			= $row->fullName;
 						$a['user'][$i]['username'] 			= $row->username;
@@ -193,7 +193,7 @@ class Services_AuthController extends Zend_Controller_Action
 						}
 						*/
 						
-						$a['user'][$i]['guid'] 				= $row->guid;
+						//$a['user'][$i]['guid'] 				= $row->guid;
 						$a['user'][$i]['kopel'] 			= $row->kopel;
 						$a['user'][$i]['fullName'] 			= $row->fullName;
 						$a['user'][$i]['username'] 			= $row->username;
@@ -228,7 +228,7 @@ class Services_AuthController extends Zend_Controller_Action
 				if ($a['totalCount']!=0) {
 					foreach ($rowset as $row)
 					{
-						$a['user'][$i]['guid'] 				= $row->guid;
+						//$a['user'][$i]['guid'] 				= $row->guid;
 						$a['user'][$i]['kopel'] 			= $row->kopel;
 						$a['user'][$i]['fullName'] 			= $row->fullName;
 						$a['user'][$i]['email'] 			= (!empty($row->email))? $row->email : '-';

@@ -68,9 +68,9 @@ setTimeout(function()
 		reader: new Ext.data.JsonReader({
 			root: 'user',
 			totalProperty: 'totalCount',
-			id: 'guid'
+			id: 'kopel'
 		}, [
-				{name:'guid'},
+				//{name:'guid'},
 				{name:'kopel'},
 				{name:'fullName'},
 				{name:'email'},
@@ -123,7 +123,7 @@ setTimeout(function()
     	if (val == 'N')
     	{
     		rowRecord = gridUser.getStore().getAt(rowIndex);
-    		return '<a href="javascript:;" onclick="sentEmail(\''+rowRecord.get('guid')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    		return '<a href="javascript:;" onclick="sentEmail(\''+rowRecord.get('kopel')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
     	}
     	else
     	{
@@ -137,7 +137,7 @@ setTimeout(function()
     	if (val == 'N')
     	{
     		rowRecord = gridUser.getStore().getAt(rowIndex);
-    		return '<a href="javascript:;" onclick="sentEmailOver(\''+rowRecord.get('guid')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    		return '<a href="javascript:;" onclick="sentEmailOver(\''+rowRecord.get('kopel')+'\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
     	}
     	else
     	{
@@ -151,11 +151,11 @@ setTimeout(function()
     	rowRecord = gridUser.getStore().getAt(rowIndex);
     	if (val == 0)
     	{
-    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('guid')+'\',\'down\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
+    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('kopel')+'\',\'down\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/cross.png"></a>';
     	}
     	else
     	{
-    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('guid')+'\',\'up\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/accept.png"></a>';
+    		return '<a href="javascript:;" onclick="changeStatus(\''+rowRecord.get('kopel')+'\',\'up\');return false;"><img src="./js/extjs/resources/images/default/silk/icons/accept.png"></a>';
     	}
     }
     
@@ -184,7 +184,7 @@ setTimeout(function()
    	([
    		sm,
    		pg,
-	    {header: "guid", dataIndex: 'guid', width: 100, sortable: true, hidden: true},
+	    //{header: "guid", dataIndex: 'guid', width: 100, sortable: true, hidden: true},
 	    {header: "ID", dataIndex: 'kopel', width: 70, sortable: true, hidden: true},
 	    {header: "User name", dataIndex: 'fullName', width: 120, sortable: true},
 		{header: "Login name", dataIndex: 'username', width: 100, sortable: true, hidden: true},
@@ -308,7 +308,7 @@ setTimeout(function()
 						conn.request({
 							url: './admin/membership_manager/set-active/format/json',
 							params: {
-								guid: selections[i].json.guid,
+								guid: selections[i].json.kopel,
 								act:action
 							},
 			                failure:function(response,options){
@@ -419,7 +419,7 @@ setTimeout(function()
 				conn.request({
 					url: './admin/membership_manager/delete-user/format/json',
 					params: {
-						guid: selections[i].json.guid,
+						guid: selections[i].json.kopel,
 						username: selections[i].json.username
 					},
 	                failure:function(response,options){
@@ -466,7 +466,7 @@ setTimeout(function()
         	waitMsg: 'Saving changes...',
             url: './admin/membership_manager/update-users/format/json',
             params: { 
-            	guid: oGrid_Event.record.data.guid,//for existing records this is the unique id (dalam hal ini guid)
+            	guid: oGrid_Event.record.data.kopel,//for existing records this is the unique id (dalam hal ini guid)
                 field: oGrid_Event.field,//the column name
                 value: oGrid_Event.value,//the updated value
                 originalValue: oGrid_Event.record.modified//the original value (oGrid_Event.orginalValue does not work for some reason)
@@ -594,19 +594,19 @@ setTimeout(function()
 	var menuG = new Ext.menu.Menu('mainGridRowContext');
 	menuG.add({ 
 		text:'Detail', 
-		handler: function(){ ext_get("./admin/membership_manager/edit-users/guid/"+rowRecord.get('guid')+"/uid/"+rowRecord.get('kopel'),950,500,'dialog_window3') } 
+		handler: function(){ ext_get("./admin/membership_manager/edit-users/guid/"+rowRecord.get('kopel')+"/uid/"+rowRecord.get('kopel'),950,500,'dialog_window3') } 
 	},{
 		text:'Edit',
 		iconCls:'user_edit',
-		handler:function(){ ext_get("./admin/membership_manager/edit/guid/"+rowRecord.get('guid'),700,500); }	
+		handler:function(){ ext_get("./admin/membership_manager/edit/guid/"+rowRecord.get('kopel'),700,500); }	
 	},{
 		text:'Sent Email',
 		handler:function(){
-			sentEmail(rowRecord.get('guid'));
+			sentEmail(rowRecord.get('kopel'));
 		}
 	},{
 		 text:'Upload image'
-		,handler:function(){ ext_get("./admin/membership_manager/add-upload/"+rowRecord.get('guid'),520,135,'dialog_upload'); }
+		,handler:function(){ ext_get("./admin/membership_manager/add-upload/"+rowRecord.get('kopel'),520,135,'dialog_upload'); }
 	}
 	);
 	
