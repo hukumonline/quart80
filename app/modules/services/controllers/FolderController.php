@@ -8,10 +8,19 @@ class Services_FolderController extends Zend_Controller_Action
 		
 		$tblFolder = new Pandamp_Modules_Dms_Folder_Model_Folder();
 		$tblCatalogFolder = new Pandamp_Modules_Dms_Catalog_Model_CatalogFolder();
+		$modelAroGroup = new Pandamp_Modules_Identity_Group_Folder_AroGroup();
+		
+        $auth = Zend_Auth::getInstance();
+        if (!$auth->hasIdentity()) {
+            echo "You aren't login";
+        }
+        
+		$packageId = $auth->getIdentity()->packageId;
 		
 		// get group information
 		$acl = Pandamp_Acl::manager();
-		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
+		//$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
+		$aReturn = $modelAroGroup->getUserGroup($packageId);
 		
 		if(!empty($parentGuid))
 		{
@@ -21,12 +30,12 @@ class Services_FolderController extends Zend_Controller_Action
 			$i=0;
 			foreach ($rowset as $row)
 			{
-				if (($aReturn[1] == "Master") || ($aReturn[1] == "Super Admin"))
+				if (($aReturn['name'] == "Master") || ($aReturn['name'] == "Super Admin"))
 					$content = 'all-access';
 				else 
 					$content = $row->type;
 
-				if ($acl->getPermissionsOnContent('', $aReturn[1], $content))
+				if ($acl->getPermissionsOnContent('', $aReturn['name'], $content))
 				{
 					if ($row->title == "Kategori" || $row->title == "Peraturan" || $row->title == "Putusan")
 					{

@@ -109,6 +109,7 @@ class Services_CatalogController extends Zend_Controller_Action
 	{
 		$acl = Pandamp_Acl::manager();
 		
+		$modelAroGroup = new Pandamp_Modules_Identity_Group_Folder_AroGroup();
 		$tblProfile = new Pandamp_Modules_Dms_Profile_Model_Profile();
 		
 		$rowset = $tblProfile->fetchAll();
@@ -119,15 +120,18 @@ class Services_CatalogController extends Zend_Controller_Action
 		{
 			$auth = Zend_Auth::getInstance();
 			
+			$packageId = $auth->getIdentity()->packageId;
+			
 			foreach ($rowset as $row)
 			{
-				$aReturn = $acl->getUserGroupIds($auth->getIdentity()->username);
-				if (($aReturn[1] == "Master") && ($aReturn[1] == "Super Admin"))
+				//$aReturn = $acl->getUserGroupIds($auth->getIdentity()->username);
+				$aReturn = $modelAroGroup->getUserGroup($packageId);
+				if (($aReturn['name'] == "Master") || ($aReturn['name'] == "Super Admin"))
 					$content = 'all-access';
 				else 
 					$content = $row->profileType;
 					
-				if ($acl->getPermissionsOnContent('', $aReturn[1], $content))
+				if ($acl->getPermissionsOnContent('', $aReturn['name'], $content))
 				{
 					$a['profile'][$i]['guid'] = $row->guid;
 					$a['profile'][$i]['title'] = $row->title;

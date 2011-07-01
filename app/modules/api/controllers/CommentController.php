@@ -24,7 +24,12 @@ class Api_CommentController extends Zend_Controller_Action
 			$error[] = '- Komentar harus diisi';
 		}
 		
-		$privatekey = "6LcL47wSAAAAAATTV9Xufi-GCHj1GvL9TxyuKm-E"; // http://hukumonline.pl
+		$registry = Zend_Registry::getInstance();
+		$config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
+		$cdn = $config->getOption('recaptcha');
+		$privatekey = $cdn['private']['key'];
+		
+		//$privatekey = "6LcL47wSAAAAAATTV9Xufi-GCHj1GvL9TxyuKm-E"; // http://hukumonline.pl
 		//$privatekey = "6Lem4rwSAAAAAFeSUqpBonLBhixm-GLeap1eTWNK"; // http://www.hukumonline.com
 		
 		$resp = recaptcha_check_answer ($privatekey,

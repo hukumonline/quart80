@@ -40,9 +40,19 @@
 	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
 	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->catalogGuid,'RELATED_IMAGE');
 	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+	$chkDir = $sDir."/".$this->catalogGuid;
+	if (fopen($chkDir,"r"))
+	{
+		$pict = $sDir ."/". $this->catalogGuid ."/". $itemGuid;
+	}
+	else 
+	{
+		$pict = $sDir ."/". $itemGuid;
+	}
+	
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".jpg")) 	{ $thumb = $pict . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".gif")) 	{ $thumb = $pict . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".png")) 	{ $thumb = $pict . ".png"; 	}
 	
 	$screenshot = "<img src=\"".$thumb."\" />";
 	

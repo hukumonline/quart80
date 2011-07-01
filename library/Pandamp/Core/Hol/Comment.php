@@ -14,7 +14,7 @@ class Pandamp_Core_Hol_Comment
 		
 		$auth = Zend_Auth::getInstance();
 		if ($auth->hasIdentity())
-			$userId = $auth->getIdentity()->guid;
+			$userId = $auth->getIdentity()->kopel;
 		else
 			$userId = 0;
 		

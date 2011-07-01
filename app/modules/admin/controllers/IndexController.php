@@ -76,15 +76,23 @@ class Admin_IndexController extends Zend_Controller_Action
 		$logoutUrl = $identity->logoutUrl;
 		//$logoutUrl = $identity->logoutUrl;
 		
+		$auth = Zend_Auth::getInstance();
+		
+		$packageId = $auth->getIdentity()->packageId;
+		
 		//$this->view->logoutUrl = $logoutUrl.'/'.$sReturn;
 		$this->view->logoutUrl = $logoutUrl.'/'.$sReturn;
 		
 		// get group information
 		$acl = Pandamp_Acl::manager();
 		
-		$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
+		$modelAroGroup = new Pandamp_Modules_Identity_Group_Folder_AroGroup();
 		
-		$this->view->group = (isset($aReturn[1]))? $aReturn[1] : '-';
+		//$aReturn = $acl->getUserGroupIds(Zend_Auth::getInstance()->getIdentity()->username);
+		$aReturn = $modelAroGroup->getUserGroup($packageId);
+		
+		//$this->view->group = (isset($aReturn[1]))? $aReturn[1] : '-';
+		$this->view->group = $aReturn['name'];
 	}
 }
 ?>
