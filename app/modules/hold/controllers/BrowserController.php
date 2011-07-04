@@ -435,7 +435,16 @@ class Hold_BrowserController extends Zend_Controller_Action
 		    $registry = Zend_Registry::getInstance();
 		    $config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
 		    $cdn = $config->getOption('cdn');
+		    $ftp = $config->getOption('ftp');
 		    
+			$strServer = $ftp['remote']['server'];
+			$strServerPort = $ftp['remote']['port'];
+			$strServerUsername = $ftp['remote']['username'];
+			$strServerPassword = $ftp['remote']['passwd'];
+			
+			//connect to server
+			$resConnection = ssh2_connect($strServer, $strServerPort);
+		
 			$flagFileFound = false;
 			
 			foreach($rowsetRelatedItem as $rowRelatedItem)
@@ -443,49 +452,60 @@ class Hold_BrowserController extends Zend_Controller_Action
 				if(!$flagFileFound)
 				{
 					$parentGuid = $rowRelatedItem->relatedGuid;
-					$sDir1 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$systemname;
-					$sDir2 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$parentGuid.DIRECTORY_SEPARATOR.$systemname;
-					$sDir3 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$oname;
-					$sDir4 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$parentGuid.DIRECTORY_SEPARATOR.$oname;
+					$sDir1 = $cdn['remote']['dir']['files']."/".$systemname;
+					$sDir2 = $cdn['remote']['dir']['files']."/".$parentGuid."/".$systemname;
+					$sDir3 = $cdn['remote']['dir']['files']."/".$oname;
+					$sDir4 = $cdn['remote']['dir']['files']."/".$parentGuid."/".$oname;
 					
-					if (@fopen($sDir1, "r"))
+					if(ssh2_auth_password($resConnection, $strServerUsername, $strServerPassword))
 					{
-						$flagFileFound = true;
-						header("Content-type: $contentType");
-						header("Content-Disposition: attachment; filename=$oriName");
-						file_put_contents($oriName, file_get_contents($sDir1));
-						die();
-					}
-					else 
-						if (@fopen($sDir2, "r"))
+						$resSFTP = ssh2_sftp($resConnection);
+						
+						if(file_exists("ssh2.sftp://{$resSFTP}".$sDir1))
 						{
 							$flagFileFound = true;
 							header("Content-type: $contentType");
 							header("Content-Disposition: attachment; filename=$oriName");
-							file_put_contents($oriName, file_get_contents($sDir2));
-							die();
-						}
-						if (@fopen($sDir3, "r"))
-						{
-							$flagFileFound = true;
-							header("Content-type: $contentType");
-							header("Content-Disposition: attachment; filename=$oriName");
-							file_put_contents($oriName, file_get_contents($sDir3));
-							die();
-						}
-						if (@fopen($sDir4, "r"))
-						{
-							$flagFileFound = true;
-							header("Content-type: $contentType");
-							header("Content-Disposition: attachment; filename=$oriName");
-							file_put_contents($oriName, file_get_contents($sDir4));
+							@readfile("ssh2.sftp://{$resSFTP}".$sDir1);
 							die();
 						}
 						else 
 						{
-							$flagFileFound = false;
-							$this->_forward('forbidden','browser','hold');
+							if(file_exists("ssh2.sftp://{$resSFTP}".$sDir2))
+							{
+								$flagFileFound = true;
+								header("Content-type: $contentType");
+								header("Content-Disposition: attachment; filename=$oriName");
+								@readfile("ssh2.sftp://{$resSFTP}".$sDir2);
+								die();
+							}
+							if(file_exists("ssh2.sftp://{$resSFTP}".$sDir3))
+							{
+								$flagFileFound = true;
+								header("Content-type: $contentType");
+								header("Content-Disposition: attachment; filename=$oriName");
+								@readfile("ssh2.sftp://{$resSFTP}".$sDir3);
+								die();
+							}
+							if(file_exists("ssh2.sftp://{$resSFTP}".$sDir4))
+							{
+								$flagFileFound = true;
+								header("Content-type: $contentType");
+								header("Content-Disposition: attachment; filename=$oriName");
+								@readfile("ssh2.sftp://{$resSFTP}".$sDir4);
+								die();
+							}
+							else 
+							{
+								$flagFileFound = false;
+								$this->_forward('forbidden','browser','hold');
+							}
 						}
+					
+					
+					} // end of ssh2
+					
+					
 				}
 			}
 			
