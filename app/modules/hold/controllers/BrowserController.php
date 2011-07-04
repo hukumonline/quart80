@@ -401,7 +401,7 @@ class Hold_BrowserController extends Zend_Controller_Action
     		$auth = Zend_Auth::getInstance();
     		if ($auth->hasIdentity())
     		{
-    			$guidUser = $auth->getIdentity()->guid;
+    			$guidUser = $auth->getIdentity()->kopel;
     		}
     		
     		$tblAsetSetting = new Pandamp_Modules_Dms_Catalog_Model_AssetSetting();
@@ -448,7 +448,7 @@ class Hold_BrowserController extends Zend_Controller_Action
 					$sDir3 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$oname;
 					$sDir4 = $cdn['static']['dir']['files'].DIRECTORY_SEPARATOR.$parentGuid.DIRECTORY_SEPARATOR.$oname;
 					
-					if (fopen($sDir1, "r"))
+					if (@fopen($sDir1, "r"))
 					{
 						$flagFileFound = true;
 						header("Content-type: $contentType");
@@ -457,7 +457,7 @@ class Hold_BrowserController extends Zend_Controller_Action
 						die();
 					}
 					else 
-						if (fopen($sDir2, "r"))
+						if (@fopen($sDir2, "r"))
 						{
 							$flagFileFound = true;
 							header("Content-type: $contentType");
@@ -465,7 +465,7 @@ class Hold_BrowserController extends Zend_Controller_Action
 							file_put_contents($oriName, file_get_contents($sDir2));
 							die();
 						}
-						if (fopen($sDir3, "r"))
+						if (@fopen($sDir3, "r"))
 						{
 							$flagFileFound = true;
 							header("Content-type: $contentType");
@@ -473,7 +473,7 @@ class Hold_BrowserController extends Zend_Controller_Action
 							file_put_contents($oriName, file_get_contents($sDir3));
 							die();
 						}
-						if (fopen($sDir4, "r"))
+						if (@fopen($sDir4, "r"))
 						{
 							$flagFileFound = true;
 							header("Content-type: $contentType");
@@ -511,7 +511,7 @@ class Hold_BrowserController extends Zend_Controller_Action
     		$auth = Zend_Auth::getInstance();
     		if ($auth->hasIdentity())
     		{
-    			$guidUser = $auth->getIdentity()->guid;
+    			$guidUser = $auth->getIdentity()->kopel;
     		}
     		
     		$tblAsetSetting = new Pandamp_Modules_Dms_Catalog_Model_AssetSetting();
