@@ -41,7 +41,7 @@
 	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->catalogGuid,'RELATED_IMAGE');
 	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
 	$chkDir = $sDir."/".$this->catalogGuid;
-	if (fopen($chkDir,"r"))
+	if (@fopen($chkDir,"r"))
 	{
 		$pict = $sDir ."/". $this->catalogGuid ."/". $itemGuid;
 	}
