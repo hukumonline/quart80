@@ -154,7 +154,7 @@ class HolSite_Widgets_ContentController extends Zend_Controller_Action
 	{
 		$modelCatalog = new Pandamp_Modules_Dms_Catalog_Model_Catalog();
 		$decorator = new Pandamp_BeanContext_Decorator($modelCatalog);
-		$rowset = $decorator->fetchFromFolderAsEntity('lt4a6f7d5377193',0,5);
+		$rowset = $decorator->fetchFromFolderAsEntity('lt4a6f7d5377193',0,3);
 		
 		$content = 0;
 		$data = array();

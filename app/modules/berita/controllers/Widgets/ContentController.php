@@ -139,7 +139,7 @@ class Berita_Widgets_ContentController extends Zend_Controller_Action
 		}
 		else {
 			//$rowset = $decorator->fetchFromFolderAsEntity('lt4a6f7d5377193',0,5,'warta');
-			$rowset = $decorator->fetchFromFolderAsEntity('lt4a6f7d5377193',0,3);
+			$rowset = $decorator->fetchFromFolderAsEntity('lt4a6f7d5377193',0,13);
 		}
 		
 		$content = 0;
@@ -173,7 +173,7 @@ class Berita_Widgets_ContentController extends Zend_Controller_Action
 		}
 		else {
 			//$rowset = $decorator->fetchFromFolderAsEntity('fb18',0,5,'warta');
-			$rowset = $decorator->fetchFromFolderAsEntity('fb18',0,5);
+			$rowset = $decorator->fetchFromFolderAsEntity('fb18',0,10);
 		}
 		
 		$content = 0;
