@@ -21,7 +21,8 @@ class IndexController extends Zend_Controller_Action
 		    
 		    $uri = $_SERVER['REQUEST_URI'];
 		    
-			$this->_redirect($cdn['url'].$uri);	        
+			//$this->_redirect($cdn['url'].$uri);	        
+			header("Location:".$cdn['url'].$uri);
 			
 		}else{
 			
