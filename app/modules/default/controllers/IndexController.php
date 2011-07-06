@@ -20,7 +20,7 @@ class IndexController extends Zend_Controller_Action
 		    $cdn = $config->getOption('mobile');
 		    
 		    $uri = $_SERVER['REQUEST_URI'];
-		    
+		    die('sampe');
 			//$this->_redirect($cdn['url'].$uri);	        
 			header("Location:".$cdn['url'].$uri);
 			
