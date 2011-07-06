@@ -11,7 +11,7 @@ class IndexController extends Zend_Controller_Action
 		$tw = Zend_Registry::get('twurfl');
 		$tw->GetDeviceCapabilitiesFromAgent($_SERVER['HTTP_USER_AGENT'],true);
 		$cap = $tw->capabilities;
-		die('s');
+		
 		// check if this device is mobile
 		if($cap['product_info']['is_wireless_device']){
 			
