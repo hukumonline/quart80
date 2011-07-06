@@ -9,10 +9,30 @@ class HolSite_BrowserController extends Zend_Controller_Action
 	}
 	function detailAction()
 	{
-		$catalogGuid = ($this->_getParam('guid'))? $this->_getParam('guid') : '';
-		$page = ($this->_getParam('page'))? $this->_getParam('page') : '';
-		$this->view->catalogGuid = $catalogGuid;
-		$this->view->page = $page;
+		$tw = Zend_Registry::get('twurfl');
+		$tw->GetDeviceCapabilitiesFromAgent($_SERVER['HTTP_USER_AGENT'],true);
+		$cap = $tw->capabilities;
+		
+		// check if this device is mobile
+		if($cap['product_info']['is_wireless_device']){
+			
+		    $registry = Zend_Registry::getInstance();
+		    $config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
+		    $cdn = $config->getOption('mobile');
+		    
+		    $uri = $_SERVER['REQUEST_URI'];
+		    
+			//$this->_redirect($cdn['url'].$uri);	        
+			header("Location:".$cdn['url'].$uri);
+			
+		}else{
+			
+			$catalogGuid = ($this->_getParam('guid'))? $this->_getParam('guid') : '';
+			$page = ($this->_getParam('page'))? $this->_getParam('page') : '';
+			$this->view->catalogGuid = $catalogGuid;
+			$this->view->page = $page;
+			
+		}
 	}
 	function detailIssueAction()
 	{
