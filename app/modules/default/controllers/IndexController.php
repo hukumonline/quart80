@@ -18,7 +18,10 @@ class IndexController extends Zend_Controller_Action
 		    $registry = Zend_Registry::getInstance();
 		    $config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
 		    $cdn = $config->getOption('mobile');
-			$this->_redirect($cdn['url']);	        
+		    
+		    $uri = $_SERVER['REQUEST_URI'];
+		    
+			$this->_redirect($cdn['url'].$uri);	        
 			
 		}else{
 			
