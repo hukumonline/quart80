@@ -10,8 +10,9 @@ for($i=0; $i<$this->numberOfRows;$i++) {
 	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
 	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($guid,'RELATED_IMAGE');
 	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
-	$chkDir = $sDir."/".$guid;
-	if (@fopen($chkDir,"r"))
+	//$chkDir = $sDir."/".$guid;
+	$chkDir = $sDir."/".$guid."/".$itemGuid;
+	if (@getimagesize($chkDir))
 	{
 		$pict = $sDir ."/". $guid ."/". $itemGuid;
 	}
