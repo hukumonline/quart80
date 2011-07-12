@@ -15,3 +15,4 @@ library/phpseclib/
 .zfproject.xml
 app_log.txt
 paypal.ipn_results.log
+.htaccess
