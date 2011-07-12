@@ -103,7 +103,13 @@ class Berita_IndexController extends Zend_Controller_Action
 		
 		$modelFolder = new Pandamp_Modules_Dms_Folder_Model_Folder();
 		$rowset = $modelFolder->getMenu($node);
-		$this->view->rowset = $rowset;
+		//$this->view->rowset = $rowset;
+		
+		/**
+		 * fungsi rubrikasi di non aktifkan
+		 * July 12, 2011
+		 */
+		$this->view->rowset = "";
 		
 		$query = ($this->_getParam('cari'))? $this->_getParam('cari') : '';
 		$category = ($this->_getParam('a'))? $this->_getParam('a') : '';
