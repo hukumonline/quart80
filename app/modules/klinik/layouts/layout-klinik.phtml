@@ -2,13 +2,18 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>hukumonline.com Klinik : <?php echo $this->getCatalogAttribute($this->catalogGuid,'fixedCommentTitle'); ?></title>
+	<? 
+	$title = ($this->catalogGuid)? ' : '.$this->getCatalogAttribute($this->catalogGuid,'fixedCommentTitle') : ''; 
+	$title2 = ($this->catalogGuid)? $this->getCatalogAttribute($this->catalogGuid,'fixedCommentTitle') : ''; 
+	?>
+	
+	<title>hukumonline.com Klinik <?=$title;?></title>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<?
 	if($this->catalogGuid!="")
 	{
 	?>
-	<meta property="og:title" content="<?php echo $this->getCatalogAttribute($this->catalogGuid,'fixedCommentTitle'); ?>" />
+	<meta property="og:title" content="<?=$title2;?>" />
 	<?
 	}
 	?>
