@@ -4,6 +4,14 @@
 <head>
 	<title>hukumonline.com Klinik</title>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<?
+	if($this->catalogGuid!="")
+	{
+	?>
+	<meta property="og:title" content="<?php echo $this->getCatalogAttribute($this->catalogGuid,'fixedCommentTitle'); ?>" />
+	<?
+	}
+	?>
 	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="<?=$this->baseUrl();?>/resources/css/elastic.css" />
