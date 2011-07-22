@@ -10,6 +10,7 @@ library/Tera-WURFL/
 library/adodb/
 library/phpgacl/
 library/phpseclib/
+library/Pandamp/Controller/Action/Helper/Cdn.php
 .buildpath
 .project
 .zfproject.xml
