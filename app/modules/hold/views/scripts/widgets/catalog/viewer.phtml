@@ -1,8 +1,10 @@
 <fieldset>
 	<legend>Pusat Data</legend>
 	<div class="hold">
+		<? if (isset($this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value)) { ?>
 		<h4><strong><?php echo $this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value;?></strong></h4>
 		<?php 
+		}
 		foreach ($this->aAttribute as $row) { 
 			if ((!in_array($row['value'],array('no-info','-','in','','00:00:00'))) && (!in_array($row['name'],array('Comments','Billing')))) {
 		?>
