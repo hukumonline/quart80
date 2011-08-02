@@ -1,0 +1,45 @@
+#topbar {            
+    position:fixed;
+    background:#eee;            
+	border-bottom: 3px solid #cd0000;
+	background: 0px -1350px black repeat-x;
+    color:white;
+    padding:5px 0;            
+    margin:0 0 40px 0;
+    width:100%;
+    z-index: 99999;
+    top:0;            
+}       
+
+#topbar-text {
+    padding:0;
+    margin:0 auto;
+    width:1024px;
+    background-color:transparent;
+    text-align:center;
+    font-size:14px; font-weight:bold;
+}
+
+#topbar-text img{
+    margin:0; padding:0; vertical-align:middle;            
+}
+#btn {
+  padding: 3px 8px;
+  margin: 5px;
+  background: #f5ad1d;
+  border: 1px solid #ffcc00;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
+  color: #332;
+  text-shadow: 0 1px 0 #fe6;        
+}
+
+#btn:hover{
+    background: #f28818;
+    color:#ffe;
+    text-shadow: 0 1px 0 #444;
+}
