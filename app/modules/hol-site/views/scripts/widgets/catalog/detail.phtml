@@ -57,10 +57,11 @@
 	
 	$screenshot = "<img src=\"".$thumb."\" />";
 	
+	if (!empty($thumb)) { 
+	list($width) = getimagesize($thumb); 	
 	?>
-	<? if (!empty($thumb)) : ?>
-    <div class="image"><?php echo $screenshot; ?><br><span class="fname"><?php echo $this->getFotoAttributeName($rowsetRelatedItem->itemGuid); ?></span></div>
-    <? endif; ?>
+    <div class="image"><?php echo $screenshot; ?><br><div class="fname" style="width:<?=$width;?>px;overflow:auto;"><?=str_replace("<br>","",$this->getFotoAttributeName($rowsetRelatedItem->itemGuid)); ?></div></div>
+    <? } ?>
 	<div id="detailarticle"> 
 	<p>
 	<?php 
