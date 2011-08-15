@@ -2,12 +2,12 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>hukumonline.com - Berita : <?=$this->getCatalogTitle($this->catalogGuid); ?></title>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>hukumonline.com - Berita : <?=$this->getCatalogTitle($this->catalogGuid); ?></title>
 	<meta property="og:title" content="<?=$this->getCatalogTitle($this->catalogGuid);?>"/>
 	<?=$this->getImage($this->catalogGuid);?>
 	<meta property="og:description" content="<?=$this->getCatalogAttribute($this->catalogGuid,"fixedDescription");?>"/>
-	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
+	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" type="image/x-icon" />
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/BBCode.js"></script>
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="<?=$this->baseUrl();?>/resources/css/elastic.css" />
