@@ -5,6 +5,7 @@
 	<title>hukumonline.com - Berita : <?php echo $this->getCatalogTitle($this->catalogGuid); ?></title>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<meta property="og:title" content="<?php echo $this->getCatalogTitle($this->catalogGuid); ?>" />
+	<?=$this->getImage($this->catalogGuid);?>
 	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" />
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/BBCode.js"></script>
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
