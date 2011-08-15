@@ -32,6 +32,6 @@ class Pandamp_Controller_Action_Helper_GetImage extends Zend_Controller_Action_H
 			return '<meta property="og:image" content="'.$thumb.'"/>';
 		}
 		else 
-			return '<meta property="og:image" content="'.$imageUrl.'/logo_hukumonline.jpg'.'"/>';
+			return '<meta property="og:image" content="'.ROOT_URL.'/resources/images/logo_hukumonline.jpg'.'"/>';
 	}
 }
