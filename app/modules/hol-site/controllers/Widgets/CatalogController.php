@@ -90,6 +90,9 @@ class HolSite_Widgets_CatalogController extends Zend_Controller_Action
 
         $temp = $rowset->toArray();
         //$temp = $rowset;
+        
+        $this->view->st = $temp["shortTitle"];
+        
         $sub = $temp["shortTitle"];
 
         $sub="";
