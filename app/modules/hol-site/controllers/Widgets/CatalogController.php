@@ -124,7 +124,7 @@ class HolSite_Widgets_CatalogController extends Zend_Controller_Action
          $http->setUri('http://api.bit.ly/stats?version=2.0.1&shortUrl='.$shortUrl.'&login=hukumonline&apiKey=R_77ba1fce98783c1734e24bc28dfdb8c7');
          $response = $http->request();
 
-          if ($response->isSuccessful())
+         if ($response->isSuccessful())
          {
               $result = Zend_Json::decode($response->getBody());
               $statsShortUrl =  $result["results"]["clicks"];
