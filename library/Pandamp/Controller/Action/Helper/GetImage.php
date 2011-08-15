@@ -29,7 +29,8 @@ class Pandamp_Controller_Action_Helper_GetImage extends Zend_Controller_Action_H
 		
 		if (!empty($thumb))
 		{
-			return '<meta property="og:image" content="'.$thumb.'" />';
+			$size = @getimagesize($thumb); 	
+			return '<link rel="image_src" type="'.$size['mime'].'" href="'.$thumb.'" />';
 		}
 		else 
 			return;
