@@ -29,9 +29,19 @@ class Pandamp_Controller_Action_Helper_GetImage extends Zend_Controller_Action_H
 		
 		if (!empty($thumb))
 		{
-			return '<meta property="og:image" content="'.$thumb.'"/>';
+			$size = @getimagesize($thumb);
+			$mt = '<link rel="image_src" type="'.$size['mime'].'" href="'.$thumb.'" />';
+			$mt .= '<meta property="og:image" content="'.$thumb.'"/>';
+			return $mt;
 		}
 		else 
-			return '<meta property="og:image" content="'.ROOT_URL.'/resources/images/logo_hukumonline.jpg'.'"/>';
+		{
+			$th = ROOT_URL.'/resources/images/logo_hukumonline.jpg';
+			$size = @getimagesize($th);
+			$mt = '<link rel="image_src" type="'.$size['mime'].'" href="'.$th.'" />';
+			$mt .= '<meta property="og:image" content="'.$th.'"/>';
+			
+			return $mt;
+		}
 	}
 }
