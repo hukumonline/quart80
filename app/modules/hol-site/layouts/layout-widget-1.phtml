@@ -4,6 +4,9 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>hukumonline.com - Berita : <?=$this->getCatalogTitle($this->catalogGuid); ?></title>
+	<meta property="og:title" content="<?=$this->getCatalogTitle($this->catalogGuid);?>"/>
+	<?=$this->getImage($this->catalogGuid);?>
+	<meta property="og:description" content="<?=$this->getCatalogAttribute($this->catalogGuid,"fixedDescription");?>"/>
 	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" type="image/x-icon" />
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/BBCode.js"></script>
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
@@ -158,8 +161,6 @@
 	<?=$this->layout()->content; ?>
 	<?=$this->render("footer.phtml"); ?>
 	
-	<script type="text/javascript" src="http://static.ak.fbcdn.net/connect.php/js/FB.Share"></script>
-
 	<script type="text/javascript">
 	
 	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
