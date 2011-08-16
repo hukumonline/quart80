@@ -6,21 +6,33 @@
 <?php } ?>
 
 <?php 
+$sDir = $this->getRemoteImageUrl();
 for ($i=0; $i<$this->numberOfRows;$i++) { 
 	
-	//$sDir = 'uploads/images';
-	$sDir = $this->getRemoteImageUrl();
 	$thumb = "";
+	$guid = $this->data[$i][1];
 	
 	$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
-	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($this->data[$i][1],'RELATED_IMAGE');
+	$rowsetRelatedItem = $modelRelatedItem->getDocumentById($guid,'RELATED_IMAGE');
 	$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
 	
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".jpg"; 	}
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".gif"; 	}
-	if (Pandamp_Lib_Formater::thumb_exists($sDir ."/tn_". $itemGuid . ".png")) 	{ $thumb = $sDir ."/tn_". $itemGuid . ".png"; 	}
+	$chkDir = $sDir."/".$guid."/".$itemGuid;
+	if (@getimagesize($chkDir))
+	{
+		$pict = $sDir ."/". $guid ."/". $itemGuid;
+	}
+	else 
+	{
+		$pict = $sDir ."/". $itemGuid;
+	}
 	
-	$screenshot = "<img src=\"".$thumb."\" vspace=\"0\" width=\"40\" border=\"0\" height=\"40\" hspace=\"0\" align=\"left\" />";
+
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".jpg")) 	{ $thumb = $pict . ".jpg"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".gif")) 	{ $thumb = $pict . ".gif"; 	}
+	if (Pandamp_Lib_Formater::thumb_exists($pict . ".png")) 	{ $thumb = $pict . ".png"; 	}
+
+    $screenshot = "<img src=\"".$thumb."\" alt=\"".$this->data[$i][0]."\" width=\"60\" height=\"60\" />";
+
 
 	?>
 	<div class="ft-isi">
@@ -29,6 +41,7 @@ for ($i=0; $i<$this->numberOfRows;$i++) {
     <? endif; ?>
 	<h2><a href="<?=$this->getRootUrl(); ?>/berita/baca/<?=$this->data[$i][1]; ?>/<?=$this->data[$i][2]; ?>"><?=$this->data[$i][0]; ?></a></h2>    
 </div>
+<div class="bersih"></div>
 <?php } ?>			
 	
 </div>
