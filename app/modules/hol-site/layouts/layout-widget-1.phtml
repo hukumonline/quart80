@@ -10,6 +10,7 @@
 	<meta property="og:site_name" content="hukumonline.com" />
 	<meta property="og:description" content="<?=$this->getCatalogAttribute($this->catalogGuid,"fixedDescription");?>"/>
 	<meta name="description" content="<?=$this->getCatalogAttribute($this->catalogGuid,"fixedDescription");?>"/> 
+	<script language="javascript" src="http://ping.fm/scripts/pingthis.js"></script>
 	<link rel="shortcut icon" href="<?=$this->baseUrl();?>/resources/images/hole_small.ico" type="image/x-icon" />
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/BBCode.js"></script>
 	<script type="text/javascript" src="<?=$this->baseUrl(); ?>/js/jquery/jquery-1.2.3.pack.js"></script>
@@ -136,6 +137,10 @@
 	<div style="padding-top:10px;"></div>
 	<?=$this->layout()->content; ?>
 	<?=$this->render("footer.phtml"); ?>
+	
+	<script language="javascript">
+	 pingthis();
+	</script>	
 	
 	<script type="text/javascript">
 	
