@@ -102,6 +102,23 @@ class Pandamp_Core_Hol_Catalog
 		
 		//$cache->remove("catalog");
 		
+		try {
+			
+			$url_content = ROOT_URL.'/berita/baca/'.$catalogGuid.'/'.$rowCatalog->shortTitle;
+		    $url = 'http://developers.facebook.com/tools/lint/?url={'.$url_content.'}&format=json';
+		    $ch = curl_init($url);
+		    curl_setopt($ch, CURLOPT_NOBODY, true);
+		    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		    curl_exec($ch);
+		    $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		    curl_close($ch);
+			
+		}
+		catch (Exception $e)
+		{
+			die($e->getMessage());
+		}
+		
 		return $catalogGuid;
 	}
 	public function delete($catalogGuid)
