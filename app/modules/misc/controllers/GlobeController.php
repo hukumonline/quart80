@@ -67,10 +67,10 @@ class Misc_GlobeController extends Zend_Controller_Action
 		
 		// set document information
 		$pdf->SetCreator(PDF_CREATOR);
-		$pdf->SetAuthor('Nicola Asuni');
-		$pdf->SetTitle('TCPDF Example 001');
-		$pdf->SetSubject('TCPDF Tutorial');
-		$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+		$pdf->SetAuthor($author);
+		$pdf->SetTitle($title);
+		$pdf->SetSubject($description);
+		//$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 		
 		// set default header data
 		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
@@ -111,19 +111,35 @@ class Misc_GlobeController extends Zend_Controller_Action
 		// This method has several options, check the source code documentation for more information.
 		$pdf->AddPage();
 		
-		$sDir = 'uploads/images';
+		$registry = Zend_Registry::getInstance();
+		$config = $registry->get(Pandamp_Keys::REGISTRY_APP_OBJECT);
+		$cdn = $config->getOption('cdn');
+		
+		$sDir = $cdn['static']['url']['images'];
 		$thumb = "";
 		$modelRelatedItem = new Pandamp_Modules_Dms_Catalog_Model_RelatedItem();
 		$rowsetRelatedItem = $modelRelatedItem->getDocumentById($catalogGuid,'RELATED_IMAGE');
 		$itemGuid = (isset($rowsetRelatedItem->itemGuid))? $rowsetRelatedItem->itemGuid : '';
-		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".jpg")) 	{ $thumb = $sDir ."/". $itemGuid . ".jpg"; 	}
-		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".gif")) 	{ $thumb = $sDir ."/". $itemGuid . ".gif"; 	}
-		if (Pandamp_Lib_Formater::thumb_exists($sDir ."/". $itemGuid . ".png")) 	{ $thumb = $sDir ."/". $itemGuid . ".png"; 	}
+		
+		$chkDir = $sDir."/".$catalogGuid."/".$itemGuid;
+		if (@getimagesize($chkDir))
+		{
+			$pict = $sDir ."/". $catalogGuid ."/". $itemGuid;
+		}
+		else 
+		{
+			$pict = $sDir ."/". $itemGuid;
+		}
+		
+		if (Pandamp_Lib_Formater::thumb_exists($pict . ".jpg")) 	{ $thumb = $pict . ".jpg"; 	}
+		if (Pandamp_Lib_Formater::thumb_exists($pict . ".gif")) 	{ $thumb = $pict . ".gif"; 	}
+		if (Pandamp_Lib_Formater::thumb_exists($pict . ".png")) 	{ $thumb = $pict . ".png"; 	}
+		
 		
 		if ($thumb == "") 
 			$screenshot = ""; 
 		else 
-			$screenshot = "<img src=\"".ROOT_URL.'/'.$thumb."\" />";
+			$screenshot = "<img src=\"".$thumb."\" />";
 		
 		// Set some content to print
 		$html = '<div class="kotakisi">';
@@ -150,7 +166,7 @@ class Misc_GlobeController extends Zend_Controller_Action
 		
 		// Close and output PDF document
 		// This method has several options, check the source code documentation for more information.
-		$pdf->Output('article.pdf', 'I');
+		$pdf->Output($title.'.pdf', 'I');
 	}
 	function printedocAction()
 	{
