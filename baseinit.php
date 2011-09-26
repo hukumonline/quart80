@@ -63,4 +63,8 @@ Zend_Controller_Action_HelperBroker::addHelper($viewRendered);
 
 $regconfig = new Zend_Config_Ini(CONFIG_PATH.'/zhol.ini', 'general'); 
 $registry->set('config', $regconfig); 
+
+$authNamespace = new Zend_Session_Namespace('Zend_Auth');
+$authNamespace->setExpirationSeconds(86400); // will expire in one day
+
 ?>
