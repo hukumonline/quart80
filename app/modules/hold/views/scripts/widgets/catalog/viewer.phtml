@@ -1,7 +1,7 @@
 <fieldset>
 	<legend>Pusat Data</legend>
 	<div class="hold">
-		<? if (isset($this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value)) { ?>
+		<? if (!empty($this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value)) { ?>
 		<h4><strong><?php echo $this->rowsetCatalogAttribute->findByAttributeGuid('fixedTitle')->value;?></strong></h4>
 		<?php 
 		}
