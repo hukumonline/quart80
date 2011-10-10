@@ -7,7 +7,7 @@ uploads/
 library/Apache/
 library/FCKeditor/
 library/PdfTool/
-library/Tera-WURFL/
+#library/Tera-WURFL/
 library/adodb/
 library/phpgacl/
 library/phpseclib/
